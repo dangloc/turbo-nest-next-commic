@@ -21,6 +21,8 @@ Success criteria:
 2. Legacy WordPress IDs and password hashes are preserved in the new user model.
 3. Purchased chapter storage has uniqueness and indexing appropriate for large-scale lookup.
 
+Status: Complete (2026-04-04)
+
 **Phase 2: ETL Migration**
 Goal: Implement the migration job that extracts WordPress data, transforms serialized metadata, and loads normalized PostgreSQL records.
 Requirements: MIG-01, MIG-02, MIG-03, MIG-04, MIG-05, MIG-06
@@ -42,9 +44,9 @@ Success criteria:
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| DATA-01 | Phase 1 | Pending |
-| DATA-02 | Phase 1 | Pending |
-| DATA-03 | Phase 1 | Pending |
+| DATA-01 | Phase 1 | Complete |
+| DATA-02 | Phase 1 | Complete |
+| DATA-03 | Phase 1 | Complete |
 | MIG-01 | Phase 2 | Pending |
 | MIG-02 | Phase 2 | Pending |
 | MIG-03 | Phase 2 | Pending |

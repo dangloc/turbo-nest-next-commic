@@ -7,11 +7,11 @@
 
 Requirements for the migration foundation. Each maps to roadmap phases.
 
-### Data Model
+### Validated
 
-- [ ] **DATA-01**: Prisma schema normalizes WordPress user, wallet, provider, VIP, transaction, and purchased chapter data into dedicated PostgreSQL tables.
-- [ ] **DATA-02**: New user records retain the original WordPress password hash, user role, and stable legacy identifier mapping.
-- [ ] **DATA-03**: Purchased chapter storage enforces uniqueness for the user/chapter pair and includes an index that supports large-scale lookup and deduplication.
+- ✓ **DATA-01**: Prisma schema normalizes WordPress user, wallet, provider, VIP, transaction, and purchased chapter data into dedicated PostgreSQL tables. — Phase 1
+- ✓ **DATA-02**: New user records retain the original WordPress password hash, user role, and stable legacy identifier mapping. — Phase 1
+- ✓ **DATA-03**: Purchased chapter storage enforces uniqueness for the user/chapter pair and includes an index that supports large-scale lookup and deduplication. — Phase 1
 
 ### Migration
 
@@ -54,9 +54,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| DATA-01 | Phase 1 | Pending |
-| DATA-02 | Phase 1 | Pending |
-| DATA-03 | Phase 1 | Pending |
+| DATA-01 | Phase 1 | Complete |
+| DATA-02 | Phase 1 | Complete |
+| DATA-03 | Phase 1 | Complete |
 | MIG-01 | Phase 2 | Pending |
 | MIG-02 | Phase 2 | Pending |
 | MIG-03 | Phase 2 | Pending |

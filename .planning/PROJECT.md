@@ -15,10 +15,10 @@ Preserve every financially or identity-sensitive record during the migration, wi
 - ✓ Monorepo scaffold exists with `apps/web`, `apps/api`, and shared `packages/*` workspace structure — existing codebase
 - ✓ NestJS API starter boots and serves a basic HTTP response from `apps/api/src/main.ts` and `apps/api/src/app.controller.ts` — existing codebase
 - ✓ Next.js frontend starter renders an App Router page from `apps/web/app/page.tsx` — existing codebase
+- ✓ Normalized Prisma schema separates user identity, social logins, wallet balance, transactions, VIP subscriptions, and purchased chapters. — Phase 1
 
 ### Active
 
-- [ ] Normalized Prisma schema separates user identity, social logins, wallet balance, transactions, VIP subscriptions, and purchased chapters.
 - [ ] ETL script migrates WordPress MySQL data into PostgreSQL while preserving WP password hashes, social IDs, balances, VIP metadata, and purchased chapter history.
 - [ ] Migration process is idempotent or safely resumable so it can be rerun without duplicating user-facing financial or purchase records.
 - [ ] Verification checks prove wallet totals, social login mappings, and purchased chapter counts match the legacy source.
@@ -46,7 +46,7 @@ The current workspace already contains a brownfield monorepo scaffold, including
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| Use a normalized Prisma schema with dedicated `User`, `UserProvider`, `Wallet`, `Transaction`, `VipSubscription`, and `PurchasedChapter` tables | Avoid duplicating serialized WordPress data and make large-table queries efficient | — Pending |
+| Use a normalized Prisma schema with dedicated `User`, `UserProvider`, `Wallet`, `Transaction`, `VipSubscription`, and `PurchasedChapter` tables | Avoid duplicating serialized WordPress data and make large-table queries efficient | ✓ Good |
 | Keep the original WordPress password hash string in the new user table | Preserve login compatibility during transition | — Pending |
 | Batch purchased chapter inserts with `createMany()` and chunking | Prevent RAM overflow and keep migration fast at scale | — Pending |
 | Treat migration as a one-time, resumable ETL rather than an always-on sync | Reduces complexity and matches the goal of platform replacement | — Pending |
@@ -69,4 +69,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-04-05 after initialization*
+*Last updated: 2026-04-05 after Phase 1 completion*
