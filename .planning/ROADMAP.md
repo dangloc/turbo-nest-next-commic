@@ -32,6 +32,12 @@ Success criteria:
 3. Serialized `wp_usermeta` values are decoded safely for VIP and purchased chapter data.
 4. Purchased chapters are inserted in batches using `createMany()` with chunking.
 
+Context: Ready for planning (2026-04-05)
+- ✓ D-06: Two-phase mapping with quarantine strategy
+- ✓ D-07: Parse-or-skip serialization failures  
+- ✓ D-08: Per-user streaming for chapter batches
+- ✓ D-09: Stop-the-world upsert-based idempotence
+
 **Phase 3: Verification**
 Goal: Prove the new database matches critical source totals and identity mappings after migration.
 Requirements: VER-01, VER-02, VER-03
@@ -64,3 +70,4 @@ Success criteria:
 
 ---
 *Roadmap created: 2026-04-05*
+*Last updated: 2026-04-05 (Phase 2 context locked)*
