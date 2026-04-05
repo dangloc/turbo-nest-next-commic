@@ -26,6 +26,12 @@ Status: Complete (2026-04-04)
 **Phase 2: ETL Migration**
 Goal: Implement the migration job that extracts WordPress data, transforms serialized metadata, and loads normalized PostgreSQL records.
 Requirements: MIG-01, MIG-02, MIG-03, MIG-04, MIG-05, MIG-06
+**Plans:** 3 plans
+Plans:
+- [ ] 02-01-PLAN.md - ETL foundation contracts, parsers, and quarantine handling.
+- [ ] 02-02-PLAN.md - User/provider/wallet/VIP/transaction migration modules.
+- [ ] 02-03-PLAN.md - Purchased-chapter streaming and end-to-end runner wiring.
+
 Success criteria:
 1. The script connects to both MySQL and PostgreSQL with clear configuration.
 2. User, social login, wallet, VIP, and transaction records are migrated with the intended mappings.
@@ -34,7 +40,7 @@ Success criteria:
 
 Context: Ready for planning (2026-04-05)
 - ✓ D-06: Two-phase mapping with quarantine strategy
-- ✓ D-07: Parse-or-skip serialization failures  
+- ✓ D-07: Parse-or-skip serialization failures
 - ✓ D-08: Per-user streaming for chapter batches
 - ✓ D-09: Stop-the-world upsert-based idempotence
 
@@ -70,4 +76,4 @@ Success criteria:
 
 ---
 *Roadmap created: 2026-04-05*
-*Last updated: 2026-04-05 (Phase 2 context locked)*
+*Last updated: 2026-04-05 (Phase 2 plans created)*
