@@ -10,11 +10,12 @@ Preserve every financially or identity-sensitive record during the migration, wi
 
 ## Current State
 
-- v1.0 shipped with schema foundation, ETL migration flow, and verification commands.
+- v1.0 shipped and is now archived and tagged.
 - Verification parity achieved for:
   - Wallet totals
   - Purchased chapter decoded totals
   - Google social mapping identities
+- Audit evidence closure backfilled the missing phase-level verification records, so the milestone is fully auditable.
 - Operational outputs are available as JSON reconciliation artifacts under `apps/api/tmp`.
 
 ## Requirements
@@ -63,4 +64,4 @@ v1.0 completed with a monorepo structure (`apps/api`, `apps/web`, `packages/*`) 
 - Large historical data volumes require chunked, memory-safe handling.
 
 ---
-*Last updated: 2026-04-07 after v1.0 milestone completion*
+*Last updated: 2026-04-07 after v1.0 milestone archive*
