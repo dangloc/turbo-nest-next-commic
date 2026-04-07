@@ -22,10 +22,11 @@ Requirements for migration foundation and its audit-closure follow-up.
 - [x] **MIG-05**: ETL script migrates transaction history with legacy identifiers, amounts, timestamps, and content preserved where available. — Phase 2, verified through transaction migration implementation.
 - [x] **MIG-06**: ETL script is idempotent or safely resumable so reruns do not create duplicate user, wallet, provider, VIP, or purchased chapter records. — Phase 2, verified through schema constraints, rerun-safe design, and repeated runtime outputs.
 
-### Pending Gap Closure (from v1.0 audit)
-- [ ] **VER-01**: Post-migration checks confirm total wallet balances match the legacy system.
-- [ ] **VER-02**: Post-migration checks confirm purchased chapter counts match the successfully decoded WordPress source data.
-- [ ] **VER-03**: Post-migration checks confirm social login mappings for Google users are preserved correctly.
+### Validated
+
+- [x] **VER-01**: Post-migration checks confirm total wallet balances match the legacy system. — Phase 3, verified through wallet reconciliation runtime output and artifact contents.
+- [x] **VER-02**: Post-migration checks confirm purchased chapter counts match the successfully decoded WordPress source data. — Phase 3, verified through purchased chapter reconciliation runtime output and artifact contents.
+- [x] **VER-03**: Post-migration checks confirm social login mappings for Google users are preserved correctly. — Phase 3, verified through social mapping runtime output and artifact contents.
 
 ## v2 Requirements
 
@@ -58,17 +59,17 @@ Deferred to future release.
 | MIG-04 | Phase 2 | Complete |
 | MIG-05 | Phase 2 | Complete |
 | MIG-06 | Phase 2 | Complete |
-| VER-01 | Phase 5 | Pending |
-| VER-02 | Phase 5 | Pending |
-| VER-03 | Phase 5 | Pending |
+| VER-01 | Phase 3 | Complete |
+| VER-02 | Phase 3 | Complete |
+| VER-03 | Phase 3 | Complete |
 
 **Coverage:**
 - v1 requirements: 12 total
-- Checked complete: 9
-- Pending gap closure: 3
+- Checked complete: 12
+- Pending gap closure: 0
 - Mapped to phases: 12
 - Unmapped: 0
 
 ---
 *Requirements restored: 2026-04-07 after /gsd:plan-milestone-gaps*
-*Last updated: 2026-04-07 (Phase 4 audit evidence closure complete)*
+*Last updated: 2026-04-07 (Phase 5 verification evidence closure complete)*
