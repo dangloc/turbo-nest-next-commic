@@ -32,7 +32,7 @@ Last activity: 2026-04-07 -- Phase 7 execution complete
 
 - v1.0 milestone is archived and tagged.
 - v1.1 milestone has started with a strict DB-to-DB content migration strategy.
-- The next work is phase 8 planning for reconciliation and rerun safety.
+- The next work is phase 8 execution for reconciliation and rerun safety.
 
 ## Accumulated Context
 
@@ -42,4 +42,4 @@ Last activity: 2026-04-07 -- Phase 7 execution complete
 
 ## Next Action
 
-Run /gsd:plan-phase 8 to prepare reconciliation and rerun-safety validation.
+Run /gsd:execute-phase 8 to implement reconciliation and rerun-safety validation.

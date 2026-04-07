@@ -14,7 +14,7 @@
 
 - ✅ Phase 6: Content schema and ID preservation (2 plans)
 - [x] Phase 7: DB-to-DB content import (2 plans)
-- [ ] Phase 8: Content reconciliation and rerun safety (1 plan)
+- ��� Phase 8: Content reconciliation and rerun safety (1 plan)
 
 **Planned outcomes:**
 - Phase 6 defines or extends the PostgreSQL content tables and ETL contracts so original MySQL IDs can be inserted directly.
@@ -31,9 +31,9 @@
 
 ## Next Steps
 
-1. Run /gsd:plan-phase 8 to define reconciliation and rerun safety checks.
+1. Run /gsd:execute-phase 8 to implement reconciliation and rerun safety checks.
 2. Keep the migration DB-to-DB only; defer rich-content tooling to the CMS.
 
 ---
 *Roadmap updated: 2026-04-07*
-*Last updated: 2026-04-07 after phase 7 execution*
+*Last updated: 2026-04-07 after phase 8 planning*
