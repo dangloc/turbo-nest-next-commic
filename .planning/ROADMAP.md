@@ -27,6 +27,9 @@ Status: Complete (2026-04-07)
 Goal: Close formal proof gaps for post-migration verification requirements and cross-phase flow signoff.
 Requirements: VER-01, VER-02, VER-03
 Gap Closure: Closes unsatisfied requirement set for Phase 3 plus integration/flow findings from audit.
+**Plans:** 1 plan
+Plans:
+- [ ] 05-01-PLAN.md - Phase 3 verification artifact and summary backfill.
 
 Planned outcomes:
 - Create .planning/phases/03-verification/03-VERIFICATION.md with requirement-level evidence and artifact references.
@@ -37,10 +40,9 @@ Status: Planned
 
 ## Next Steps
 
-1. Run /gsd:plan-phase 5
-2. Execute phase 5
-3. Re-run /gsd:audit-milestone
+1. Execute phase 5
+2. Re-run /gsd:audit-milestone
 
 ---
 *Roadmap created: 2026-04-05*
-*Last updated: 2026-04-07 (Phase 4 audit evidence closure complete)*
+*Last updated: 2026-04-07 (Phase 5 plan created)
