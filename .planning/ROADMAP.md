@@ -12,8 +12,8 @@
 
 ### 🚧 v1.1 Content Migration (Phases 6-8)
 
-- [ ] Phase 6: Content schema and ID preservation (2 plans)
-- [ ] Phase 7: DB-to-DB content import (2 plans)
+- ✅ Phase 6: Content schema and ID preservation (2 plans)
+- ��� Phase 7: DB-to-DB content import (2 plans)
 - [ ] Phase 8: Content reconciliation and rerun safety (1 plan)
 
 **Planned outcomes:**
@@ -25,15 +25,15 @@
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
-| 6. Content schema and ID preservation | v1.1 | 0/2 | Not started | - |
-| 7. DB-to-DB content import | v1.1 | 0/2 | Not started | - |
+| 6. Content schema and ID preservation | v1.1 | 2/2 | Complete | 2026-04-07 |
+| 7. DB-to-DB content import | v1.1 | 0/2 | Planned | - |
 | 8. Content reconciliation and rerun safety | v1.1 | 0/1 | Not started | - |
 
 ## Next Steps
 
-1. Run /gsd:plan-phase 6 to create the first execution plan.
+1. Run /gsd:execute-phase 7 to begin content import.
 2. Keep the migration DB-to-DB only; defer rich-content tooling to the CMS.
 
 ---
 *Roadmap updated: 2026-04-07*
-*Last updated: 2026-04-07 after v1.1 milestone start*
+*Last updated: 2026-04-07 after phase 7 planning*
