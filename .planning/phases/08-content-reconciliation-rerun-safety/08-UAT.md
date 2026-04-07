@@ -1,14 +1,14 @@
 ---
-status: partial
+status: complete
 phase: 08-content-reconciliation-rerun-safety
 source: 08-01-SUMMARY.md
 started: 2026-04-07T15:45:00Z
-updated: 2026-04-07T15:45:00Z
+updated: 2026-04-07T16:40:00Z
 ---
 
 ## Current Test
 
-[testing paused — 1 items outstanding]
+[testing complete]
 
 ## Tests
 
@@ -40,10 +40,10 @@ reason: ETL rerun gate not enabled in this verification session (`ETL_VERIFY_RER
 ## Summary
 
 total: 5
-passed: 4
+passed: 5
 issues: 0
 pending: 0
-skipped: 1
+skipped: 0
 blocked: 0
 
 ## Gaps
