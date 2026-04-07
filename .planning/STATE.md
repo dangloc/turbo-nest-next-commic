@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Content Migration
 status: complete
-last_updated: "2026-04-07T14:52:13.012Z"
-last_activity: 2026-04-07 -- Phase 8 complete: content reconciliation and rerun safety tooling delivered
+last_updated: "2026-04-07T16:12:00.000Z"
+last_activity: 2026-04-07 -- v1.1 milestone archived and tagged after content migration closeout
 progress:
   total_phases: 8
   completed_phases: 8
@@ -19,27 +19,28 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-07)
 
 **Core value:** Preserve every financially or identity-sensitive record during the migration, with exact IDs and relationships intact.
-**Current focus:** Phase 8 verification and milestone closeout
+**Current focus:** Milestone closeout complete; prepare next milestone when ready.
 
 ## Current Position
 
 Phase: 8 (content-reconciliation-rerun-safety) — COMPLETE
 Plan: 1 of 1 (complete)
-Status: Phase 8 Complete — reconciliation report and verifier command operational
-Last activity: 2026-04-07 -- Phase 8 execution complete
+Status: v1.1 milestone complete and archived
+Last activity: 2026-04-07 -- Phase 8 verification and milestone archival complete
 
 ## Current Status
 
 - v1.0 milestone is archived and tagged.
-- v1.1 milestone has started with a strict DB-to-DB content migration strategy.
-- The next work is verification and milestone closeout for v1.1.
+- v1.1 milestone is archived and tagged.
+- The next work is to define the next milestone scope.
 
 ## Accumulated Context
 
 - v1.0 proved the ETL foundation, verification, and audit closeout flow.
-- v1.1 should preserve source IDs, chapter relationships, and raw chapter content while avoiding heavy document parsing.
+- v1.1 preserved source IDs, chapter relationships, and raw chapter content while avoiding heavy document parsing.
+- v1.1 rerun verification passed with duplicate growth false/false.
 - Manual rich-content cleanup will be handled later in the CMS, outside this milestone.
 
 ## Next Action
 
-Run /gsd:verify-work 8 to confirm reconciliation outputs before milestone completion.
+Run /gsd:new-milestone to define the next release scope.
