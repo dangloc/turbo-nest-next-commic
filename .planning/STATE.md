@@ -2,43 +2,36 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: active
-last_updated: "2026-04-05T09:35:00+0700"
+status: complete
+last_updated: "2026-04-07T17:30:00+0700"
 progress:
   total_phases: 3
-  completed_phases: 1
-  in_progress_phases: 1
-  total_plans: 4
-  completed_plans: 1
+  completed_phases: 3
+  in_progress_phases: 0
+  total_plans: 7
+  completed_plans: 7
 ---
 
 # Project State
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-04-05)
+See: .planning/PROJECT.md (updated 2026-04-07)
 
 **Core value:** Preserve every financially or identity-sensitive record during the migration, with a repeatable ETL process and verifiable totals.
-**Current focus:** Phase 2 ETL migration execution
+**Current focus:** v1.0 archived; preparing v1.1 milestone definition
 
 ## Current Status
 
-- Codebase map exists in `.planning/codebase/`
-- Project initialization complete for the WordPress-to-NestJS migration effort
-- Phase 1 schema foundation is complete and committed
-- Phase 2 context decisions locked (D-06..D-09): mapping strategy, parse failures, chapter batching, rerun idempotence
-- Phase 2 has 3 execution plans created and validated (02-01, 02-02, 02-03)
-- Roadmap is defined for schema, ETL, and verification phases
+- v1.0 milestone archived in `.planning/milestones/`.
+- Phase execution is complete through verification (wallet, purchases, social mappings).
+- Active roadmap has been collapsed to milestone-level summary for context efficiency.
 
-## Phase 2 Locked Decisions
+## Milestone Closeout Notes
 
-| Decision | Choice | Expected Impact |
-|----------|--------|-----------------|
-| D-06: Mapping failure strategy | Two-phase with quarantine | Catch data issues early, manual remediation post-run |
-| D-07: Serialization parse failures | Parse or skip user entirely | No silent data loss; high confidence in migrated records |
-| D-08: Chapter batching for scale | Per-user streaming (1K chunks) | Memory-safe, easier resume points |
-| D-09: Rerun idempotence | Stop-the-world upsert | Simple deterministic retry; acceptable for one-time migration |
+- No `.planning/v1.0-MILESTONE-AUDIT.md` existed at completion time.
+- Phase 2 plans lack per-plan SUMMARY.md files; delivery is complete but documentation traceability is partial.
 
 ## Next Action
 
-Run `/gsd:execute-phase 2` to execute plans 02-01 through 02-03 in wave order.
+Run `/gsd:new-milestone` to define v1.1 requirements and roadmap.
