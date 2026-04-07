@@ -21,7 +21,7 @@ Planned outcomes:
 - Backfill .planning/phases/02-etl-migration/02-01-SUMMARY.md, 02-02-SUMMARY.md, and 02-03-SUMMARY.md.
 - Confirm ETL runner and migration modules satisfy MIG requirements under the verification matrix.
 
-Status: Planned
+Status: Complete (2026-04-07)
 
 ### Phase 5: Verification Audit Evidence Closure
 Goal: Close formal proof gaps for post-migration verification requirements and cross-phase flow signoff.
@@ -37,11 +37,10 @@ Status: Planned
 
 ## Next Steps
 
-1. Run /gsd:plan-phase 4
-2. Run /gsd:plan-phase 5
-3. Execute phases 4 and 5
-4. Re-run /gsd:audit-milestone
+1. Run /gsd:plan-phase 5
+2. Execute phase 5
+3. Re-run /gsd:audit-milestone
 
 ---
 *Roadmap created: 2026-04-05*
-*Last updated: 2026-04-07 (added phases 4-5 for milestone audit gap closure)*
+*Last updated: 2026-04-07 (Phase 4 audit evidence closure complete)*
