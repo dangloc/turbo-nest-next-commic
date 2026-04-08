@@ -48,9 +48,9 @@ Phase 17 (Social Interaction APIs)
 
 | Phase | Requirements | Status | Planned |
 |-------|--------------|--------|---------|
-| 16 | READ-01..READ-06 | Planned | 1-2 plans |
+| 16 | READ-01..READ-06 | Completed | 1 plan |
 | 17 | SOC-01..SOC-05 | Planned | 1-2 plans |
 
 ---
 
-Next: /gsd:plan-phase 16 (initial plan generated in this session)
+Next: /gsd:plan-phase 17

@@ -8,12 +8,12 @@ Core Value: Deliver stable, frontend-ready reader and social APIs on top of vali
 
 ### Reader Content APIs (READ)
 
-- [ ] READ-01: Public GET /novels endpoint supports pagination (`page`, `limit`) and returns total/count metadata.
-- [ ] READ-02: GET /novels supports sorting by `viewCount`, `updatedAt`, and `createdAt` with deterministic direction handling.
-- [ ] READ-03: GET /novels supports filtering by taxonomy tags/category and publish status using query parameters.
-- [ ] READ-04: GET /chapters/:id returns chapter payload and atomically increments both `chapter.viewCount` and parent `novel.viewCount`.
-- [ ] READ-05: Authenticated bookmark APIs allow users to list/add/remove bookmarks while enforcing user ownership.
-- [ ] READ-06: Authenticated reading history APIs allow upsert/get of user progress for resume behavior.
+- [x] READ-01: Public GET /novels endpoint supports pagination (`page`, `limit`) and returns total/count metadata.
+- [x] READ-02: GET /novels supports sorting by `viewCount`, `updatedAt`, and `createdAt` with deterministic direction handling.
+- [x] READ-03: GET /novels supports filtering by taxonomy tags/category and publish status using query parameters.
+- [x] READ-04: GET /chapters/:id returns chapter payload and atomically increments both `chapter.viewCount` and parent `novel.viewCount`.
+- [x] READ-05: Authenticated bookmark APIs allow users to list/add/remove bookmarks while enforcing user ownership.
+- [x] READ-06: Authenticated reading history APIs allow upsert/get of user progress for resume behavior.
 
 ### Social Interaction APIs (SOC)
 
@@ -27,12 +27,12 @@ Core Value: Deliver stable, frontend-ready reader and social APIs on top of vali
 
 | Requirement | Category | Phase | Status |
 |-------------|----------|-------|--------|
-| READ-01 | Reader API | 16 | Planned |
-| READ-02 | Reader API | 16 | Planned |
-| READ-03 | Reader API | 16 | Planned |
-| READ-04 | Reader API | 16 | Planned |
-| READ-05 | Reader API | 16 | Planned |
-| READ-06 | Reader API | 16 | Planned |
+| READ-01 | Reader API | 16 | Completed |
+| READ-02 | Reader API | 16 | Completed |
+| READ-03 | Reader API | 16 | Completed |
+| READ-04 | Reader API | 16 | Completed |
+| READ-05 | Reader API | 16 | Completed |
+| READ-06 | Reader API | 16 | Completed |
 | SOC-01 | Social API | 17 | Planned |
 | SOC-02 | Social API | 17 | Planned |
 | SOC-03 | Social API | 17 | Planned |
