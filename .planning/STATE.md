@@ -1,17 +1,15 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.4
-milestone_name: Platform Ecosystem Foundation (Schema Expansion)
-status: verified
-last_updated: "2026-04-08T10:05:00.000Z"
+milestone: v1.5
+milestone_name: Auth Verification & CMS Import Foundation
+status: planning
+last_updated: "2026-04-08T11:00:00.000Z"
 last_activity: 2026-04-08
 progress:
-  total_phases: 13
-  completed_phases: 13
-  verified_phases: 13
-  total_plans: 19
-  completed_plans: 19
-  verified_plans: 19
+  total_phases: 2
+  completed_phases: 0
+  total_plans: 2
+  completed_plans: 0
 ---
 
 # Project State
@@ -20,43 +18,29 @@ progress:
 
 See: .planning/PROJECT.md (updated 2026-04-08)
 
-**Core value:** Preserve every financially or identity-sensitive record during the migration, with exact IDs and relationships intact.
-**Current focus:** Phase 13 complete and verified — ready for milestone closeout
+**Core value:** Preserve every financially or identity-sensitive record during migration, with exact IDs and relationships intact.
+**Current focus:** v1.5 — Auth Verification & CMS Import Foundation
 
 ## Current Position
 
-Phase: 13 (legacy-data-backfill-vip-wallets) - VERIFIED ✅
-Plan: 1 of 1 (completed and verified)
-Status: All phases implemented and verified — milestone v1.4 complete
-Last activity: 2026-04-08 -- Verified Phase 13 implementation (27/27 tests passing)
+Phase: 14-auth-verification-rbac (planning)
+Plan: TBD
+Status: Defining requirements and creating phase plans
+Last activity: 2026-04-08 -- v1.5 milestone started with AUTH (Phase 14) and CMS (Phase 15) phases planned
 
-## Milestone Status: v1.4
+## Current Status
 
-**ALL 13 PHASES COMPLETE AND VERIFIED ✅**
-
-Summary of v1.4 achievements:
-- Phase 1-9: Foundation, content migration, uploader ownership, commerce infrastructure
-- Phase 10-11: Advanced relations and taxonomy system added
-- Phase 12: Schema expansion for VIP, wallets, authors, gamification, social
-- Phase 13: Complete legacy VIP and wallet balance backfill with verification (VERIFIED)
+- v1.0-v1.4 milestones are archived and tagged.
+- v1.5 Milestone started: Auth Verification & CMS Import Foundation
 
 ## Accumulated Context
 
-- v1.0 proved the ETL foundation, verification, and audit closeout flow.
-- v1.1 preserved source IDs, chapter relationships, and raw chapter content.
-- v1.2 introduced required uploader ownership with safe default assignment.
-- v1.3 delivered taxonomy schema plus ETL backfill and parity tooling.
-- v1.4 Phase 12 established additive schema contracts for ecosystem features.
-- v1.4 Phase 13 delivered deterministic migration of legacy VIP levels and wallet decomposition (NOW VERIFIED).
+- v1.0-v1.4 delivered migration foundation through ecosystem schema (13 phases, 28 requirements)
+- v1.4 provided role enum and auth baseline (User model with role field)
+- v1.5 will add Google OAuth verification, RBAC enforcement, and Admin CMS tooling
+- Phase 14: Google OAuth + RBAC (AUTH-01 through RBAC-04)
+- Phase 15: CMS Import API (CMS-01 through CMS-05)
 
-## Next Actions
+## Next Action
 
-1. **For Milestone Closeout**: Run `/gsd:complete-milestone v1.4` to finalize and tag v1.4
-2. **For Next Version**: Run `/gsd:new-milestone v1.5` to start v1.5 planning
-3. **For Project Summary**: Run `/gsd:milestone-summary v1.4` for team onboarding/review
-
-**Verification Evidence**:
-- UAT document: .planning/phases/13-legacy-data-backfill-vip-wallets/13-UAT.md
-- All 27 tests passing (content-loaders, etl-runner, etl-integration, verify-wallet-reconciliation)
-- TypeScript compilation: Clean (no errors)
-- All 5 commits in git history
+Run `/gsd:plan-phase 14` to plan Phase 14 (Google OAuth & RBAC implementation) and start execution.
