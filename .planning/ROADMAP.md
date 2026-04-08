@@ -5,13 +5,36 @@
 
 ## Milestones
 
-- ✅ v1.0 WordPress Migration Foundation (shipped 2026-04-07) - archived in .planning/milestones/v1.0-ROADMAP.md
-- ✅ v1.1 Content Migration (shipped 2026-04-07) - archived in .planning/milestones/v1.1-ROADMAP.md
+- [x] v1.0 WordPress Migration Foundation (shipped 2026-04-07) - archived in .planning/milestones/v1.0-ROADMAP.md
+- [x] v1.1 Content Migration (shipped 2026-04-07) - archived in .planning/milestones/v1.1-ROADMAP.md
+- [~] v1.2 User-Generated Content (UGC) Foundation (in progress) - uploader ownership schema groundwork
 
-## Next Milestone
+## Phases
 
-- Define the next migration or product milestone with /gsd:new-milestone.
+### [~] v1.2 User-Generated Content (UGC) Foundation (Phase 9)
+
+- [ ] Phase 9: Novel uploader ownership schema + migration rollout (1 plan)
+
+**Plans:** 1 plan
+Plans:
+- [ ] 09-01-PLAN.md - Add User->Novel ownership relation, default uploader assignment, and apply Prisma migration.
+
+**Planned outcomes:**
+- Prisma schema links each novel to an uploader user.
+- Existing 176 novels backfill to uploader ID 1 through schema default.
+- Migration applies cleanly and remains compatible with current ETL/content flows.
+
+## Progress
+
+| Phase | Milestone | Plans Complete | Status | Completed |
+|-------|-----------|----------------|--------|-----------|
+| 9. UGC ownership foundation | v1.2 | 0/1 | Planned | - |
+
+## Next Steps
+
+1. Execute /gsd:execute-phase 9 to implement schema + migration.
+2. Run verification to confirm uploader default backfill and relational integrity.
 
 ---
-*Roadmap updated: 2026-04-07*
-*Last updated: 2026-04-07 after v1.1 milestone completion*
+*Roadmap updated: 2026-04-08*
+*Last updated: 2026-04-08 after v1.2 milestone planning*
