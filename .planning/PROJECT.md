@@ -14,11 +14,18 @@ v1.7 is shipped and archived. Backend APIs now cover:
 - Reader and social APIs (discovery, chapter analytics, bookmarks/history, nested comments, reactions).
 - Financial engine APIs (payment intents/verification, wallet settlement, purchase safety, revenue split, withdrawal workflows).
 
-v1.8 is now shipped with a complete web storefront baseline (auth, discovery, reader, social) on top of the existing backend APIs.
+v1.8 shipped a complete web storefront baseline (auth, discovery, reader, social) on top of those backend APIs.
 
-## Current Milestone
+## Current Milestone: v1.9 Full Reader Productization
 
-None active. Start the next milestone with /gsd:new-milestone.
+Goal: Build the complete user dashboard including wallet top-up, chapter purchases, profile management, and notifications.
+
+Target features:
+- Dashboard shell with account-centric navigation and status cards.
+- Wallet top-up and transaction history UX integrated with financial APIs.
+- Chapter purchase UX integrated into reading flow.
+- Profile management screens for account settings.
+- Notification center with read/unread management and user preference controls.
 
 ## Validated Milestones
 
@@ -31,11 +38,11 @@ None active. Start the next milestone with /gsd:new-milestone.
 - v1.7: Financial Engine & Payment Integration shipped.
 - v1.8: Frontend web foundation (auth/discovery/reader/social) shipped.
 
-## Out of Scope (v1.8)
+## Out of Scope (v1.9)
 
-- Production payment gateway hardening and live settlement rollout.
-- Automated payout rails and financial reporting dashboards.
-- Native mobile apps (focus is web storefront foundation).
+- Native mobile application UX and push notification delivery.
+- Live payment settlement operations and finance admin dashboards.
+- Major visual redesign system replacement.
 
 ## Evolution
 
@@ -56,4 +63,4 @@ After each milestone (via /gsd:complete-milestone):
 
 ---
 
-*Last updated: 2026-04-08 after v1.8 milestone completion*
+*Last updated: 2026-04-08 after v1.9 milestone initialization*
