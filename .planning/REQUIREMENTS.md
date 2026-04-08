@@ -17,11 +17,11 @@ Core Value: Deliver stable, frontend-ready reader and social APIs on top of vali
 
 ### Social Interaction APIs (SOC)
 
-- [ ] SOC-01: GET comments endpoint returns nested comment trees for novel/chapter scope including replies.
-- [ ] SOC-02: POST comment endpoint supports top-level comments and replies via optional `parentId`.
-- [ ] SOC-03: Comment creation validates scope (novel/chapter) and ownership fields from authenticated user.
-- [ ] SOC-04: Reaction toggle endpoint supports LIKE, HEART, HAHA, WOW, SAD, ANGRY enum values.
-- [ ] SOC-05: Reaction toggle respects uniqueness constraint (userId + commentId), preventing duplicate concurrent reactions.
+- [x] SOC-01: GET comments endpoint returns nested comment trees for novel/chapter scope including replies.
+- [x] SOC-02: POST comment endpoint supports top-level comments and replies via optional `parentId`.
+- [x] SOC-03: Comment creation validates scope (novel/chapter) and ownership fields from authenticated user.
+- [x] SOC-04: Reaction toggle endpoint supports LIKE, HEART, HAHA, WOW, SAD, ANGRY enum values.
+- [x] SOC-05: Reaction toggle respects uniqueness constraint (userId + commentId), preventing duplicate concurrent reactions.
 
 ## Traceability
 
@@ -33,11 +33,11 @@ Core Value: Deliver stable, frontend-ready reader and social APIs on top of vali
 | READ-04 | Reader API | 16 | Completed |
 | READ-05 | Reader API | 16 | Completed |
 | READ-06 | Reader API | 16 | Completed |
-| SOC-01 | Social API | 17 | Planned |
-| SOC-02 | Social API | 17 | Planned |
-| SOC-03 | Social API | 17 | Planned |
-| SOC-04 | Social API | 17 | Planned |
-| SOC-05 | Social API | 17 | Planned |
+| SOC-01 | Social API | 17 | Completed |
+| SOC-02 | Social API | 17 | Completed |
+| SOC-03 | Social API | 17 | Completed |
+| SOC-04 | Social API | 17 | Completed |
+| SOC-05 | Social API | 17 | Completed |
 
 ---
 

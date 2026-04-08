@@ -49,11 +49,11 @@ Phase 17 (Social Interaction APIs)
 | Phase | Requirements | Status | Planned |
 |-------|--------------|--------|---------|
 | 16 | READ-01..READ-06 | Completed | 1 plan |
-| 17 | SOC-01..SOC-05 | Planned | 1 plan |
+| 17 | SOC-01..SOC-05 | Completed | 1 plan |
 
 ---
 
 Plans:
-- [ ] 17-01-PLAN.md — nested comments, replies, and reaction toggles
+- [x] 17-01-PLAN.md — nested comments, replies, and reaction toggles
 
-Next: /gsd:execute-phase 17
+Next: /gsd:complete-milestone v1.6
