@@ -2,7 +2,7 @@
 
 **Milestone:** v1.5 — Auth Verification & CMS Import Foundation
 **Created:** 2026-04-08
-**Status:** Phase 14 complete, Phase 15 planned
+**Status:** v1.5 scope complete
 
 ## Phases
 
@@ -17,12 +17,6 @@
 Plans:
 - [x] 14-01-PLAN.md — Google OAuth strategy + RBAC decorator/guard + route protection
 
-**Outcome:**
-- Google OAuth strategy implemented with provider-id and email fallback account linking.
-- New users are created with default USER role and wallet bootstrap.
-- `@Roles()` and `RolesGuard` implemented and applied to sensitive routes.
-- API regression sweep passed (20/20 suites, 91/91 tests).
-
 **Artifacts:**
 - `.planning/phases/14-auth-verification-rbac/14-01-SUMMARY.md`
 - `.planning/phases/14-auth-verification-rbac/14-VERIFICATION.md`
@@ -36,28 +30,25 @@ Plans:
 **Plans:** 1 plan
 
 Plans:
-- [ ] 15-01-PLAN.md — Admin-only import endpoint + parser service + novel/chapter persistence
+- [x] 15-01-PLAN.md — Admin-only import endpoint + parser service + novel/chapter persistence
 
-**Scope:**
-- POST /admin/import endpoint with file upload handling
-- Novel title extraction from filename/metadata
-- Intelligent chapter detection via regex markers
-- Novel and Chapter record creation with attribution
-- Import response with validation summary
+**Outcome:**
+- `/admin/import` endpoint implemented with ADMIN-only access.
+- Parser supports txt/docx and Chapter/Chương marker splitting.
+- Novel + chapter persistence implemented with uploader attribution.
+- Response contract includes `novelId`, `chaptersCreated`, `errors`, `warnings`.
+- Full API regression and typecheck pass.
 
-**Success Criteria:**
-- Endpoint accepts .txt and .docx files, rejects others
-- Chapter markers detected and split content correctly
-- Records created with correct uploaderId attribution
-- Import response includes novel ID, chapter counts, errors, warnings
-- Admin-only access enforced via @Roles('ADMIN') guard
+**Artifacts:**
+- `.planning/phases/15-admin-cms-import-api/15-01-SUMMARY.md`
+- `.planning/phases/15-admin-cms-import-api/15-VERIFICATION.md`
 
 ## Dependency Graph
 
 ```
 Phase 14 (Auth & RBAC)  [COMPLETE]
   ↓
-Phase 15 (CMS Import)   [READY TO EXECUTE]
+Phase 15 (CMS Import)   [COMPLETE]
 ```
 
 ## Progress
@@ -65,9 +56,9 @@ Phase 15 (CMS Import)   [READY TO EXECUTE]
 | Phase | Requirements | Status | Planned |
 |-------|--------------|--------|---------|
 | 14 | AUTH-01 to RBAC-04 (8 reqs) | Complete (2026-04-08) | 1/1 plans |
-| 15 | CMS-01 to CMS-05 (5 reqs) | Planned | 1/1 plans |
+| 15 | CMS-01 to CMS-05 (5 reqs) | Complete (2026-04-08) | 1/1 plans |
 
 ---
 
 *Roadmap updated: 2026-04-08*
-*Next: `/gsd:execute-phase 15`*
+*Next: `/gsd:complete-milestone v1.5`*

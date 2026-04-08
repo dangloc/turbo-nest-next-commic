@@ -22,11 +22,11 @@
 
 ### CMS Import API (CMS)
 
-- [ ] **CMS-01**: Create secure POST /admin/import endpoint accepting multipart/form-data with .txt or .docx file uploads, accessible only to ADMIN role
-- [ ] **CMS-02**: Implement file parser service that extracts novel title from filename or file metadata, reads full content for chapter extraction
-- [ ] **CMS-03**: Implement intelligent chapter splitter that detects common markers ('Chapter 1', 'Chương 1', 'Chap. 1', etc.) to split content into atomic chapter text blocks
-- [ ] **CMS-04**: Upon successful parse, create Novel record with title, postContent (will be split), uploaderId = authenticated Admin user, then create individual Chapter records with chapterNumber, title (from marker), postContent, novelId, createdAt
-- [ ] **CMS-05**: Return import response with {novelId, chaptersCreated[], errors[], warnings[]}, allowing Admins to verify parse quality before final save
+- [x] **CMS-01**: Create secure POST /admin/import endpoint accepting multipart/form-data with .txt or .docx file uploads, accessible only to ADMIN role
+- [x] **CMS-02**: Implement file parser service that extracts novel title from filename or file metadata, reads full content for chapter extraction
+- [x] **CMS-03**: Implement intelligent chapter splitter that detects common markers ('Chapter 1', 'Chương 1', 'Chap. 1', etc.) to split content into atomic chapter text blocks
+- [x] **CMS-04**: Upon successful parse, create Novel record with title, postContent (will be split), uploaderId = authenticated Admin user, then create individual Chapter records with chapterNumber, title (from marker), postContent, novelId, createdAt
+- [x] **CMS-05**: Return import response with {novelId, chaptersCreated[], errors[], warnings[]}, allowing Admins to verify parse quality before final save
 
 ## Traceability
 
@@ -40,12 +40,12 @@
 | RBAC-02 | Authorization | 14 | Complete |
 | RBAC-03 | Authorization | 14 | Complete |
 | RBAC-04 | Authorization | 14 | Complete |
-| CMS-01 | Content Management | 15 | Planned |
-| CMS-02 | Content Management | 15 | Planned |
-| CMS-03 | Content Management | 15 | Planned |
-| CMS-04 | Content Management | 15 | Planned |
-| CMS-05 | Content Management | 15 | Planned |
+| CMS-01 | Content Management | 15 | Complete |
+| CMS-02 | Content Management | 15 | Complete |
+| CMS-03 | Content Management | 15 | Complete |
+| CMS-04 | Content Management | 15 | Complete |
+| CMS-05 | Content Management | 15 | Complete |
 
 ---
 
-*v1.5 requirements updated after Phase 14 execution*
+*v1.5 requirements updated after Phase 15 execution*
