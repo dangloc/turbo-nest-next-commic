@@ -10,15 +10,14 @@ Preserve every identity-sensitive and financial record with exact IDs and relati
 
 ## Current State
 
-v1.6 is shipped and archived. Reader delivery APIs and social interaction APIs are available for frontend clients, including public discovery, chapter analytics, bookmarks/history, nested comment threads, and reaction toggles.
+v1.7 is shipped and archived. The platform now includes:
+- Reader and social APIs from v1.6 (discovery, chapter analytics, bookmarks/history, nested comments, reaction toggles).
+- Financial engine APIs from v1.7 (payment intents/verification, wallet settlement, purchase safety, 95/5 revenue split, author withdrawal requests, admin withdrawal decisions).
 
-## Current Milestone: v1.7 - Financial Engine & Payment Integration
+## Next Milestone Goals
 
-Goal: Build secure financial APIs to handle user deposits, content purchases, author withdrawals, and platform revenue sharing.
-
-Target features:
-- Deposit & Purchase APIs (Phase 18): payment intent/verification, wallet top-up settlement, chapter purchase flow.
-- Author Withdrawals & Revenue Share (Phase 19): 95/5 split, withdrawal requests, admin approval/rejection workflows.
+- Define the next milestone scope via /gsd:new-milestone.
+- Prioritize post-v1.7 follow-ups such as production gateway integration, payout rail automation, and financial reporting.
 
 ## Validated Milestones
 
@@ -28,6 +27,7 @@ Target features:
 - v1.4: Ecosystem foundation schema expansion shipped.
 - v1.5: Auth verification, RBAC, and CMS import shipped.
 - v1.6: Core Reader API & Social Experience shipped.
+- v1.7: Financial Engine & Payment Integration shipped.
 
 ## Out of Scope (v1.7)
 
@@ -36,17 +36,6 @@ Target features:
 - Automated payout rail execution to external banks.
 - Full fraud engine and dispute workflow.
 
-<details>
-<summary>Archived v1.6 baseline</summary>
-
-## v1.6 - Core Reader API & Social Experience
-
-- Reader discovery, chapter analytics, bookmarks/history APIs shipped.
-- Nested comments and reaction toggles shipped.
-- Realtime chat, search, recommendations, and notification fanout intentionally deferred.
-
-</details>
-
 ---
 
-*Last updated: 2026-04-08 after v1.7 milestone start*
+*Last updated: 2026-04-08 after v1.7 milestone completion*
