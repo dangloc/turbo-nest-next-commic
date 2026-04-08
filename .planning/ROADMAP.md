@@ -28,7 +28,7 @@ Success Criteria:
 - Unauthenticated users are redirected to sign-in flow consistently.
 
 Plans:
-- [ ] 24-01-PLAN.md - dashboard shell, navigation contracts, and session guards
+- [x] 24-01-PLAN.md - dashboard shell, navigation contracts, and session guards
 
 ### Phase 25: Wallet Top-Up and Chapter Purchases
 
@@ -99,11 +99,11 @@ Phase 24 (Dashboard Foundation)
 
 | Phase | Requirements | Status | Planned |
 |-------|--------------|--------|---------|
-| 24 | DASH-01..DASH-02 | Planned | 1 plan |
+| 24 | DASH-01..DASH-02 | Completed | 1 plan |
 | 25 | WAL-01..BUY-02 | Planned | 2 plans |
 | 26 | PROF-01..PROF-02 | Planned | 1 plan |
 | 27 | NOTI-01..NOTI-03 | Planned | 1 plan |
 
 ---
 
-Next: /gsd:execute-phase 24
+Next: /gsd:plan-phase 25

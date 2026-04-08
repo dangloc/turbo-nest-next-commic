@@ -7,8 +7,8 @@ Core Value: Deliver a complete signed-in reader dashboard where payments, purcha
 
 ### Dashboard
 
-- [ ] DASH-01: User can open a dedicated dashboard with account summary cards for wallet, purchases, profile, and notifications.
-- [ ] DASH-02: User can navigate between dashboard sections without losing signed-in session context.
+- [x] DASH-01: User can open a dedicated dashboard with account summary cards for wallet, purchases, profile, and notifications.
+- [x] DASH-02: User can navigate between dashboard sections without losing signed-in session context.
 
 ### Wallet & Payments
 
@@ -49,8 +49,8 @@ Core Value: Deliver a complete signed-in reader dashboard where payments, purcha
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| DASH-01 | Phase 24 | Pending |
-| DASH-02 | Phase 24 | Pending |
+| DASH-01 | Phase 24 | Completed |
+| DASH-02 | Phase 24 | Completed |
 | WAL-01 | Phase 25 | Pending |
 | WAL-02 | Phase 25 | Pending |
 | BUY-01 | Phase 25 | Pending |
@@ -68,4 +68,4 @@ Coverage:
 
 ---
 Requirements defined: 2026-04-08
-Last updated: 2026-04-08 after milestone initialization
+Last updated: 2026-04-08 after Phase 24 execution
