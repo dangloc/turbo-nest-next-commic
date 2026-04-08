@@ -1,15 +1,15 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.7
-milestone_name: Financial Engine & Payment Integration
-status: archived
-last_updated: "2026-04-08T14:05:00.000Z"
+milestone: v1.8
+milestone_name: Frontend Web Foundation
+status: planning
+last_updated: "2026-04-08T14:20:00.000Z"
 last_activity: 2026-04-08
 progress:
-  total_phases: 2
-  completed_phases: 2
-  total_plans: 3
-  completed_plans: 3
+  total_phases: 4
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
 ---
 
 # Project State
@@ -19,20 +19,21 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-08)
 
 Core value: Preserve identity-sensitive/financial fidelity while delivering safe migration tooling and reader-facing APIs.
-Current focus: milestone archival completed
+Current focus: v1.8 storefront foundation planning
 
 ## Current Position
 
-Milestone: v1.7 (completed and archived)
-Status: no active milestone in execution
-Last activity: 2026-04-08 -- archived v1.7 roadmap and requirements, updated project planning posture
+Phase: Not started (defining phase plans)
+Plan: —
+Status: Milestone initialized and ready for planning
+Last activity: 2026-04-08 -- started v1.8 Frontend Web Foundation and generated requirements + roadmap baseline
 
 ## Current Status
 
-- v1.6 archived and tagged.
-- v1.7 archived with finance engine scope delivered and verified.
-- Active requirements file removed pending next milestone initialization.
+- v1.7 archived and tagged.
+- v1.8 initialized for frontend web foundation work.
+- Requirements and roadmap are ready for phase-level planning.
 
 ## Next Action
 
-Run /gsd:new-milestone
+Run /gsd:plan-phase 20

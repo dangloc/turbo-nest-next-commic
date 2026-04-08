@@ -2,22 +2,29 @@
 
 ## What This Is
 
-A NestJS + PostgreSQL migration platform for a legacy WordPress novel/webcomic system.
+A migration and product-delivery platform that preserves legacy WordPress data fidelity while serving a modern reading storefront through NestJS APIs and a web frontend.
 
 ## Core Value
 
-Preserve every identity-sensitive and financial record with exact IDs and relationships while enabling safe operational tooling and reader-facing APIs on the new platform.
+Preserve every identity-sensitive and financial record with exact IDs and relationships while enabling a high-quality reader experience that is fast, social, and monetization-ready.
 
 ## Current State
 
-v1.7 is shipped and archived. The platform now includes:
-- Reader and social APIs from v1.6 (discovery, chapter analytics, bookmarks/history, nested comments, reaction toggles).
-- Financial engine APIs from v1.7 (payment intents/verification, wallet settlement, purchase safety, 95/5 revenue split, author withdrawal requests, admin withdrawal decisions).
+v1.7 is shipped and archived. Backend APIs now cover:
+- Reader and social APIs (discovery, chapter analytics, bookmarks/history, nested comments, reactions).
+- Financial engine APIs (payment intents/verification, wallet settlement, purchase safety, revenue split, withdrawal workflows).
 
-## Next Milestone Goals
+The next major gap is a production-grade frontend web experience that consumes these APIs.
 
-- Define the next milestone scope via /gsd:new-milestone.
-- Prioritize post-v1.7 follow-ups such as production gateway integration, payout rail automation, and financial reporting.
+## Current Milestone: v1.8 - Frontend Web Foundation
+
+Goal: Initialize the frontend web application foundation, establish a reusable API client/auth layer, and ship the core public-facing Reader UX.
+
+Target features:
+- Frontend Init & Auth: Initialize/structure the web app, shared client state patterns, and connect existing Google OAuth login flow (Phase 14 backend).
+- Novel Discovery UI: Homepage/category pages backed by discovery APIs (Phase 16) with pagination/filtering.
+- Reader Experience UI: Chapter reading page integrating chapter view trigger and reading-history updates.
+- Social UI: Nested comments and reaction interactions backed by Phase 17 social APIs.
 
 ## Validated Milestones
 
@@ -29,13 +36,29 @@ v1.7 is shipped and archived. The platform now includes:
 - v1.6: Core Reader API & Social Experience shipped.
 - v1.7: Financial Engine & Payment Integration shipped.
 
-## Out of Scope (v1.7)
+## Out of Scope (v1.8)
 
-- Direct live gateway settlement in production (sandbox-first contracts only).
-- In-app tax invoices and accounting exports.
-- Automated payout rail execution to external banks.
-- Full fraud engine and dispute workflow.
+- Production payment gateway hardening and live settlement rollout.
+- Automated payout rails and financial reporting dashboards.
+- Native mobile apps (focus is web storefront foundation).
+
+## Evolution
+
+This document evolves at phase transitions and milestone boundaries.
+
+After each phase transition (via /gsd-transition):
+1. Requirements invalidated? Move to Out of Scope with reason.
+2. Requirements validated? Move to Validated with phase reference.
+3. New requirements emerged? Add to Active.
+4. Decisions to log? Add to Key Decisions.
+5. What This Is still accurate? Update if drifted.
+
+After each milestone (via /gsd:complete-milestone):
+1. Full review of all sections.
+2. Core Value check.
+3. Out-of-Scope audit.
+4. Context refresh with current delivered state.
 
 ---
 
-*Last updated: 2026-04-08 after v1.7 milestone completion*
+*Last updated: 2026-04-08 after v1.8 milestone initialization*
