@@ -521,3 +521,110 @@ p {
     align-items: stretch;
   }
 }
+
+.dashboard-shell {
+  width: min(1120px, calc(100% - 32px));
+  margin: 24px auto 72px;
+  display: grid;
+  gap: 16px;
+}
+
+.dashboard-card {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: rgba(255, 250, 242, 0.94);
+  box-shadow: 0 12px 30px rgba(42, 21, 10, 0.08);
+  padding: 24px;
+  display: grid;
+  gap: 16px;
+}
+
+.dashboard-heading-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.dashboard-nav {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.dashboard-nav-link {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+  padding: 10px 12px;
+  display: grid;
+  gap: 4px;
+  transition: transform 120ms ease, border-color 120ms ease;
+}
+
+.dashboard-nav-link:hover {
+  transform: translateY(-1px);
+  border-color: rgba(184, 92, 47, 0.35);
+}
+
+.dashboard-nav-link small {
+  color: #7b5c3f;
+  font-size: 0.8rem;
+}
+
+.dashboard-nav-link--active {
+  background: var(--accent-soft);
+  border-color: rgba(184, 92, 47, 0.35);
+}
+
+.dashboard-highlight {
+  border: 1px dashed var(--line);
+  border-radius: 12px;
+  padding: 10px 12px;
+  background: #fff;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.dashboard-module-card {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+  padding: 14px;
+  display: grid;
+  gap: 10px;
+}
+
+.dashboard-module-card header {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  align-items: baseline;
+}
+
+.dashboard-module-card header span {
+  color: #7b5c3f;
+  font-size: 0.82rem;
+}
+
+.dashboard-module-value {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+@media (max-width: 840px) {
+  .dashboard-nav,
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-heading-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

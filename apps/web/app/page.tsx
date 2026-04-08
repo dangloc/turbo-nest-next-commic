@@ -63,9 +63,14 @@ export default function Home() {
                 Sign in with Google
               </Link>
             ) : (
-              <button className="action-primary" onClick={onLogout} type="button">
-                Sign out
-              </button>
+              <>
+                <Link className="action-primary" href="/dashboard">
+                  Open dashboard
+                </Link>
+                <button className="action-secondary" onClick={onLogout} type="button">
+                  Sign out
+                </button>
+              </>
             )}
             <a className="action-secondary" href="http://localhost:8000/auth/google">
               Open backend auth route
