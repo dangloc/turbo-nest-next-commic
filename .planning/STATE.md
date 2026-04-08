@@ -2,8 +2,8 @@
 gsd_state_version: 1.0
 milestone: v1.6
 milestone_name: Core Reader API & Social Experience
-status: ready_for_completion
-last_updated: "2026-04-08T23:15:00.000Z"
+status: archived
+last_updated: "2026-04-08T23:45:00.000Z"
 last_activity: 2026-04-08
 progress:
   total_phases: 2
@@ -18,25 +18,21 @@ progress:
 
 See: .planning/PROJECT.md (updated 2026-04-08)
 
-Core value: Preserve identity-sensitive/financial fidelity while delivering frontend-grade APIs.
-Current focus: v1.6 milestone closure
+Core value: Preserve identity-sensitive/financial fidelity while delivering safe migration tooling and reader-facing APIs.
 
 ## Current Position
 
-Phase: 17-social-interaction-apis (completed)
-Plan: 17-01 (completed)
-Status: v1.6 phase work complete, ready to archive milestone
-Last activity: 2026-04-08 -- completed Phase 17 Plan 01 (social interaction APIs)
+Milestone: v1.6 (archived)
+Status: shipped and archived
+Last activity: 2026-04-08 -- archived Phase 16 and Phase 17
 
 ## Current Status
 
-- v1.5 archived and tagged.
-- v1.6 initiated with Reader + Social API scope.
-- Phase 16 completed: public discovery, chapter analytics read endpoint, authenticated bookmarks/history.
-- Phase 17 completed: nested comments, comment replies, and reaction toggles.
-- READ-01 through READ-06 marked complete.
-- SOC-01 through SOC-05 marked complete.
+- v1.6 shipped with Reader Content APIs and Social Interaction APIs.
+- READ-01 through READ-06 are complete.
+- SOC-01 through SOC-05 are complete.
+- Milestone artifacts moved to .planning/milestones/.
 
 ## Next Action
 
-Run /gsd:complete-milestone v1.6 to archive the milestone and prepare the next cycle.
+Run /gsd:new-milestone to define the next milestone scope.

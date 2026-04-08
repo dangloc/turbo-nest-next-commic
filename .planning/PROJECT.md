@@ -4,16 +4,31 @@
 
 A NestJS + PostgreSQL migration platform for a legacy WordPress novel/webcomic system.
 
-Milestones v1.0-v1.5 established:
-- schema and ETL migration foundation,
-- strict reconciliation and rerun safety,
-- ecosystem schema expansion,
-- Google OAuth + RBAC,
-- admin CMS import tooling.
-
 ## Core Value
 
-Preserve every identity-sensitive and financial record with exact IDs and relationships while enabling safe operational tooling and scalable reader-facing APIs on the new platform.
+Preserve every identity-sensitive and financial record with exact IDs and relationships while enabling safe operational tooling and reader-facing APIs on the new platform.
+
+## Current State
+
+v1.6 is shipped and archived. Reader delivery APIs and social interaction APIs are now available for frontend clients, including public discovery, chapter analytics, bookmarks/history, nested comment threads, and reaction toggles.
+
+## Validated Milestones
+
+- v1.0: WordPress migration foundation shipped.
+- v1.1: Content DB-to-DB migration and reconciliation shipped.
+- v1.2: UGC ownership foundation shipped.
+- v1.4: Ecosystem foundation schema expansion shipped.
+- v1.5: Auth verification, RBAC, and CMS import shipped.
+- v1.6: Core Reader API & Social Experience shipped.
+
+## Next Milestone Goals
+
+- Define the next milestone scope with /gsd:new-milestone.
+- Extend the API surface without breaking the shipped reader and social contracts.
+- Keep realtime chat, search, recommendations, and notification fanout out of scope until explicitly introduced.
+
+<details>
+<summary>Archived v1.6 baseline</summary>
 
 ## Current Milestone: v1.6 - Core Reader API & Social Experience
 
@@ -34,14 +49,6 @@ Target features:
 - Nested comment list/create/reply APIs for novel/chapter discussions.
 - Comment reaction toggle API with unique reaction safety.
 
-## Validated Milestones
-
-- v1.0: WordPress migration foundation shipped.
-- v1.1: Content DB-to-DB migration and reconciliation shipped.
-- v1.2: Uploader ownership model for novels shipped.
-- v1.4: Ecosystem schema expansion shipped.
-- v1.5: Auth verification + RBAC + CMS import shipped.
-
 ## Out of Scope (v1.6)
 
 - Realtime comments/chat (websocket streaming).
@@ -49,20 +56,8 @@ Target features:
 - Full-text search infrastructure.
 - Notification fanout workflows for comment/reaction events.
 
-## Evolution
-
-This document evolves at phase transitions and milestone boundaries.
-
-After each phase transition:
-1. Move shipped requirements to validated traceability.
-2. Add decisions and known constraints discovered during execution.
-3. Re-evaluate out-of-scope boundaries.
-
-After each milestone:
-1. Archive roadmap and requirements under .planning/milestones.
-2. Collapse active roadmap and reset requirements for next milestone.
-3. Update current state and next goals.
+</details>
 
 ---
 
-Last updated: 2026-04-08 after v1.6 milestone start
+*Last updated: 2026-04-08 after v1.6 milestone archive*

@@ -1,3 +1,32 @@
+## v1.6 Core Reader API & Social Experience (Shipped: 2026-04-08)
+
+**Phases completed:** 2 phases, 2 plans, 6 tasks
+
+**Key accomplishments:**
+
+- Public reader discovery ships pagination, sorting, and taxonomy-based filtering.
+- Chapter reads increment chapter and novel view counts with transactional safety.
+- Authenticated bookmark and reading-history APIs support resume UX.
+- Nested comment threads return deterministic reply trees for novel and chapter scopes.
+- Comment creation validates scope inheritance and ownership.
+- Reaction toggles enforce the unique user/comment constraint without duplicate records.
+
+**Stats:**
+
+- 8 API files changed with 832 insertions
+- 7 planning/documentation files changed with 405 insertions and 39 deletions
+- 127 API tests passing, 0 regressions
+- Same-day ship on 2026-04-08
+
+**Git range:**
+
+- API implementation: d28465c -> aa952e9
+- Planning/archive docs: 2aeb5fb -> cf3fd94
+
+**What's next:** Define the next milestone with /gsd:new-milestone.
+
+---
+
 # Project Milestones: WordPress to NestJS Migration
 
 ## v1.5 Auth Verification & CMS Import Foundation (Shipped: 2026-04-08)
