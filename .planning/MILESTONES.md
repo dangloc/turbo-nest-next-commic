@@ -13,7 +13,7 @@
 - Purchased chapter migration runs in chunked batches to stay safe at large scale.
 - Wallet parity verification passed with zero delta.
 - Purchased chapter reconciliation passed with zero delta and zero decode failures.
-- Google social mapping verification passed with full parity, and the audit evidence was backfilled to keep the milestone auditable end-to-end.
+- Google social mapping verification passed with full parity, and the audit evidence was backfilled to keep the milestone auditable end to end.
 
 **Stats:**
 
@@ -47,5 +47,28 @@
 - Same-day ship on 2026-04-07 (2026-04-07 21:48:59 +0700 -> 2026-04-07 23:45:36 +0700)
 
 **Git range:** fac59e9 -> f23f0d7
+
+**What's next:** Define the next milestone with /gsd:new-milestone.
+
+## v1.2 User-Generated Content (UGC) Foundation (Shipped: 2026-04-08)
+
+**Delivered:** Linked novels to uploader users with a safe default assignment so existing migrated novels resolve to Admin user ID 1.
+
+**Phases completed:** 1 phase, 1 plan total
+
+**Key accomplishments:**
+
+- Added uploader ownership semantics to the content model without disturbing existing novel IDs.
+- Applied an idempotent migration that backfilled legacy novels to uploader ID 1.
+- Verified schema, API type-checking, and reconciliation tests still pass after the ownership change.
+- Completed UAT with 4/4 checks passing.
+
+**Stats:**
+
+- 7 files changed in the milestone closeout range
+- 319 insertions, 26 deletions
+- Same-day ship on 2026-04-08 (2026-04-08 09:45:11 +0700 -> 2026-04-08 10:46:56 +0700)
+
+**Git range:** 883c522 -> 56380f0
 
 **What's next:** Define the next milestone with /gsd:new-milestone.
