@@ -47,8 +47,8 @@ Success Criteria:
 - Purchased chapter access updates immediately in reading experience.
 
 Plans:
-- [ ] 25-01-PLAN.md - wallet top-up and ledger experience
-- [ ] 25-02-PLAN.md - chapter purchase flow and reader unlock integration
+- [ ] 25-01-PLAN.md - wallet summary API, top-up verification UX, and transaction history
+- [ ] 25-02-PLAN.md - chapter purchase UX, insufficient-balance handling, and instant unlock state
 
 ### Phase 26: Profile Management Dashboard
 
@@ -106,4 +106,4 @@ Phase 24 (Dashboard Foundation)
 
 ---
 
-Next: /gsd:plan-phase 25
+Next: /gsd:execute-phase 25
