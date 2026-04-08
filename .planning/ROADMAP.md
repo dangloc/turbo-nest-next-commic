@@ -80,6 +80,9 @@ Success Criteria:
 - Authenticated users can post comments/replies successfully.
 - Reaction toggles update UI quickly and remain API-consistent after refresh.
 
+Plans:
+- [ ] 23-01-PLAN.md — social contracts, nested threads, replies, and reaction toggles
+
 ## Dependency Graph
 
 Phase 20 (Frontend Foundation & Auth Integration)
@@ -94,8 +97,8 @@ Phase 20 (Frontend Foundation & Auth Integration)
 | 20 | WEB-01..AUTH-02 | Completed | 2/2 plans |
 | 21 | DISC-01..DISC-03 | Completed | 1/1 plans |
 | 22 | READ-01..READ-03 | Completed | 1/1 plans |
-| 23 | SOC-01..SOC-03 | Planned | 1-2 plans |
+| 23 | SOC-01..SOC-03 | Planned | 1 plan |
 
 ---
 
-Next: /gsd:plan-phase 23
+Next: /gsd:execute-phase 23
