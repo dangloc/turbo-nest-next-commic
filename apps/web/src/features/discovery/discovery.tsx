@@ -42,7 +42,7 @@ function NovelCard({ novel }: { novel: DiscoveryNovel }) {
         <span>{novel.viewCount.toLocaleString()} views</span>
         <span>{formatDate(novel.updatedAt)}</span>
       </div>
-      <h3>{novel.title}</h3>
+      <h3><Link className="reader-history-link" href={"/novels/" + novel.id}>{novel.title}</Link></h3>
       <div className="discovery-card__chips">
         {category ? (
           <Link className="discovery-chip discovery-chip--link" href={"/category/" + category.slug}>

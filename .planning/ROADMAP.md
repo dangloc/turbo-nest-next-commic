@@ -62,7 +62,7 @@ Success Criteria:
 - Authenticated readers resume from persisted history/progress.
 
 Plans:
-- [ ] 22-01-PLAN.md — reader contracts, novel detail, and chapter reading pages
+- [x] 22-01-PLAN.md — reader contracts, novel detail, and chapter reading pages
 
 ### Phase 23: Social Interaction UI
 
@@ -93,9 +93,9 @@ Phase 20 (Frontend Foundation & Auth Integration)
 |-------|--------------|--------|---------|
 | 20 | WEB-01..AUTH-02 | Completed | 2/2 plans |
 | 21 | DISC-01..DISC-03 | Completed | 1/1 plans |
-| 22 | READ-01..READ-03 | Planned | 1 plan |
+| 22 | READ-01..READ-03 | Completed | 1/1 plans |
 | 23 | SOC-01..SOC-03 | Planned | 1-2 plans |
 
 ---
 
-Next: /gsd:execute-phase 22
+Next: /gsd:plan-phase 23
