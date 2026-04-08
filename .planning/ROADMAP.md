@@ -106,4 +106,4 @@ Phase 24 (Dashboard Foundation)
 
 ---
 
-Next: /gsd:plan-phase 24
+Next: /gsd:execute-phase 24
