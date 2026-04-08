@@ -22,6 +22,10 @@ Success Criteria:
 - Login/logout and session rehydration behavior work end to end.
 - Shared API client is reused by downstream discovery/reader/social features.
 
+Plans:
+- [ ] 20-01-PLAN.md — frontend env/api contracts, shared HTTP client, provider wiring
+- [ ] 20-02-PLAN.md — backend auth endpoints and frontend Google/session integration
+
 ### Phase 21: Novel Discovery UI
 
 Goal: Ship public storefront discovery pages backed by existing reader discovery APIs.
@@ -81,11 +85,11 @@ Phase 20 (Frontend Foundation & Auth Integration)
 
 | Phase | Requirements | Status | Planned |
 |-------|--------------|--------|---------|
-| 20 | WEB-01..AUTH-02 | Planned | 1-2 plans |
+| 20 | WEB-01..AUTH-02 | Planned | 2 plans |
 | 21 | DISC-01..DISC-03 | Planned | 1-2 plans |
 | 22 | READ-01..READ-03 | Planned | 1-2 plans |
 | 23 | SOC-01..SOC-03 | Planned | 1-2 plans |
 
 ---
 
-Next: /gsd:plan-phase 20
+Next: /gsd:execute-phase 20
