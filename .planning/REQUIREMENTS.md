@@ -9,9 +9,9 @@ Requirements for the v1.2 User-Generated Content (UGC) Foundation milestone.
 
 ### UGC Ownership Foundation
 
-- [ ] **UGC-01**: Novel model has a required uploader ownership link to User (one User can own many novels).
-- [ ] **UGC-02**: Novel table includes `uploaderId` as an integer foreign key with schema default `1` (Admin) for safe backfill and future unassigned inserts.
-- [ ] **UGC-03**: Prisma migration is generated and applied successfully, preserving existing novels and assigning uploader ownership without breaking existing ETL/content flows.
+- [x] **UGC-01**: Novel model has a required uploader ownership link to User (one User can own many novels).
+- [x] **UGC-02**: Novel table includes `uploaderId` as an integer foreign key with schema default `1` (Admin) for safe backfill and future unassigned inserts.
+- [x] **UGC-03**: Prisma migration is generated and applied successfully, preserving existing novels and assigning uploader ownership without breaking existing ETL/content flows.
 
 ## v2 Requirements
 
@@ -35,9 +35,9 @@ Deferred to future release.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| UGC-01 | Phase 9 | Pending |
-| UGC-02 | Phase 9 | Pending |
-| UGC-03 | Phase 9 | Pending |
+| UGC-01 | Phase 9 | Complete |
+| UGC-02 | Phase 9 | Complete |
+| UGC-03 | Phase 9 | Complete |
 
 **Coverage:**
 - v1 requirements: 3 total
@@ -46,4 +46,4 @@ Deferred to future release.
 
 ---
 *Requirements defined: 2026-04-08*
-*Last updated: 2026-04-08 after v1.2 milestone definition*
+*Last updated: 2026-04-08 after Phase 9 execution*

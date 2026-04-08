@@ -13,11 +13,11 @@
 
 ### [~] v1.2 User-Generated Content (UGC) Foundation (Phase 9)
 
-- [ ] Phase 9: Novel uploader ownership schema + migration rollout (1 plan)
+- [x] Phase 9: Novel uploader ownership schema + migration rollout (1 plan)
 
 **Plans:** 1 plan
 Plans:
-- [ ] 09-01-PLAN.md - Add User->Novel ownership relation, default uploader assignment, and apply Prisma migration.
+- [x] 09-01-PLAN.md - Add User->Novel ownership relation, default uploader assignment, and apply Prisma migration.
 
 **Planned outcomes:**
 - Prisma schema links each novel to an uploader user.
@@ -28,13 +28,13 @@ Plans:
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
-| 9. UGC ownership foundation | v1.2 | 0/1 | Planned | - |
+| 9. UGC ownership foundation | v1.2 | 1/1 | Complete | 2026-04-08 |
 
 ## Next Steps
 
-1. Execute /gsd:execute-phase 9 to implement schema + migration.
-2. Run verification to confirm uploader default backfill and relational integrity.
+1. Run /gsd:verify-work 9 to validate phase-level UAT evidence.
+2. Decide whether to close out v1.2 now or extend with additional UGC phases.
 
 ---
 *Roadmap updated: 2026-04-08*
-*Last updated: 2026-04-08 after v1.2 milestone planning*
+*Last updated: 2026-04-08 after Phase 9 execution*
