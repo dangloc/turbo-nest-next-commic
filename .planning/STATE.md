@@ -2,8 +2,8 @@
 gsd_state_version: 1.0
 milestone: v1.8
 milestone_name: Frontend Web Foundation
-status: active
-last_updated: "2026-04-08T18:35:00.000Z"
+status: completed
+last_updated: "2026-04-08T23:45:00.000Z"
 last_activity: 2026-04-08
 progress:
   total_phases: 4
@@ -19,21 +19,21 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-08)
 
 Core value: Preserve identity-sensitive/financial fidelity while delivering safe migration tooling and reader-facing APIs.
-Current focus: Phase 23 execution complete
+Current focus: Milestone v1.8 archived
 
 ## Current Position
 
-Phase: 23-social-interaction-ui (execution complete)
-Plan: 23-01 (completed)
-Status: phase delivered and verified
-Last activity: 2026-04-08 -- completed social interaction UI implementation and verification
+Phase: milestone-closeout
+Plan: archive-v1.8
+Status: milestone shipped and archived
+Last activity: 2026-04-08 -- completed milestone archival and roadmap reset
 
 ## Current Status
 
-- v1.8 milestone initialized with requirements and roadmap.
-- Phase 20 execution complete with requirement coverage WEB-01/02 + AUTH-01/02.
-- Phase 23 execution complete with requirement coverage SOC-01/02/03.
+- Milestone v1.8 delivered with phase coverage 20 through 23.
+- Archive artifacts created under .planning/milestones/ for roadmap and requirements.
+- Active roadmap collapsed; awaiting next milestone definition.
 
 ## Next Action
 
-Run /gsd:complete-milestone v1.8
+Run /gsd:new-milestone

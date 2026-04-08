@@ -14,17 +14,11 @@ v1.7 is shipped and archived. Backend APIs now cover:
 - Reader and social APIs (discovery, chapter analytics, bookmarks/history, nested comments, reactions).
 - Financial engine APIs (payment intents/verification, wallet settlement, purchase safety, revenue split, withdrawal workflows).
 
-The next major gap is a production-grade frontend web experience that consumes these APIs.
+v1.8 is now shipped with a complete web storefront baseline (auth, discovery, reader, social) on top of the existing backend APIs.
 
-## Current Milestone: v1.8 - Frontend Web Foundation
+## Current Milestone
 
-Goal: Initialize the frontend web application foundation, establish a reusable API client/auth layer, and ship the core public-facing Reader UX.
-
-Target features:
-- Frontend Init & Auth: Initialize/structure the web app, shared client state patterns, and connect existing Google OAuth login flow (Phase 14 backend).
-- Novel Discovery UI: Homepage/category pages backed by discovery APIs (Phase 16) with pagination/filtering.
-- Reader Experience UI: Chapter reading page integrating chapter view trigger and reading-history updates.
-- Social UI: Nested comments and reaction interactions backed by Phase 17 social APIs.
+None active. Start the next milestone with /gsd:new-milestone.
 
 ## Validated Milestones
 
@@ -35,6 +29,7 @@ Target features:
 - v1.5: Auth verification, RBAC, and CMS import shipped.
 - v1.6: Core Reader API & Social Experience shipped.
 - v1.7: Financial Engine & Payment Integration shipped.
+- v1.8: Frontend web foundation (auth/discovery/reader/social) shipped.
 
 ## Out of Scope (v1.8)
 
@@ -61,4 +56,4 @@ After each milestone (via /gsd:complete-milestone):
 
 ---
 
-*Last updated: 2026-04-08 after v1.8 milestone initialization*
+*Last updated: 2026-04-08 after v1.8 milestone completion*
