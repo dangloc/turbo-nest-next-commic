@@ -10,7 +10,15 @@ Preserve every identity-sensitive and financial record with exact IDs and relati
 
 ## Current State
 
-v1.6 is shipped and archived. Reader delivery APIs and social interaction APIs are now available for frontend clients, including public discovery, chapter analytics, bookmarks/history, nested comment threads, and reaction toggles.
+v1.6 is shipped and archived. Reader delivery APIs and social interaction APIs are available for frontend clients, including public discovery, chapter analytics, bookmarks/history, nested comment threads, and reaction toggles.
+
+## Current Milestone: v1.7 - Financial Engine & Payment Integration
+
+Goal: Build secure financial APIs to handle user deposits, content purchases, author withdrawals, and platform revenue sharing.
+
+Target features:
+- Deposit & Purchase APIs (Phase 18): payment intent/verification, wallet top-up settlement, chapter purchase flow.
+- Author Withdrawals & Revenue Share (Phase 19): 95/5 split, withdrawal requests, admin approval/rejection workflows.
 
 ## Validated Milestones
 
@@ -21,43 +29,24 @@ v1.6 is shipped and archived. Reader delivery APIs and social interaction APIs a
 - v1.5: Auth verification, RBAC, and CMS import shipped.
 - v1.6: Core Reader API & Social Experience shipped.
 
-## Next Milestone Goals
+## Out of Scope (v1.7)
 
-- Define the next milestone scope with /gsd:new-milestone.
-- Extend the API surface without breaking the shipped reader and social contracts.
-- Keep realtime chat, search, recommendations, and notification fanout out of scope until explicitly introduced.
+- Direct live gateway settlement in production (sandbox-first contracts only).
+- In-app tax invoices and accounting exports.
+- Automated payout rail execution to external banks.
+- Full fraud engine and dispute workflow.
 
 <details>
 <summary>Archived v1.6 baseline</summary>
 
-## Current Milestone: v1.6 - Core Reader API & Social Experience
+## v1.6 - Core Reader API & Social Experience
 
-Goal: Build public-facing APIs for frontend clients to consume content, track reading habits, and enable social interaction.
-
-Target features:
-- Reader Content APIs (Phase 16): discovery, chapter read analytics, bookmark/history UX.
-- Social Interaction APIs (Phase 17): nested comments and reaction toggles.
-
-## Active Scope (v1.6)
-
-### Phase 16 - Reader Content APIs
-- Public novel discovery API with pagination, sorting, and filters (category/tags/status).
-- Chapter reading endpoint that safely increments Chapter and parent Novel view counts.
-- Authenticated Bookmark and ReadingHistory APIs for resume UX.
-
-### Phase 17 - Social Interaction APIs
-- Nested comment list/create/reply APIs for novel/chapter discussions.
-- Comment reaction toggle API with unique reaction safety.
-
-## Out of Scope (v1.6)
-
-- Realtime comments/chat (websocket streaming).
-- Recommendation engine / personalization ML.
-- Full-text search infrastructure.
-- Notification fanout workflows for comment/reaction events.
+- Reader discovery, chapter analytics, bookmarks/history APIs shipped.
+- Nested comments and reaction toggles shipped.
+- Realtime chat, search, recommendations, and notification fanout intentionally deferred.
 
 </details>
 
 ---
 
-*Last updated: 2026-04-08 after v1.6 milestone archive*
+*Last updated: 2026-04-08 after v1.7 milestone start*
