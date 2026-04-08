@@ -1,16 +1,56 @@
-# Roadmap: WordPress to NestJS Migration
+# Roadmap: WordPress to NestJS Migration v1.6
 
-## Milestones
+Milestone: v1.6 - Core Reader API & Social Experience
+Created: 2026-04-08
+Status: active
 
-- ✅ v1.5 Auth Verification & CMS Import Foundation (shipped 2026-04-08) -> see .planning/milestones/v1.5-ROADMAP.md
-- ✅ v1.4 Platform Ecosystem Foundation (shipped 2026-04-08) -> see .planning/milestones/v1.4-ROADMAP.md
-- ✅ v1.2 User-Generated Content Foundation (shipped 2026-04-08) -> see .planning/milestones/v1.2-ROADMAP.md
-- ✅ v1.1 Content Migration (shipped 2026-04-07) -> see .planning/milestones/v1.1-ROADMAP.md
-- ✅ v1.0 WordPress Migration Foundation (shipped 2026-04-07) -> see .planning/milestones/v1.0-ROADMAP.md
+## Phases
 
-## Current Status
+### Phase 16: Reader Content APIs
 
-No active milestone roadmap is open.
+Goal: Ship public content-delivery APIs and authenticated personal reading UX APIs for frontend consumption.
 
-Next step:
-- Run /gsd:new-milestone to define v1.6 scope and create fresh REQUIREMENTS.md and phase roadmap.
+Requirements: READ-01, READ-02, READ-03, READ-04, READ-05, READ-06
+
+Scope:
+- Novel discovery listing with pagination/sorting/filtering.
+- Chapter read endpoint with safe dual viewCount increment.
+- Bookmark and reading-history endpoints for authenticated users.
+
+Success Criteria:
+- Frontend can browse/filter/sort novels via stable paginated API.
+- Reading a chapter increments chapter + novel counters safely under concurrent access.
+- Users can save bookmarks and resume reading positions through authenticated APIs.
+
+### Phase 17: Social Interaction APIs
+
+Goal: Enable reader discussion and engagement through nested comments and reaction toggles.
+
+Requirements: SOC-01, SOC-02, SOC-03, SOC-04, SOC-05
+
+Scope:
+- Comment retrieval with nested reply trees.
+- Comment/reply creation endpoints.
+- Reaction toggle endpoint with uniqueness enforcement.
+
+Success Criteria:
+- Clients can render threaded comments by novel/chapter.
+- Users can post comments/replies with valid scope rules.
+- Reactions toggle deterministically without duplicate reaction records.
+
+## Dependency Graph
+
+Phase 16 (Reader Content APIs)
+  ->
+Phase 17 (Social Interaction APIs)
+
+## Progress
+
+| Phase | Requirements | Status | Planned |
+|-------|--------------|--------|---------|
+| 16 | READ-01..READ-06 | Planned | 1-2 plans |
+| 17 | SOC-01..SOC-05 | Planned | 1-2 plans |
+
+---
+
+Next: /gsd:plan-phase 16 (initial plan generated in this session)
