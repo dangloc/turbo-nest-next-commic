@@ -1,24 +1,24 @@
 # Requirements: v1.5 Auth Verification & CMS Import Foundation
 
-**Milestone:** v1.5  
-**Defined:** 2026-04-08  
+**Milestone:** v1.5
+**Defined:** 2026-04-08
 **Core Value:** Preserve every financially or identity-sensitive record during migration, with exact IDs and relationships intact.
 
 ## v1.5 Requirements
 
 ### Authentication & Legacy Sync (AUTH)
 
-- [ ] **AUTH-01**: Implement Google OAuth endpoint using Passport.js that accepts Google callback and exchanges auth code for user profile
-- [ ] **AUTH-02**: Upon successful Google login, query UserProvider table for matching provider ID; if found, link to existing User; if not, check User table by email for safe legacy account linking
-- [ ] **AUTH-03**: If no existing User or UserProvider exists, create new User with isNewUser flag and initialize default Wallet record
-- [ ] **AUTH-04**: Validate that Google OAuth session maintains HTTPS-only, secure, sameSite cookies with proper expiration (JWT or session-based, 24h default)
+- [x] **AUTH-01**: Implement Google OAuth endpoint using Passport.js that accepts Google callback and exchanges auth code for user profile
+- [x] **AUTH-02**: Upon successful Google login, query UserProvider table for matching provider ID; if found, link to existing User; if not, check User table by email for safe legacy account linking
+- [x] **AUTH-03**: If no existing User or UserProvider exists, create new User with isNewUser flag and initialize default Wallet record
+- [x] **AUTH-04**: Validate that Google OAuth session maintains HTTPS-only, secure, sameSite cookies with proper expiration (JWT or session-based, 24h default)
 
 ### Role-Based Access Control (RBAC)
 
-- [ ] **RBAC-01**: Implement @Roles() NestJS decorator to guard API endpoints by user.role (ADMIN, AUTHOR, USER)
-- [ ] **RBAC-02**: Create RolesGuard middleware that checks authenticated user.role against required roles before route execution
-- [ ] **RBAC-03**: Apply Role guards to sensitive endpoints: POST /novels (ADMIN/AUTHOR), PATCH /novels/:id (ADMIN/AUTHOR/OWNER), DELETE endpoints (ADMIN only)
-- [ ] **RBAC-04**: Enforce User.role = 'USER' as default for new users, assignable only by ADMIN through separate admin API
+- [x] **RBAC-01**: Implement @Roles() NestJS decorator to guard API endpoints by user.role (ADMIN, AUTHOR, USER)
+- [x] **RBAC-02**: Create RolesGuard middleware that checks authenticated user.role against required roles before route execution
+- [x] **RBAC-03**: Apply Role guards to sensitive endpoints: POST /novels (ADMIN/AUTHOR), PATCH /novels/:id (ADMIN/AUTHOR/OWNER), DELETE endpoints (ADMIN only)
+- [x] **RBAC-04**: Enforce User.role = 'USER' as default for new users, assignable only by ADMIN through separate admin API
 
 ### CMS Import API (CMS)
 
@@ -32,14 +32,14 @@
 
 | Requirement | Category | Phase | Status |
 |-------------|----------|-------|--------|
-| AUTH-01 | Authentication | 14 | Planned |
-| AUTH-02 | Authentication | 14 | Planned |
-| AUTH-03 | Authentication | 14 | Planned |
-| AUTH-04 | Authentication | 14 | Planned |
-| RBAC-01 | Authorization | 14 | Planned |
-| RBAC-02 | Authorization | 14 | Planned |
-| RBAC-03 | Authorization | 14 | Planned |
-| RBAC-04 | Authorization | 14 | Planned |
+| AUTH-01 | Authentication | 14 | Complete |
+| AUTH-02 | Authentication | 14 | Complete |
+| AUTH-03 | Authentication | 14 | Complete |
+| AUTH-04 | Authentication | 14 | Complete |
+| RBAC-01 | Authorization | 14 | Complete |
+| RBAC-02 | Authorization | 14 | Complete |
+| RBAC-03 | Authorization | 14 | Complete |
+| RBAC-04 | Authorization | 14 | Complete |
 | CMS-01 | Content Management | 15 | Planned |
 | CMS-02 | Content Management | 15 | Planned |
 | CMS-03 | Content Management | 15 | Planned |
@@ -48,4 +48,4 @@
 
 ---
 
-*v1.5 requirements defined and ready for phased execution*
+*v1.5 requirements updated after Phase 14 execution*

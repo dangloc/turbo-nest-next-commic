@@ -1,8 +1,8 @@
 # Roadmap: WordPress to NestJS Migration v1.5
 
-**Milestone:** v1.5 — Auth Verification & CMS Import Foundation  
-**Created:** 2026-04-08  
-**Status:** Planning phase creation
+**Milestone:** v1.5 — Auth Verification & CMS Import Foundation
+**Created:** 2026-04-08
+**Status:** Phase 14 complete, Phase 15 pending
 
 ## Phases
 
@@ -12,19 +12,20 @@
 
 **Requirements:** AUTH-01, AUTH-02, AUTH-03, AUTH-04, RBAC-01, RBAC-02, RBAC-03, RBAC-04
 
-**Scope:**
-- Google OAuth integration with Passport.js
-- Legacy account linking by email/provider ID
-- Wallet initialization for new users
-- @Roles() decorator and RolesGuard middleware
-- Route protection for novel CRUD operations
+**Plans:** 1 plan
 
-**Success Criteria:**
-- Google login endpoint accepts callback and grants session
-- First-time Google users linked to existing accounts by email (if found)
-- New users created with default USER role and initialized Wallet
-- @Roles() guard blocks unauthenticated and under-privileged requests
-- Admin-only routes require ADMIN role, Author routes require ADMIN/AUTHOR
+Plans:
+- [x] 14-01-PLAN.md — Google OAuth strategy + RBAC decorator/guard + route protection
+
+**Outcome:**
+- Google OAuth strategy implemented with provider-id and email fallback account linking.
+- New users are created with default USER role and wallet bootstrap.
+- `@Roles()` and `RolesGuard` implemented and applied to sensitive routes.
+- API regression sweep passed (20/20 suites, 91/91 tests).
+
+**Artifacts:**
+- `.planning/phases/14-auth-verification-rbac/14-01-SUMMARY.md`
+- `.planning/phases/14-auth-verification-rbac/14-VERIFICATION.md`
 
 ### Phase 15: Admin CMS Import API
 
@@ -49,20 +50,19 @@
 ## Dependency Graph
 
 ```
-Phase 14 (Auth & RBAC)
+Phase 14 (Auth & RBAC)  [COMPLETE]
   ↓
-Phase 15 (CMS Import)
-  (depends on Phase 14 for @Roles guard)
+Phase 15 (CMS Import)   [NEXT]
 ```
 
 ## Progress
 
 | Phase | Requirements | Status | Planned |
 |-------|--------------|--------|---------|
-| 14 | AUTH-01 to RBAC-04 (8 reqs) | Pending | 2 plans |
+| 14 | AUTH-01 to RBAC-04 (8 reqs) | Complete (2026-04-08) | 1/1 plans |
 | 15 | CMS-01 to CMS-05 (5 reqs) | Pending | 1-2 plans |
 
 ---
 
-*Roadmap created: 2026-04-08*
-*Ready for phase planning with `/gsd:plan-phase 14`*
+*Roadmap updated: 2026-04-08*
+*Next: `/gsd:execute-phase 15` after Phase 15 plan creation/confirmation*
