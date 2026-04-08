@@ -14,15 +14,41 @@ import {
 } from "./types";
 
 function toCards(sections: DashboardSection[]): DashboardSummaryCard[] {
-  return sections.map((section) => ({
-    id: section.id,
-    title: section.title,
-    value: "Not configured yet",
-    subtitle: section.description,
-    href: section.href,
-    ctaLabel: "Open section",
-    phaseLabel: `${section.phaseLabel} delivery`,
-  }));
+  return sections.map((section) => {
+    if (section.id === "wallet") {
+      return {
+        id: section.id,
+        title: section.title,
+        value: "Balance sync ready",
+        subtitle: "Top-up, verify, and review your latest wallet transactions.",
+        href: section.href,
+        ctaLabel: "Open wallet",
+        phaseLabel: `${section.phaseLabel} delivery`,
+      };
+    }
+
+    if (section.id === "purchases") {
+      return {
+        id: section.id,
+        title: section.title,
+        value: "Purchase unlocks in wave 2",
+        subtitle: section.description,
+        href: section.href,
+        ctaLabel: "Open section",
+        phaseLabel: `${section.phaseLabel} delivery`,
+      };
+    }
+
+    return {
+      id: section.id,
+      title: section.title,
+      value: "Not configured yet",
+      subtitle: section.description,
+      href: section.href,
+      ctaLabel: "Open section",
+      phaseLabel: `${section.phaseLabel} delivery`,
+    };
+  });
 }
 
 export function buildDashboardSnapshot(user: SessionUser): DashboardSnapshot {

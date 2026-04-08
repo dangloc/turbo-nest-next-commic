@@ -628,3 +628,145 @@ p {
     align-items: stretch;
   }
 }
+
+.dashboard-wallet {
+  display: grid;
+  gap: 14px;
+}
+
+.dashboard-wallet-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.dashboard-wallet-card,
+.dashboard-wallet-form-card,
+.dashboard-wallet-transactions {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+  padding: 14px;
+  display: grid;
+  gap: 10px;
+}
+
+.dashboard-wallet-card h3,
+.dashboard-wallet-form-card h3,
+.dashboard-wallet-transactions h3 {
+  font-size: 0.96rem;
+  margin: 0;
+}
+
+.dashboard-wallet-card p {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.dashboard-wallet-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.dashboard-wallet-form-card form {
+  display: grid;
+  gap: 10px;
+}
+
+.dashboard-wallet-form-card label {
+  display: grid;
+  gap: 6px;
+  font-size: 0.9rem;
+}
+
+.dashboard-wallet-form-card input,
+.dashboard-wallet-form-card select {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: #fff;
+}
+
+.dashboard-wallet-checkbox {
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 8px;
+}
+
+.dashboard-wallet-pending {
+  border: 1px dashed var(--line);
+  border-radius: 10px;
+  background: rgba(255, 250, 242, 0.8);
+  padding: 10px 12px;
+  display: grid;
+  gap: 4px;
+}
+
+.dashboard-wallet-pending p {
+  margin: 0;
+}
+
+.dashboard-wallet-pending a {
+  color: var(--accent-strong);
+  font-weight: 600;
+}
+
+.dashboard-wallet-message {
+  color: #5f471d;
+  margin: 0;
+}
+
+.dashboard-wallet-error {
+  color: #8c401e;
+  margin: 0;
+}
+
+.dashboard-wallet-transactions header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.dashboard-wallet-transactions ul {
+  list-style: none;
+  display: grid;
+  gap: 8px;
+}
+
+.dashboard-wallet-transactions li {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 10px 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.dashboard-wallet-transactions li p {
+  margin: 0;
+  font-size: 0.84rem;
+  color: #7b5c3f;
+}
+
+.dashboard-wallet-amount {
+  text-align: right;
+  display: grid;
+  gap: 2px;
+}
+
+.dashboard-wallet-amount span {
+  font-size: 0.76rem;
+  color: #7b5c3f;
+}
+
+@media (max-width: 840px) {
+  .dashboard-wallet-grid,
+  .dashboard-wallet-actions {
+    grid-template-columns: 1fr;
+  }
+}
+
