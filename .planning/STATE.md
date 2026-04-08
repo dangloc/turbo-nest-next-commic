@@ -3,7 +3,7 @@ gsd_state_version: 1.0
 milestone: v1.5
 milestone_name: Auth Verification & CMS Import Foundation
 status: in_progress
-last_updated: "2026-04-08T18:30:00.000Z"
+last_updated: "2026-04-08T19:10:00.000Z"
 last_activity: 2026-04-08
 progress:
   total_phases: 2
@@ -23,17 +23,17 @@ See: .planning/PROJECT.md (updated 2026-04-08)
 
 ## Current Position
 
-Phase: 15-admin-cms-import (pending)
-Plan: 15-01 (not started)
-Status: Phase 14 complete and verified; preparing CMS import implementation
-Last activity: 2026-04-08 -- executed Phase 14 plan 14-01 and passed verification
+Phase: 15-admin-cms-import-api (planned)
+Plan: 15-01
+Status: AUTHOR enum fixed in DB and Phase 15 plan generated
+Last activity: 2026-04-08 -- added AUTHOR Role enum migration and created 15-01-PLAN.md
 
 ## Current Status
 
 - v1.0-v1.4 milestones are archived and tagged.
 - v1.5 milestone active.
 - Phase 14 (Auth + RBAC) completed and verified.
-- Phase 15 (Admin CMS import) remains pending.
+- Phase 15 plan created and ready for execution.
 
 ## Accumulated Context
 
@@ -41,8 +41,8 @@ Last activity: 2026-04-08 -- executed Phase 14 plan 14-01 and passed verificatio
 - RBAC infrastructure added: `@Roles()` + `RolesGuard`.
 - Route-level role protection applied to novels/users controllers.
 - Regression gate passed: 20 suites, 91 tests.
-- Prisma role enum currently supports USER/ADMIN only; AUTHOR remains metadata-level in route guards.
+- Prisma Role enum now includes USER, AUTHOR, ADMIN (migration applied).
 
 ## Next Action
 
-Run `/gsd:execute-phase 15` (or plan Phase 15 in detail first if needed) to implement Admin CMS import endpoint and parser service.
+Run `/gsd:execute-phase 15` to implement Admin CMS import endpoint and parser service.

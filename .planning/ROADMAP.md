@@ -2,7 +2,7 @@
 
 **Milestone:** v1.5 — Auth Verification & CMS Import Foundation
 **Created:** 2026-04-08
-**Status:** Phase 14 complete, Phase 15 pending
+**Status:** Phase 14 complete, Phase 15 planned
 
 ## Phases
 
@@ -33,6 +33,11 @@ Plans:
 
 **Requirements:** CMS-01, CMS-02, CMS-03, CMS-04, CMS-05
 
+**Plans:** 1 plan
+
+Plans:
+- [ ] 15-01-PLAN.md — Admin-only import endpoint + parser service + novel/chapter persistence
+
 **Scope:**
 - POST /admin/import endpoint with file upload handling
 - Novel title extraction from filename/metadata
@@ -52,7 +57,7 @@ Plans:
 ```
 Phase 14 (Auth & RBAC)  [COMPLETE]
   ↓
-Phase 15 (CMS Import)   [NEXT]
+Phase 15 (CMS Import)   [READY TO EXECUTE]
 ```
 
 ## Progress
@@ -60,9 +65,9 @@ Phase 15 (CMS Import)   [NEXT]
 | Phase | Requirements | Status | Planned |
 |-------|--------------|--------|---------|
 | 14 | AUTH-01 to RBAC-04 (8 reqs) | Complete (2026-04-08) | 1/1 plans |
-| 15 | CMS-01 to CMS-05 (5 reqs) | Pending | 1-2 plans |
+| 15 | CMS-01 to CMS-05 (5 reqs) | Planned | 1/1 plans |
 
 ---
 
 *Roadmap updated: 2026-04-08*
-*Next: `/gsd:execute-phase 15` after Phase 15 plan creation/confirmation*
+*Next: `/gsd:execute-phase 15`*
