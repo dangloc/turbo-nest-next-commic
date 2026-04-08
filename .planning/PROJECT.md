@@ -2,50 +2,58 @@
 
 ## What This Is
 
-A NestJS + PostgreSQL migration program for a legacy WordPress novel/webcomic platform. v1.0 established the financial and identity record foundation, v1.1 completed strict content migration, and v1.2 completed the User-Generated Content (UGC) foundation by linking novels to uploaders.
+A NestJS + PostgreSQL migration program for a legacy WordPress novel/webcomic platform. v1.0 established the financial and identity record foundation, v1.1 completed strict content migration, v1.2 completed the UGC foundation by linking novels to uploaders, and v1.3 begins taxonomy and tag migration for novel classification.
 
 ## Core Value
 
 Preserve every financially or identity-sensitive record during migration, with exact IDs and relationships intact.
 
-## Current State
+## Current Milestone: v1.3 Taxonomy & Tags Migration
 
-- v1.0 is shipped and archived.
-- v1.1 is shipped and archived.
-- v1.2 is shipped and archived.
-- Novel ownership now links each novel to a User uploader, and the legacy novel set is backfilled to Admin user ID 1.
-- Reconciliation, schema validation, and UAT evidence are complete for the UGC ownership foundation.
+**Goal:** Migrate WordPress categories, tags, and custom taxonomies into PostgreSQL and map them to existing novels.
 
-## Validated in v1.2
+**Target features:**
+- Add a taxonomy/term model to store WordPress term name, slug, and taxonomy type.
+- Establish many-to-many relationships between Novel and Term.
+- Preserve original WordPress term IDs and reconstruct novel-term links for the existing 176 novels.
+- Generate and apply the PostgreSQL migration for taxonomy support.
 
-- Uploader ownership relation from User to Novel.
-- Required `uploaderId` on Novel with default 1.
-- Safe migration and verification for the existing 176 novels.
+## Requirements
 
-## Validated in v1.1
+### Validated
 
-- Strict DB-to-DB content migration requirements for novels and chapters.
-- Exact MySQL ID preservation for novels and chapters.
-- Chapter-to-novel relationships and raw chapter content without heavy parsing.
-- Reconciliation output and rerun safety for content migration.
+- [x] Data model normalization and legacy identity preservation - v1.0
+- [x] ETL extraction, transformation, and loading with resumable semantics - v1.0
+- [x] Post-migration verification for critical parity checks - v1.0
+- [x] Strict DB-to-DB content migration with exact IDs and raw content fidelity - v1.1
+- [x] Content reconciliation and rerun safety verification - v1.1
+- [x] Uploader ownership relation from User to Novel - v1.2
+- [x] Required `uploaderId` on Novel with default 1 - v1.2
+- [x] Safe migration and verification for the existing 176 novels - v1.2
 
-## Out of Scope
+### Active
 
-- Heavy Word/Text parsing or content cleanup in ETL - manual CMS import will handle rich content later.
-- Frontend redesign or reader UX rebuild - migration milestones remain backend/data first.
-- Additional content types outside novels and chapters for this milestone.
-- Full user submission UI/workflow in v1.2 (this milestone only prepares ownership schema).
+- [ ] Add a taxonomy/term model that preserves WordPress term name, slug, and taxonomy type.
+- [ ] Map novels to terms using a many-to-many relationship that preserves WordPress term IDs.
+- [ ] Apply and verify Prisma migration for taxonomy support without breaking existing novel data.
+
+### Out of Scope
+
+- Full taxonomy editing UI or admin dashboard - this milestone only prepares the relational model and migration.
+- Taxonomy normalization beyond preserving the WordPress source shape - keep the migration deterministic.
+- Novel search/filter UX changes - this milestone is backend schema and ETL only.
+- Content rewriting based on taxonomy labels - taxonomy should be preserved, not transformed.
 
 ## Context
 
-The migration now preserves content, ownership, and verification coverage end to end. The dataset already includes 176 migrated novels and the schema can safely assign future unowned novels to the Admin account until a real UGC submission flow is built.
+The database already contains 176 migrated novels and the UGC ownership link established in v1.2. WordPress categories, tags, and custom taxonomies are represented by `wp_terms`, `wp_term_taxonomy`, and `wp_term_relationships`, and the new milestone must preserve source term IDs and reconstruct novel-term links cleanly.
 
 ## Constraints
 
-- **Data integrity**: Existing novel IDs and chapter relationships must remain unchanged.
-- **Migration safety**: Existing novels must be assigned to Admin user ID 1 without manual row-by-row scripts.
+- **Data integrity**: Existing novel IDs, chapter relationships, and uploader ownership must remain unchanged.
+- **Migration safety**: Existing taxonomy terms and relationships must preserve original WordPress term IDs where possible.
 - **Compatibility**: Prisma schema and generated migration must apply cleanly to current PostgreSQL state.
-- **Scope**: v1.2 phase 9 establishes ownership foundation only; no full UGC submission product yet.
+- **Scope**: v1.3 phase 10 establishes taxonomy storage and novel-term mapping only; no user-facing taxonomy management yet.
 
 ## Key Decisions
 
@@ -57,6 +65,7 @@ The migration now preserves content, ownership, and verification coverage end to
 | Treat chapter content as raw post_content during import | Avoids accidental transformation of user-visible content | Good |
 | Migrate novels before chapters during content ETL reruns | Prevents FK failures when chapters reference yet-to-exist parents | Good |
 | Default `Novel.uploaderId` to Admin user ID 1 in v1.2 | Safely backfills existing 176 novels and future unassigned inserts | Good |
+| Preserve WordPress term IDs in the taxonomy model for easy mapping | Keeps ETL joins deterministic across wp_terms, wp_term_taxonomy, and wp_term_relationships | Pending |
 
 ## Evolution
 
@@ -76,4 +85,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-04-08 after v1.2 milestone completion*
+*Last updated: 2026-04-08 after v1.3 milestone start*
