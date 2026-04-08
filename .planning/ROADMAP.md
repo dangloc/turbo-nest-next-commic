@@ -46,15 +46,15 @@ Plans:
 - Reader UX/social primitives (reviews, history, bookmarks, notifications, nested comments, reactions) are established with referential integrity and dedupe constraints.
 - View counters on novels/chapters are additive and safe for large increments.
 
-### [ ] v1.4 Legacy Data Backfill (VIP & Wallets) (Phase 13)
+### [x] v1.4 Legacy Data Backfill (VIP & Wallets) (Phase 13)
 
-- [ ] Phase 13: Backfill VIP levels and execute wallet split migration from legacy balances (1 plan)
+- [x] Phase 13: Backfill VIP levels and execute wallet split migration from legacy balances (1 plan)
 
 **Goal:** Migrate historical VIP tier and wallet financial data into the new v1.4 schema with deterministic, rerunnable semantics.
 
 **Plans:** 1 plan
 Plans:
-- [ ] 13-01-PLAN.md - Load wp_vip_levels into VipLevel and backfill Wallet deposited/earned/total fields safely.
+- [x] 13-01-PLAN.md - Load wp_vip_levels into VipLevel and backfill Wallet deposited/earned/total fields safely.
 
 ## Progress
 
@@ -63,13 +63,13 @@ Plans:
 | 10. Taxonomy schema and novel-term mapping | v1.3 | 1/1 | Complete | 2026-04-08 |
 | 11. Taxonomy ETL backfill and verification | v1.3 | 1/1 | Complete | 2026-04-08 |
 | 12. Platform ecosystem schema expansion | v1.4 | 1/1 | Complete | 2026-04-08 |
-| 13. Legacy VIP and wallet data backfill | v1.4 | 0/1 | Planned | - |
+| 13. Legacy VIP and wallet data backfill | v1.4 | 1/1 | Complete | 2026-04-08 |
 
 ## Next Steps
 
-1. Execute `/gsd:execute-phase 13` for VIP level and wallet legacy data backfill.
-2. Verify VIP tier parity and wallet totalDeposited/depositedBalance integrity against WordPress source records.
+1. Run /gsd:verify-work 13 to validate VIP parity and wallet backfill evidence.
+2. Prepare milestone closeout once verification output is accepted.
 
 ---
 *Roadmap updated: 2026-04-08*
-*Last updated: 2026-04-08 after Phase 12 completion and Phase 13 planning kickoff*
+*Last updated: 2026-04-08 after Phase 13 execution completion*
