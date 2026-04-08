@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { getSessionToken } from "../../lib/auth/session-store";
+import { SocialThread } from "../social/social";
 import {
   buildChapterHref,
   buildNovelHref,
@@ -117,6 +118,12 @@ export function NovelDetailView({ novelId }: { novelId: number }) {
               </ul>
             )}
           </section>
+
+          <SocialThread
+            title="Novel discussion"
+            scope={{ novelId }}
+            emptyHint="No comments yet. Start the novel discussion."
+          />
         </>
       ) : null}
     </main>
@@ -261,6 +268,12 @@ export function ChapterReaderView({ chapterId }: { chapterId: number }) {
               </ul>
             ) : null}
           </section>
+
+          <SocialThread
+            title="Chapter discussion"
+            scope={{ chapterId }}
+            emptyHint="No replies yet. Be the first to discuss this chapter."
+          />
         </>
       ) : null}
     </main>

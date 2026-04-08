@@ -27,9 +27,9 @@ Core Value: Deliver the first complete web storefront experience on top of the s
 
 ### Social UI
 
-- [ ] SOC-01: Render nested comment threads for chapter/novel scope using social comments APIs with deterministic parent-reply display.
-- [ ] SOC-02: Allow authenticated users to submit top-level comments and replies with inline validation/error states.
-- [ ] SOC-03: Support reaction toggles on comments with immediate UI update and eventual backend consistency.
+- [x] SOC-01: Render nested comment threads for chapter/novel scope using social comments APIs with deterministic parent-reply display.
+- [x] SOC-02: Allow authenticated users to submit top-level comments and replies with inline validation/error states.
+- [x] SOC-03: Support reaction toggles on comments with immediate UI update and eventual backend consistency.
 
 ## Future Requirements (Deferred)
 
@@ -57,9 +57,9 @@ Core Value: Deliver the first complete web storefront experience on top of the s
 | READ-01 | Reader UI | 22 | Planned |
 | READ-02 | Reader UI | 22 | Planned |
 | READ-03 | Reader UI | 22 | Planned |
-| SOC-01 | Social UI | 23 | Planned |
-| SOC-02 | Social UI | 23 | Planned |
-| SOC-03 | Social UI | 23 | Planned |
+| SOC-01 | Social UI | 23 | Complete |
+| SOC-02 | Social UI | 23 | Complete |
+| SOC-03 | Social UI | 23 | Complete |
 
 ---
 
