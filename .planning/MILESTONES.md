@@ -1,5 +1,20 @@
 # Project Milestones: WordPress to NestJS Migration
 
+## v1.5 Auth Verification & CMS Import Foundation (Shipped: 2026-04-08)
+
+**Phases completed:** 2 phases, 2 plans, 6 tasks
+
+**Key accomplishments:**
+
+- Google OAuth strategy with legacy account linking (provider ID -> email fallback).
+- Role-based access control shipped with @Roles() + RolesGuard on sensitive routes.
+- Prisma Role enum expanded to include AUTHOR for persisted authorization semantics.
+- Admin CMS import endpoint shipped (/admin/import) with ADMIN-only enforcement.
+- TXT/DOCX parser supports Chapter/Chương markers and deterministic chapter splitting.
+- Milestone closed with 23/23 API test suites and 103/103 tests passing.
+
+---
+
 ## v1.0 WordPress Migration Foundation (Shipped: 2026-04-07)
 
 **Delivered:** Complete migration foundation from WordPress/MySQL to NestJS/PostgreSQL with end-to-end reconciliation coverage and audit evidence closure.
