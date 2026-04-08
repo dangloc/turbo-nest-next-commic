@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.3
 milestone_name: Taxonomy & Tags Migration
 status: in_progress
-last_updated: "2026-04-08T11:10:00.000Z"
-last_activity: 2026-04-08 -- Started milestone v1.3 and planned Phase 10 taxonomy schema update
+last_updated: "2026-04-08T14:30:00.000Z"
+last_activity: 2026-04-08 -- Completed Phase 11 taxonomy ETL backfill and verification implementation
 progress:
-  total_phases: 10
-  completed_phases: 9
-  total_plans: 16
-  completed_plans: 15
+  total_phases: 11
+  completed_phases: 11
+  total_plans: 17
+  completed_plans: 17
 ---
 
 # Project State
@@ -19,29 +19,31 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-08)
 
 **Core value:** Preserve every financially or identity-sensitive record during the migration, with exact IDs and relationships intact.
-**Current focus:** Phase 10 planning complete; ready to execute taxonomy schema update.
+**Current focus:** Final live migration and taxonomy verification UAT.
 
 ## Current Position
 
-Phase: 10 (taxonomy-tags-migration) - PLANNED
-Plan: 1 of 1 (planned)
-Status: Ready for execution
-Last activity: 2026-04-08 -- Phase 10 plan created for taxonomy storage and novel-term mapping
+Phase: 11 (taxonomy-etl-backfill-verification) - COMPLETE
+Plan: 1 of 1 (complete)
+Status: Awaiting final local UAT run
+Last activity: 2026-04-08 -- Completed Phase 11 implementation, tests, and reconciliation tooling
 
 ## Current Status
 
 - v1.0 milestone is archived and tagged.
 - v1.1 milestone is archived and tagged.
 - v1.2 milestone is archived and tagged.
-- v1.3 milestone has started with taxonomy and tags migration scope.
+- v1.3 Phase 10 schema/migration foundation is complete.
+- v1.3 Phase 11 taxonomy ETL backfill and verification is complete.
 
 ## Accumulated Context
 
 - v1.0 proved the ETL foundation, verification, and audit closeout flow.
 - v1.1 preserved source IDs, chapter relationships, and raw chapter content while avoiding heavy document parsing.
 - v1.2 introduced required uploader ownership with safe default assignment for existing novels.
-- v1.3 will add taxonomy storage and novel-term relationships while preserving the existing migrated dataset.
+- v1.3 Phase 10 added taxonomy storage and Novel-Term mapping without breaking the current migrated dataset.
+- v1.3 Phase 11 now backfills taxonomy records and links from WordPress taxonomy tables with rerun-safe checks and reconciliation output.
 
 ## Next Action
 
-Run /gsd:execute-phase 10 to apply the taxonomy schema and migration.
+Run `npm run etl:migrate` then `npm run etl:verify:taxonomy` locally for final UAT.
