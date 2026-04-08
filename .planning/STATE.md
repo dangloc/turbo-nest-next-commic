@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.4
 milestone_name: Platform Ecosystem Foundation (Schema Expansion)
 status: in_progress
-last_updated: "2026-04-08T16:00:00.000Z"
-last_activity: 2026-04-08 -- Initiated Phase 12 planning for platform ecosystem schema expansion
+last_updated: "2026-04-08T16:45:00.000Z"
+last_activity: 2026-04-08 -- Marked Phase 12 complete and initiated Phase 13 planning (legacy VIP & wallet backfill)
 progress:
-  total_phases: 12
-  completed_phases: 11
-  total_plans: 18
-  completed_plans: 17
+  total_phases: 13
+  completed_phases: 12
+  total_plans: 19
+  completed_plans: 18
 ---
 
 # Project State
@@ -19,14 +19,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-08)
 
 **Core value:** Preserve every financially or identity-sensitive record during the migration, with exact IDs and relationships intact.
-**Current focus:** Phase 12 Prisma schema expansion planning and safe migration sequencing.
+**Current focus:** Phase 13 legacy data backfill for VIP tiers and wallet split balances.
 
 ## Current Position
 
-Phase: 12 (platform-ecosystem-foundation-schema-expansion) - PLANNED
+Phase: 13 (legacy-data-backfill-vip-wallets) - PLANNED
 Plan: 1 of 1 (planned)
-Status: Ready for schema implementation
-Last activity: 2026-04-08 -- Created Phase 12 plan draft for ecosystem schema contracts
+Status: Ready for backfill implementation
+Last activity: 2026-04-08 -- Closed Phase 12 and opened Phase 13 planning scope
 
 ## Current Status
 
@@ -34,7 +34,8 @@ Last activity: 2026-04-08 -- Created Phase 12 plan draft for ecosystem schema co
 - v1.1 milestone is archived and tagged.
 - v1.2 milestone is archived and tagged.
 - v1.3 Phases 10-11 are complete in planning and implementation tracking.
-- v1.4 milestone started with Phase 12 schema-first expansion scope.
+- v1.4 Phase 12 schema expansion is complete.
+- v1.4 Phase 13 is planned for historical data backfill.
 
 ## Accumulated Context
 
@@ -42,8 +43,9 @@ Last activity: 2026-04-08 -- Created Phase 12 plan draft for ecosystem schema co
 - v1.1 preserved source IDs, chapter relationships, and raw chapter content while avoiding heavy document parsing.
 - v1.2 introduced required uploader ownership with safe default assignment for existing novels.
 - v1.3 delivered taxonomy schema plus ETL backfill and parity tooling.
-- v1.4 begins with additive schema contracts for VIP, wallets, author center, gamification, and advanced social UX.
+- v1.4 Phase 12 established additive schema contracts for VIP, wallets, author center, gamification, and advanced social UX.
+- v1.4 Phase 13 now targets deterministic migration of legacy VIP levels and wallet balance decomposition.
 
 ## Next Action
 
-Execute `/gsd:execute-phase 12` after finalizing local v1.3 UAT commands.
+Run `/gsd:execute-phase 13` once Phase 13 plan is approved.
