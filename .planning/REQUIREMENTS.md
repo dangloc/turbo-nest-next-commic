@@ -1,45 +1,49 @@
-# Requirements: v1.10 Notification Center & Dynamic Content
+# Requirements: v1.11 Dynamic Content Discovery & Channel Expansion
 
 Defined: 2026-04-09
-Core Value: Deliver notification management and inbox experience so users stay informed of account activity and content updates.
+Core Value: Expand content relevance and long-term engagement by improving discovery and enabling richer notification delivery channels.
 
-## v1.10 Requirements
+## v1.11 Requirements
 
-### Notifications
+### Discovery & Recommendations
 
-- [ ] NOTI-01: User can view notification inbox with unread/read grouping.
-- [ ] NOTI-02: User can mark single notifications and all notifications as read.
-- [ ] NOTI-03: User can manage notification preference toggles from dashboard settings.
+- [ ] CONTENT-01: User can discover novels with dynamic genre/tag filtering and stable pagination.
+- [ ] CONTENT-02: User can see recommendation-ready content lists based on reading history signals.
+- [ ] CONTENT-03: User can follow authors and view follow state for digest generation.
+
+### Notification Channels
+
+- [ ] NOTI-04: User can manage notification delivery channels beyond in-app inbox (foundation-level preference model).
 
 ## Future Requirements (Deferred)
 
-- NOTI-04: Push and email channel delivery configuration.
-- CONTENT-01: Content discovery by genre/tag with dynamic filtering.
-- CONTENT-02: Content recommendation based on reading history.
-- CONTENT-03: Author follow functionality with digest emails.
+- CONTENT-04: Personalized ranking using behavior model scoring.
+- NOTI-05: Real-time websocket delivery with per-event subscriptions.
+- NOTI-06: Digest scheduler and outbound delivery worker orchestration.
 
-## Out of Scope (v1.10)
+## Out of Scope (v1.11)
 
 | Feature | Reason |
 |---------|--------|
-| Real-time websocket notification delivery | HTTP polling/refresh sufficient for milestone scope |
-| Mobile app notification delivery | Web-only in v1.10; mobile app deferred to v2.0 |
-| Email template customization | Standard notification templates sufficient |
+| Full ML-based recommendation ranking | Start with deterministic baseline before model complexity |
+| Native mobile notification SDK integration | Web-first channel model remains priority |
+| Real-time websocket fan-out infrastructure | Deferred until channel foundation and digest flows stabilize |
 
 ## Traceability
 
-| Requirement | Phase | Status |
-|-------------|-------|--------|
-| NOTI-01 | Phase 27 | Pending |
-| NOTI-02 | Phase 27 | Pending |
-| NOTI-03 | Phase 27 | Pending |
+| Requirement | Planned Phase | Status |
+|-------------|---------------|--------|
+| CONTENT-01 | Phase 28 | Planned |
+| CONTENT-02 | Phase 28 | Planned |
+| CONTENT-03 | Phase 29 | Planned |
+| NOTI-04 | Phase 29 | Planned |
 
 Coverage:
-- v1.10 requirements: 3 total
-- Mapped to phases: 3
+- v1.11 requirements: 4 total
+- Mapped to planned phases: 4
 - Unmapped: 0
 
 ---
 
 Requirements defined: 2026-04-09
-Last updated: 2026-04-09 for v1.10 planning
+Last updated: 2026-04-09 after v1.10 milestone completion

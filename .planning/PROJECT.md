@@ -10,14 +10,13 @@ Preserve every identity-sensitive and financial record with exact IDs and relati
 
 ## Current State
 
-v1.9 shipped a complete user dashboard with account management:
-- Dashboard shell provides centralized entry to wallet, purchases, profile, and notifications.
-- Wallet top-up flow with VNPAY/MOMO provider checkout and payment verification.
-- Chapter purchase UX with confirmation, insufficient-balance handling, and immediate unlock.
-- Profile management (read/update) with account identity visibility.
-- Transaction history and purchase activity tracking.
+v1.10 shipped a complete notification center inside the dashboard:
+- Notification inbox grouped into unread/read collections.
+- Single and batch mark-as-read actions with persistent backend state.
+- Notification preference controls persisted from dashboard settings.
+- End-to-end API and frontend integration validated (notification API tests + web typecheck/lint).
 
-Next: v1.10 delivers notification center with inbox, read management, and preference controls.
+Next: v1.11 focuses on dynamic content discovery and notification channel expansion.
 
 ## Shipped Milestones
 
@@ -30,37 +29,32 @@ Next: v1.10 delivers notification center with inbox, read management, and prefer
 - ✅ v1.7: Financial Engine & Payment Integration.
 - ✅ v1.8: Frontend Web Foundation (auth/discovery/reader/social).
 - ✅ v1.9: Full Reader Productization (dashboard/wallet/purchases/profile).
+- ✅ v1.10: Notification Center & Dynamic Content (notification inbox and preferences).
 
-## Active Milestone: v1.10 Notification Center & Dynamic Content
+## Active Milestone: v1.11 Dynamic Content Discovery & Channel Expansion
 
-Goal: Complete notification management and lay groundwork for content discovery dynamics.
+Goal: Expand discovery relevance and broaden notification delivery beyond in-app inbox actions.
 
 Target features:
-- Notification inbox with read/unread grouping.
-- Mark-one and mark-all read actions.
-- Notification preference toggles in dashboard settings.
+- Genre/tag based dynamic content filtering and retrieval flows.
+- Recommendation baseline from reading history signals.
+- Author follow and digest-ready relationship data.
+- Notification channel expansion foundation (push/email preference channels).
 
-Deferred to v1.11+:
-- Real-time websocket notification delivery (polling sufficient for v1.10).
-- Mobile app notification delivery (web-first in v1.10).
-- Advanced content discovery and recommendation algorithms.
+Out of scope (v1.11 candidate constraints):
+- Full real-time websocket fan-out.
+- Native mobile application notification integration.
+- Advanced personalization ML ranking.
 
-## Out of Scope (v1.10)
-
-- Native mobile application UX and push notification delivery.
-- Live payment settlement operations and advanced finance admin dashboards.
-- Major visual redesign or branding system replacement.
-- Email channel delivery configuration.
-
-## Key Decisions (v1.9)
+## Key Decisions (v1.9-v1.10)
 
 | Decision | Outcome | Phase |
 |----------|---------|-------|
 | Dashboard sections via ?section={id} queries before dedicated routes | ✓ Stable, unified navigation; enables parallel section work | 24 |
 | Session guards via AppContext + storage + fetchSession fallback | ✓ Preserves existing auth behavior; no regressions | 24 |
-| Feature-local module structure (types/api/view split) | ✓ Consistent with discovery/reader/social; reduces friction | 24-26 |
+| Feature-local module structure (types/api/view split) | ✓ Consistent with discovery/reader/social; reduces friction | 24-27 |
 | Deterministic purchase status mapping (including insufficient_balance) | ✓ Clear error paths in UX; prevents silent failures | 25 |
-| Immediate unlock refresh on successful purchase (no page reload) | ✓ Better UX; proves session/context sync works end-to-end | 25 |
+| Notification inbox + preference controls inside dashboard section model | ✓ Reuses established patterns and keeps account actions centralized | 27 |
 
 ## Evolution
 
@@ -82,4 +76,4 @@ After each milestone:
 
 ---
 
-*Last updated: 2026-04-09 after v1.9 milestone completion*
+*Last updated: 2026-04-09 after v1.10 milestone completion*

@@ -1,41 +1,62 @@
 # Roadmap: WordPress to NestJS Migration
 
-Milestone: v1.10 - Notification Center & Dynamic Content
+Milestone: v1.11 - Dynamic Content Discovery & Channel Expansion
 Created: 2026-04-09
 Status: planning
 
 ## Milestones
 
 - [done] v1.9 Full Reader Productization (shipped 2026-04-09) - see .planning/milestones/v1.9-ROADMAP.md
-- [active] v1.10 Notification Center & Dynamic Content (in progress)
+- [done] v1.10 Notification Center & Dynamic Content (shipped 2026-04-09) - see .planning/milestones/v1.10-ROADMAP.md
+- [active] v1.11 Dynamic Content Discovery & Channel Expansion (in progress)
 
 ## Phases
 
-### Phase 27: Notification Center and Preferences
+### Phase 28: Dynamic Content Discovery Foundation
 
-Goal: Complete notification management with inbox actions and preference controls.
+Goal: Deliver filterable discovery and recommendation-ready content retrieval contracts.
 
-Requirements: NOTI-01, NOTI-02, NOTI-03
+Requirements: CONTENT-01, CONTENT-02
 
 Scope:
-- Notification inbox grouped by read/unread state.
-- Mark-one and mark-all read interactions.
-- Notification preference settings integrated into dashboard.
+- Genre/tag based discovery filtering contracts and query flows.
+- Reading-history driven recommendation baseline endpoint contracts.
+- Frontend discovery integration for dynamic filters.
 
 Success Criteria:
-- Users can read and manage notification states without page reload friction.
-- Mark-all and per-item actions remain consistent after refresh.
-- Preference updates persist and are reflected in UI state.
+- Users can filter content by taxonomy dimensions with stable pagination.
+- Recommendation endpoint returns deterministic data shape for UI rendering.
+- Discovery UI can consume and render dynamic content payloads without regressions.
 
 Plans:
-- [ ] 27-01-PLAN.md - notification API endpoints, service, frontend module, and dashboard integration
+- [ ] 28-01-PLAN.md - define discovery contracts, API query layer, and frontend integration
+
+### Phase 29: Follow and Notification Channel Expansion
+
+Goal: Add follow-driven digest signals and broaden notification channel preferences.
+
+Requirements: CONTENT-03, NOTI-04
+
+Scope:
+- Author follow relationship model and APIs.
+- Digest-ready payload shape for followed-author updates.
+- Notification preference channel expansion (in-app + channel settings baseline).
+
+Success Criteria:
+- Users can follow/unfollow authors and retrieve follow state.
+- Digest payload data source exists for downstream delivery workers.
+- Notification preference model captures channel-level enablement.
+
+Plans:
+- [ ] 29-01-PLAN.md - implement follow APIs and channel preference contracts
 
 ## Progress
 
 | Phase | Requirements | Status | Planned |
 |-------|--------------|--------|---------|
-| 27 | NOTI-01..NOTI-03 | Planned | 1 plan created |
+| 28 | CONTENT-01, CONTENT-02 | Planned | 1 plan |
+| 29 | CONTENT-03, NOTI-04 | Planned | 1 plan |
 
 ---
 
-Next: /gsd:execute-phase 27
+Next: /gsd:discuss-phase 28

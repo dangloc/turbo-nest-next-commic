@@ -1,5 +1,19 @@
 # Project Milestones: WordPress to NestJS Migration
 
+## v1.10 Notification Center & Dynamic Content (Shipped: 2026-04-09)
+
+**Phases completed:** 1 phase, 1 plan, 2 tasks
+
+**Key accomplishments:**
+
+- Added user-scoped notification API endpoints for inbox retrieval, mark-one/mark-all read, and preference updates.
+- Added notification service and controller test suite (9 passing tests) covering success and ownership/error paths.
+- Shipped dashboard notification inbox with unread/read grouping, per-item mark-read, and mark-all-read actions.
+- Added notification preference panel with toggle persistence from dashboard.
+- Integrated notification feature module into dashboard section routing and responsive UI styles.
+
+---
+
 ## v1.9 Full Reader Productization (Shipped: 2026-04-09)
 
 **Phases completed:** 3 phases, 4 plans, 4 tasks
@@ -56,4 +70,4 @@
 
 ---
 
-*Latest update: 2026-04-09 after v1.9 completion*
+*Latest update: 2026-04-09 after v1.10 completion*

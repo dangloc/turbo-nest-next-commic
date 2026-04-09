@@ -1,53 +1,52 @@
 # GSD Workflow State
 
-Current Phase: 27-notification-center-and-preferences
-Current Milestone: v1.10 (Notification Center & Dynamic Content)
-Status: Phase 27 plan created; ready for execution
+Current Phase: 28-dynamic-content-discovery-foundation
+Current Milestone: v1.11 (Dynamic Content Discovery & Channel Expansion)
+Status: v1.10 archived; v1.11 initialized for planning
 
 ---
 
 ## Progress
 
 ### Completed Milestones
+- ✅ v1.10: Notification Center & Dynamic Content (shipped 2026-04-09)
 - ✅ v1.9: Full Reader Productization (shipped 2026-04-09)
 - ✅ v1.8: Frontend Web Foundation (shipped 2026-04-08)
 - ✅ v1.7: Financial Engine & Payment Integration (shipped 2026-04-08)
 - ✅ v1.6: Core Reader API & Social Experience (shipped 2026-04-08)
 
-### Active Milestone: v1.10
+### Active Milestone: v1.11
 
-Planning status: Phase 27 plan complete
-
-Phase 27 (Notification Center):
-- Planning: ✓ Complete (27-01-PLAN.md created and validated)
-- Execution: Pending (/gsd:execute-phase 27)
-- Requirements: NOTI-01 (inbox grouping), NOTI-02 (mark read), NOTI-03 (preferences)
-- Blocked by: None
-- Dependency: Phases 24-26 complete ✓
+Planning status:
+- Phase 28 defined (dynamic discovery foundation)
+- Phase 29 defined (follow + notification channels)
 
 ---
 
-## Requirement Status Snapshot (v1.10)
+## Requirement Status Snapshot (v1.11)
 
-Phase 27 plan addresses:
-- NOTI-01: Notification inbox with unread/read grouping (Task 1-2)
-- NOTI-02: Mark single and all notifications as read (Task 1-2)
-- NOTI-03: Manage notification preferences (Task 2)
-- CONTENT-01..CONTENT-03: deferred (v1.11+)
+Planned:
+- CONTENT-01, CONTENT-02 (Phase 28)
+- CONTENT-03, NOTI-04 (Phase 29)
+
+Deferred:
+- CONTENT-04, NOTI-05, NOTI-06
 
 ---
 
-## Recent Commits (planning phase)
+## Recent Commits
 
-Phase 27 planning:
-- (pending) docs(27): create phase plan and initialize planning artifacts
+Phase 27 execution:
+- 30d7b9d feat(27-01): add notification API endpoints, service, and tests (apps/api)
+- 2254857 feat(27-01): wire notification feature module and dashboard integration
 
 ---
 
 ## Next Steps
 
-1. Execute Phase 27:
-   - /gsd:execute-phase 27
-2. Verify notification functionality (backend + frontend integration)
-3. Complete milestone v1.10:
-   - /gsd:complete-milestone v1.10
+1. Discuss and lock Phase 28 decisions:
+   - /gsd:discuss-phase 28
+2. Plan Phase 28:
+   - /gsd:plan-phase 28
+3. Execute Phase 28:
+   - /gsd:execute-phase 28
