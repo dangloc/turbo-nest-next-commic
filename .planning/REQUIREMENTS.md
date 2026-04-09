@@ -22,8 +22,8 @@ Core Value: Deliver a complete signed-in reader dashboard where payments, purcha
 
 ### Profile Management
 
-- [ ] PROF-01: User can view and update profile fields (nickname and avatar metadata) from dashboard settings.
-- [ ] PROF-02: User can review account identity/session information relevant to web profile management.
+- [x] PROF-01: User can view and update profile fields (nickname and avatar metadata) from dashboard settings.
+- [x] PROF-02: User can review account identity/session information relevant to web profile management.
 
 ### Notifications
 
@@ -55,8 +55,8 @@ Core Value: Deliver a complete signed-in reader dashboard where payments, purcha
 | WAL-02 | Phase 25 | Pending |
 | BUY-01 | Phase 25 | Pending |
 | BUY-02 | Phase 25 | Pending |
-| PROF-01 | Phase 26 | Pending |
-| PROF-02 | Phase 26 | Pending |
+| PROF-01 | Phase 26 | Completed |
+| PROF-02 | Phase 26 | Completed |
 | NOTI-01 | Phase 27 | Pending |
 | NOTI-02 | Phase 27 | Pending |
 | NOTI-03 | Phase 27 | Pending |

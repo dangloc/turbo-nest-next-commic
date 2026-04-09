@@ -67,7 +67,7 @@ Success Criteria:
 - Validation and error states are clear and recoverable.
 
 Plans:
-- [ ] 26-01-PLAN.md - profile data contracts, settings UI, and update flows
+- [x] 26-01-PLAN.md - profile data contracts, settings UI, and update flows
 
 ### Phase 27: Notification Center and Preferences
 
@@ -101,9 +101,9 @@ Phase 24 (Dashboard Foundation)
 |-------|--------------|--------|---------|
 | 24 | DASH-01..DASH-02 | Completed | 1 plan |
 | 25 | WAL-01..BUY-02 | Planned | 2 plans |
-| 26 | PROF-01..PROF-02 | Planned | 1 plan |
+| 26 | PROF-01..PROF-02 | Completed | 1 plan |
 | 27 | NOTI-01..NOTI-03 | Planned | 1 plan |
 
 ---
 
-Next: /gsd:execute-phase 25
+Next: /gsd:execute-phase 25 --wave 2
