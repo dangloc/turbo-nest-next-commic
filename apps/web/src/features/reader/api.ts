@@ -1,14 +1,19 @@
-import { apiRequest } from "../../lib/api/http";
 import type { ApiResult } from "../../lib/api/types";
+import {
+  purchaseChapter,
+  type PurchaseChapterResult,
+} from "../finance/api";
 import {
   buildChapterHref,
   buildNovelHref,
   normalizeChapterId,
   type ReaderChapter,
   type ReaderNovel,
+  type ReaderPurchaseAction,
   type ReadingHistoryEntry,
   type ReadingHistoryUpsertInput,
 } from "./types";
+import { apiRequest } from "../../lib/api/http";
 
 export {
   buildChapterHref,
@@ -62,4 +67,11 @@ export async function upsertReadingHistory(
     body: input,
     includeCredentials: true,
   });
+}
+
+export async function purchaseReaderChapter(
+  action: ReaderPurchaseAction,
+  token?: string,
+): Promise<ApiResult<PurchaseChapterResult>> {
+  return purchaseChapter(action, token);
 }

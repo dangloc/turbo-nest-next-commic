@@ -35,6 +35,14 @@ export interface ReaderNavigationContext {
   chapterId: number;
 }
 
+export interface ReaderPurchaseAction {
+  chapterId: number;
+  novelId: number;
+  price: number;
+}
+
+export type ReaderPurchaseStatus = "purchased" | "already_owned" | "insufficient_balance";
+
 export function normalizeChapterId(value: string | number | null | undefined) {
   const normalized = Number(value);
   if (!Number.isInteger(normalized) || normalized <= 0) {

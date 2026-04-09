@@ -56,3 +56,27 @@ export interface WalletSummaryResponse {
   };
   transactions: WalletSummaryItem[];
 }
+
+export interface PurchaseChapterInput {
+  chapterId: number;
+  novelId: number;
+  price: number;
+}
+
+export interface PurchaseChapterResponse {
+  status: "purchased" | "already_owned";
+  chapterId: number;
+  novelId: number;
+  purchasedChapterId: number | null;
+  transactionId?: number;
+  depositedBalance?: number;
+}
+
+export interface PurchaseChapterResult {
+  status: "purchased" | "already_owned" | "insufficient_balance";
+  chapterId: number;
+  novelId: number;
+  purchasedChapterId: number | null;
+  transactionId?: number;
+  depositedBalance?: number;
+}
