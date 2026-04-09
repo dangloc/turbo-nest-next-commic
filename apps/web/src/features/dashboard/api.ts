@@ -39,6 +39,18 @@ function toCards(sections: DashboardSection[]): DashboardSummaryCard[] {
       };
     }
 
+    if (section.id === "profile") {
+      return {
+        id: section.id,
+        title: section.title,
+        value: "Profile editing ready",
+        subtitle: "Update nickname/avatar metadata and review account identity details.",
+        href: section.href,
+        ctaLabel: "Open profile",
+        phaseLabel: `${section.phaseLabel} delivery`,
+      };
+    }
+
     return {
       id: section.id,
       title: section.title,

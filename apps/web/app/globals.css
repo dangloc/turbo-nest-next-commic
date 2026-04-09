@@ -770,3 +770,86 @@ p {
   }
 }
 
+
+.dashboard-profile {
+  display: grid;
+  gap: 14px;
+}
+
+.dashboard-profile-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.dashboard-profile-card {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+  padding: 14px;
+  display: grid;
+  gap: 10px;
+}
+
+.dashboard-profile-card h3 {
+  margin: 0;
+  font-size: 0.96rem;
+}
+
+.dashboard-profile-card form {
+  display: grid;
+  gap: 10px;
+}
+
+.dashboard-profile-card label {
+  display: grid;
+  gap: 6px;
+  font-size: 0.9rem;
+}
+
+.dashboard-profile-card input {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: #fff;
+}
+
+.dashboard-profile-message {
+  margin: 0;
+  color: #275422;
+}
+
+.dashboard-profile-error {
+  margin: 0;
+  color: #8c401e;
+}
+
+.dashboard-profile-details {
+  display: grid;
+  gap: 8px;
+}
+
+.dashboard-profile-details div {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 8px 10px;
+  background: rgba(255, 250, 242, 0.75);
+}
+
+.dashboard-profile-details dt {
+  font-size: 0.76rem;
+  color: #7b5c3f;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.dashboard-profile-details dd {
+  margin: 4px 0 0;
+  font-weight: 600;
+}
+
+@media (max-width: 840px) {
+  .dashboard-profile-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -3,7 +3,11 @@
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useContext, useEffect, useMemo, useState } from "react";
-import { getSessionToken } from "../../lib/auth/session-store";
+import { type SessionUser } from "../../lib/api/types";
+import {
+  getSessionToken,
+  persistSessionToStorage,
+} from "../../lib/auth/session-store";
 import { AppContext } from "../../providers/app-provider";
 import {
   fetchWalletSummary,
@@ -12,6 +16,11 @@ import {
   type PaymentProvider,
   type WalletSummaryResponse,
 } from "../finance/api";
+import {
+  fetchProfile,
+  updateProfile,
+  type ProfileResponse,
+} from "../profile/api";
 import { bootstrapDashboardSession, resolveDashboardSection } from "./api";
 import type { DashboardSnapshot } from "./types";
 
@@ -29,6 +38,11 @@ interface TopUpFormState {
 interface VerifyFormState {
   providerTransactionId: string;
   success: boolean;
+}
+
+interface ProfileFormState {
+  nickname: string;
+  avatar: string;
 }
 
 const DEFAULT_TOP_UP_FORM: TopUpFormState = {
@@ -65,6 +79,15 @@ function createReference() {
   return `topup-${Date.now()}`;
 }
 
+function toSessionUser(profilePayload: ProfileResponse): SessionUser {
+  return {
+    id: profilePayload.profile.id,
+    email: profilePayload.profile.email,
+    nickname: profilePayload.profile.nickname,
+    role: profilePayload.profile.role,
+  };
+}
+
 export function DashboardView() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -87,6 +110,18 @@ export function DashboardView() {
   } | null>(null);
   const [walletMessage, setWalletMessage] = useState<string | null>(null);
   const [walletBusy, setWalletBusy] = useState(false);
+
+  const [profileState, setProfileState] = useState<
+    | { status: "idle" | "loading" }
+    | { status: "ready"; data: ProfileResponse }
+    | { status: "error"; message: string }
+  >({ status: "idle" });
+  const [profileForm, setProfileForm] = useState<ProfileFormState>({
+    nickname: "",
+    avatar: "",
+  });
+  const [profileMessage, setProfileMessage] = useState<string | null>(null);
+  const [profileBusy, setProfileBusy] = useState(false);
 
   useEffect(() => {
     if (!loaded) {
@@ -157,17 +192,58 @@ export function DashboardView() {
     [],
   );
 
+  const loadProfile = useMemo(
+    () => async (signal?: AbortSignal) => {
+      const token = getSessionToken() ?? undefined;
+      setProfileState((previous) =>
+        previous.status === "ready"
+          ? {
+              status: "ready",
+              data: previous.data,
+            }
+          : { status: "loading" },
+      );
+
+      const result = await fetchProfile(token, signal);
+      if (!result.ok) {
+        setProfileState({
+          status: "error",
+          message: result.error.message,
+        });
+        return false;
+      }
+
+      setProfileState({ status: "ready", data: result.data });
+      setProfileForm({
+        nickname: result.data.profile.nickname ?? "",
+        avatar: result.data.profile.avatar ?? "",
+      });
+      return true;
+    },
+    [],
+  );
+
   useEffect(() => {
-    if (viewState.status !== "ready" || activeSection !== "wallet") {
+    if (viewState.status !== "ready") {
       return;
     }
 
-    const abortController = new AbortController();
-    void loadWalletSummary(abortController.signal);
-    return () => {
-      abortController.abort();
-    };
-  }, [activeSection, loadWalletSummary, viewState.status]);
+    if (activeSection === "wallet") {
+      const abortController = new AbortController();
+      void loadWalletSummary(abortController.signal);
+      return () => {
+        abortController.abort();
+      };
+    }
+
+    if (activeSection === "profile") {
+      const abortController = new AbortController();
+      void loadProfile(abortController.signal);
+      return () => {
+        abortController.abort();
+      };
+    }
+  }, [activeSection, loadProfile, loadWalletSummary, viewState.status]);
 
   if (viewState.status === "loading") {
     return (
@@ -285,12 +361,56 @@ export function DashboardView() {
           : "Top-up marked as failed by provider.";
 
     setWalletMessage(statusLabel);
-    const loaded = await loadWalletSummary();
-    if (loaded && result.data.status !== "failed") {
+    const loadedWallet = await loadWalletSummary();
+    if (loadedWallet && result.data.status !== "failed") {
       setPendingTopUp(null);
       setTopUpForm({ ...DEFAULT_TOP_UP_FORM, reference: "" });
       setVerifyForm(DEFAULT_VERIFY_FORM);
     }
+  }
+
+  async function onSubmitProfile(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setProfileBusy(true);
+    setProfileMessage(null);
+
+    const token = getSessionToken() ?? undefined;
+    const result = await updateProfile(
+      {
+        nickname: profileForm.nickname,
+        avatar: profileForm.avatar,
+      },
+      token,
+    );
+
+    setProfileBusy(false);
+    if (!result.ok) {
+      setProfileMessage(result.error.message);
+      return;
+    }
+
+    setProfileState({ status: "ready", data: result.data });
+    setProfileForm({
+      nickname: result.data.profile.nickname ?? "",
+      avatar: result.data.profile.avatar ?? "",
+    });
+
+    const sessionUser = toSessionUser(result.data);
+    persistSessionToStorage(sessionUser);
+    setUser(sessionUser);
+    setViewState((previous) =>
+      previous.status === "ready"
+        ? {
+            status: "ready",
+            snapshot: {
+              ...previous.snapshot,
+              user: sessionUser,
+            },
+          }
+        : previous,
+    );
+
+    setProfileMessage("Profile saved successfully.");
   }
 
   function renderWalletSection() {
@@ -302,7 +422,6 @@ export function DashboardView() {
             earnedBalance: 0,
             totalDeposited: 0,
           };
-
     const transactions = walletState.status === "ready" ? walletState.data.transactions : [];
 
     return (
@@ -482,6 +601,107 @@ export function DashboardView() {
     );
   }
 
+  function renderProfileSection() {
+    const profileReady = profileState.status === "ready" ? profileState.data : null;
+
+    return (
+      <section className="dashboard-profile" aria-label="Profile section">
+        <div className="dashboard-profile-grid">
+          <article className="dashboard-profile-card">
+            <h3>Profile settings</h3>
+            <p>Update nickname and avatar metadata used across dashboard and social views.</p>
+            <form onSubmit={onSubmitProfile}>
+              <label>
+                Nickname
+                <input
+                  maxLength={40}
+                  minLength={2}
+                  name="nickname"
+                  onChange={(event) =>
+                    setProfileForm((current) => ({
+                      ...current,
+                      nickname: event.target.value,
+                    }))
+                  }
+                  placeholder="Enter nickname"
+                  value={profileForm.nickname}
+                />
+              </label>
+
+              <label>
+                Avatar metadata
+                <input
+                  maxLength={255}
+                  name="avatar"
+                  onChange={(event) =>
+                    setProfileForm((current) => ({
+                      ...current,
+                      avatar: event.target.value,
+                    }))
+                  }
+                  placeholder="https://... or external avatar id"
+                  value={profileForm.avatar}
+                />
+              </label>
+
+              <button className="action-primary" disabled={profileBusy} type="submit">
+                {profileBusy ? "Saving..." : "Save profile"}
+              </button>
+            </form>
+
+            {profileMessage ? <p className="dashboard-profile-message">{profileMessage}</p> : null}
+            {profileState.status === "error" ? (
+              <p className="dashboard-profile-error">{profileState.message}</p>
+            ) : null}
+          </article>
+
+          <article className="dashboard-profile-card">
+            <h3>Identity and session details</h3>
+            {profileState.status === "loading" || profileState.status === "idle" ? (
+              <p>Loading profile details...</p>
+            ) : profileState.status === "error" ? (
+              <p>Unable to load profile details.</p>
+            ) : (
+              <dl className="dashboard-profile-details">
+                <div>
+                  <dt>User ID</dt>
+                  <dd>{profileReady?.profile.id}</dd>
+                </div>
+                <div>
+                  <dt>Email</dt>
+                  <dd>{profileReady?.profile.email}</dd>
+                </div>
+                <div>
+                  <dt>Role</dt>
+                  <dd>{profileReady?.profile.role}</dd>
+                </div>
+                <div>
+                  <dt>Token source</dt>
+                  <dd>{profileReady?.session.tokenSource}</dd>
+                </div>
+                <div>
+                  <dt>Last profile update</dt>
+                  <dd>{profileReady ? formatDate(profileReady.profile.updatedAt) : "Unknown"}</dd>
+                </div>
+              </dl>
+            )}
+
+            <button
+              className="action-secondary"
+              disabled={profileBusy || profileState.status === "loading"}
+              onClick={() => {
+                void loadProfile();
+              }}
+              type="button"
+            >
+              Refresh profile
+            </button>
+          </article>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <main className="dashboard-shell">
       <section className="dashboard-card">
@@ -520,6 +740,8 @@ export function DashboardView() {
 
         {activeSection === "wallet" ? (
           renderWalletSection()
+        ) : activeSection === "profile" ? (
+          renderProfileSection()
         ) : (
           <div className="dashboard-grid">
             {snapshot.cards.map((card) => (
