@@ -1,69 +1,55 @@
 # GSD Workflow State
 
-Current Phase: 25-wallet-top-up-and-chapter-purchases
-Current Milestone: 6 (Monetization MVP)
-Status: Phase 25 complete; ready for Phase 27
+Current Phase: 27-notification-center-and-preferences
+Current Milestone: v1.10 (Notification Center & Dynamic Content)
+Status: v1.9 complete and archived; v1.10 planning phase next
 
 ---
 
 ## Progress
 
-### Completed Phases
-- Phase 01: Project setup & core auth (Completed)
-- Phase 02: Discovery/reader flow (Completed)
-- Phase 03: Verification (Completed)
-- Phase 04-16: Infrastructure & platform (Completed)
-- Phase 17: Social features (Completed)
-- Phase 18: Deposit/purchase APIs (Completed)
-- Phase 19: Author withdrawals (Completed)
-- Phase 20: Frontend auth integration (Completed)
-- Phase 21-23: Reader/author flows (Completed)
-- Phase 24: Dashboard foundation (Completed)
-- Phase 25: Wallet top-up and chapter purchases (Completed)
-- Phase 26: Profile management dashboard (Completed)
+### Completed Milestones
+- ✅ v1.9: Full Reader Productization (shipped 2026-04-09)
+- ✅ v1.8: Frontend Web Foundation (shipped 2026-04-08)
+- ✅ v1.7: Financial Engine & Payment Integration (shipped 2026-04-08)
+- ✅ v1.6: Core Reader API & Social Experience (shipped 2026-04-08)
 
-### Phase 25 Completion
+### Active Milestone: v1.10
 
-Plan 25-01 (Wave 1): complete
-- Wallet summary API + top-up verification flow + transaction history
-- Summary: .planning/phases/25-wallet-top-up-and-chapter-purchases/25-01-SUMMARY.md
+Planning status: Ready for /gsd:plan-phase 27
 
-Plan 25-02 (Wave 2): complete
-- Reader purchase contracts/actions
-- Locked chapter purchase confirmation + insufficient-balance handling
-- Immediate unlock propagation in reader navigation
-- Dashboard purchases activity section
-- Summary: .planning/phases/25-wallet-top-up-and-chapter-purchases/25-02-SUMMARY.md
+Phase 27 (Notification Center):
+- Pending planning: /gsd:plan-phase 27
+- Requirements: NOTI-01 (inbox grouping), NOTI-02 (mark read), NOTI-03 (preferences)
+- Blocked by: None
+- Dependency: Phases 24-26 complete ✓
 
 ---
 
-## Requirement Status Snapshot
+## Requirement Status Snapshot (v1.10)
 
-- DASH-01, DASH-02: complete
-- WAL-01, WAL-02: complete
-- BUY-01, BUY-02: complete
-- PROF-01, PROF-02: complete
 - NOTI-01..NOTI-03: pending (Phase 27)
+- CONTENT-01..CONTENT-03: deferred (v1.11+)
 
 ---
 
-## Recent Commits
+## Recent Commits (v1.9 → v1.10 transition)
 
 Phase 25 wave 2:
 - 51d6fa0 feat(25-02): add reader purchase contracts and client actions
 - 219a1a6 feat(25-02): wire chapter purchase unlock flow and dashboard purchases
-- (pending docs commit) phase 25-02 summary and tracker sync
+- b28eec2 docs(25-02): record wave 2 completion and requirement status
 
-Phase 26:
-- 183bef3 feat(26-01): add profile read and update auth contracts (api repo)
-- 6b9ba5e feat(26-01): add dashboard profile management and identity panel
-- 9c1c396 docs(26-01): record profile execution summary and status
+Phase completion:
+- (pending) chore: archive v1.9 milestone
 
 ---
 
 ## Next Steps
 
-1. Plan/execute Phase 27 notification center:
+1. Plan Phase 27 notification center:
    - /gsd:plan-phase 27
+2. Execute Phase 27:
    - /gsd:execute-phase 27
-2. Run milestone-level validation/audit before ship
+3. Complete milestone v1.10:
+   - /gsd:complete-milestone v1.10
