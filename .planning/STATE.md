@@ -2,7 +2,7 @@
 
 Current Phase: 27-notification-center-and-preferences
 Current Milestone: v1.10 (Notification Center & Dynamic Content)
-Status: v1.9 complete and archived; v1.10 planning phase next
+Status: Phase 27 plan created; ready for execution
 
 ---
 
@@ -16,10 +16,11 @@ Status: v1.9 complete and archived; v1.10 planning phase next
 
 ### Active Milestone: v1.10
 
-Planning status: Ready for /gsd:plan-phase 27
+Planning status: Phase 27 plan complete
 
 Phase 27 (Notification Center):
-- Pending planning: /gsd:plan-phase 27
+- Planning: ✓ Complete (27-01-PLAN.md created and validated)
+- Execution: Pending (/gsd:execute-phase 27)
 - Requirements: NOTI-01 (inbox grouping), NOTI-02 (mark read), NOTI-03 (preferences)
 - Blocked by: None
 - Dependency: Phases 24-26 complete ✓
@@ -28,28 +29,25 @@ Phase 27 (Notification Center):
 
 ## Requirement Status Snapshot (v1.10)
 
-- NOTI-01..NOTI-03: pending (Phase 27)
+Phase 27 plan addresses:
+- NOTI-01: Notification inbox with unread/read grouping (Task 1-2)
+- NOTI-02: Mark single and all notifications as read (Task 1-2)
+- NOTI-03: Manage notification preferences (Task 2)
 - CONTENT-01..CONTENT-03: deferred (v1.11+)
 
 ---
 
-## Recent Commits (v1.9 → v1.10 transition)
+## Recent Commits (planning phase)
 
-Phase 25 wave 2:
-- 51d6fa0 feat(25-02): add reader purchase contracts and client actions
-- 219a1a6 feat(25-02): wire chapter purchase unlock flow and dashboard purchases
-- b28eec2 docs(25-02): record wave 2 completion and requirement status
-
-Phase completion:
-- (pending) chore: archive v1.9 milestone
+Phase 27 planning:
+- (pending) docs(27): create phase plan and initialize planning artifacts
 
 ---
 
 ## Next Steps
 
-1. Plan Phase 27 notification center:
-   - /gsd:plan-phase 27
-2. Execute Phase 27:
+1. Execute Phase 27:
    - /gsd:execute-phase 27
+2. Verify notification functionality (backend + frontend integration)
 3. Complete milestone v1.10:
    - /gsd:complete-milestone v1.10

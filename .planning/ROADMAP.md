@@ -28,14 +28,14 @@ Success Criteria:
 - Preference updates persist and are reflected in UI state.
 
 Plans:
-- [ ] 27-01-PLAN.md - notification inbox and preference settings
+- [ ] 27-01-PLAN.md - notification API endpoints, service, frontend module, and dashboard integration
 
 ## Progress
 
 | Phase | Requirements | Status | Planned |
 |-------|--------------|--------|---------|
-| 27 | NOTI-01..NOTI-03 | Planned | 1 plan |
+| 27 | NOTI-01..NOTI-03 | Planned | 1 plan created |
 
 ---
 
-Next: /gsd:plan-phase 27
+Next: /gsd:execute-phase 27
