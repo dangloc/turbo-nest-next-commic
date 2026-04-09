@@ -228,7 +228,7 @@ export function DashboardView() {
       return;
     }
 
-    if (activeSection === "wallet") {
+    if (activeSection === "wallet" || activeSection === "purchases") {
       const abortController = new AbortController();
       void loadWalletSummary(abortController.signal);
       return () => {
@@ -601,6 +601,82 @@ export function DashboardView() {
     );
   }
 
+  function renderPurchasesSection() {
+    const purchaseTransactions =
+      walletState.status === "ready"
+        ? walletState.data.transactions.filter(
+            (item) =>
+              item.type === "PURCHASE_CHAPTER" ||
+              item.label.toLowerCase().includes("purchase"),
+          )
+        : [];
+
+    const totalSpent = purchaseTransactions.reduce((sum, item) => sum + item.amount, 0);
+
+    return (
+      <section className="dashboard-purchases" aria-label="Purchases section">
+        <div className="dashboard-purchases-grid">
+          <article className="dashboard-purchases-card">
+            <h3>Recent purchase actions</h3>
+            <p>{purchaseTransactions.length}</p>
+            <span>Detected chapter purchase transactions from wallet ledger.</span>
+          </article>
+          <article className="dashboard-purchases-card">
+            <h3>Total spent (recent)</h3>
+            <p>{formatCurrency(totalSpent)}</p>
+            <span>Calculated from latest purchase transactions in your account.</span>
+          </article>
+        </div>
+
+        <article className="dashboard-purchases-list">
+          <header>
+            <h3>Purchase timeline</h3>
+            <button
+              className="action-secondary"
+              type="button"
+              onClick={() => {
+                void loadWalletSummary();
+              }}
+              disabled={walletState.status === "loading"}
+            >
+              Refresh
+            </button>
+          </header>
+
+          {walletState.status === "loading" || walletState.status === "idle" ? (
+            <p>Loading purchase activity...</p>
+          ) : purchaseTransactions.length === 0 ? (
+            <p>
+              No purchase transactions yet. Open a locked chapter and complete purchase flow,
+              then return here to confirm unlock activity.
+            </p>
+          ) : (
+            <ul>
+              {purchaseTransactions.slice(0, 10).map((item) => (
+                <li key={item.id}>
+                  <div>
+                    <strong>{item.label}</strong>
+                    <p>{formatDate(item.transactionDate)}</p>
+                  </div>
+                  <strong>{formatCurrency(item.amount)}</strong>
+                </li>
+              ))}
+            </ul>
+          )}
+        </article>
+
+        <div className="dashboard-purchases-actions">
+          <Link className="action-secondary" href="/dashboard?section=wallet">
+            Top up wallet
+          </Link>
+          <Link className="action-secondary" href="/novels/1">
+            Open reader and unlock chapters
+          </Link>
+        </div>
+      </section>
+    );
+  }
+
   function renderProfileSection() {
     const profileReady = profileState.status === "ready" ? profileState.data : null;
 
@@ -740,6 +816,8 @@ export function DashboardView() {
 
         {activeSection === "wallet" ? (
           renderWalletSection()
+        ) : activeSection === "purchases" ? (
+          renderPurchasesSection()
         ) : activeSection === "profile" ? (
           renderProfileSection()
         ) : (

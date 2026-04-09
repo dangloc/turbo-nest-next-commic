@@ -31,10 +31,10 @@ function toCards(sections: DashboardSection[]): DashboardSummaryCard[] {
       return {
         id: section.id,
         title: section.title,
-        value: "Purchase unlocks in wave 2",
-        subtitle: section.description,
+        value: "Purchase tracking active",
+        subtitle: "Review recent chapter unlock purchases and wallet deductions.",
         href: section.href,
-        ctaLabel: "Open section",
+        ctaLabel: "Open purchases",
         phaseLabel: `${section.phaseLabel} delivery`,
       };
     }

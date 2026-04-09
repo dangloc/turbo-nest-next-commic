@@ -11,6 +11,7 @@ import {
   fetchNovelById,
   fetchReadingHistory,
   normalizeChapterId,
+  purchaseReaderChapter,
   upsertReadingHistory,
 } from "./api";
 import type { ReaderChapter, ReaderNovel, ReadingHistoryEntry } from "./types";
@@ -18,6 +19,8 @@ import type { ReaderChapter, ReaderNovel, ReadingHistoryEntry } from "./types";
 function toDisplayText(content: string) {
   return content.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
 }
+
+const DEFAULT_CHAPTER_PRICE = 15000;
 
 export function NovelDetailView({ novelId }: { novelId: number }) {
   const [novel, setNovel] = useState<ReaderNovel | null>(null);
@@ -95,6 +98,9 @@ export function NovelDetailView({ novelId }: { novelId: number }) {
                   Enter valid chapter
                 </button>
               )}
+              <Link className="action-secondary" href="/dashboard?section=purchases">
+                View purchase activity
+              </Link>
               <Link className="action-secondary" href="/">
                 Back to discovery
               </Link>
@@ -137,6 +143,12 @@ export function ChapterReaderView({ chapterId }: { chapterId: number }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [saveMessage, setSaveMessage] = useState<string | null>(null);
+  const [purchaseBusy, setPurchaseBusy] = useState(false);
+  const [purchaseMessage, setPurchaseMessage] = useState<string | null>(null);
+  const [purchasePrice, setPurchasePrice] = useState(String(DEFAULT_CHAPTER_PRICE));
+  const [isUnlocked, setIsUnlocked] = useState(chapterId === 1);
+
+  const requiresPurchase = chapterId > 1;
 
   useEffect(() => {
     const token = getSessionToken() ?? undefined;
@@ -144,6 +156,8 @@ export function ChapterReaderView({ chapterId }: { chapterId: number }) {
     setLoading(true);
     setError(null);
     setSaveMessage(null);
+    setPurchaseMessage(null);
+    setIsUnlocked(chapterId === 1);
 
     void (async () => {
       const chapterResult = await fetchChapterById(chapterId);
@@ -162,6 +176,7 @@ export function ChapterReaderView({ chapterId }: { chapterId: number }) {
           const current = historyResult.data.find((item) => item.chapterId === chapterId);
           if (current) {
             setProgress(current.progressPercent);
+            setIsUnlocked(true);
           }
         }
 
@@ -186,6 +201,11 @@ export function ChapterReaderView({ chapterId }: { chapterId: number }) {
       return;
     }
 
+    if (requiresPurchase && !isUnlocked) {
+      setSaveMessage("Purchase this chapter before saving progress.");
+      return;
+    }
+
     const result = await upsertReadingHistory(
       {
         novelId: chapter.novelId,
@@ -201,6 +221,74 @@ export function ChapterReaderView({ chapterId }: { chapterId: number }) {
     }
 
     setSaveMessage("Progress saved.");
+  }
+
+  async function purchaseChapterAccess() {
+    const token = getSessionToken() ?? undefined;
+    if (!token) {
+      setPurchaseMessage("Sign in before purchasing chapter access.");
+      return;
+    }
+
+    if (!chapter) {
+      setPurchaseMessage("Chapter details are unavailable.");
+      return;
+    }
+
+    const price = Number(purchasePrice);
+    if (!Number.isFinite(price) || price <= 0) {
+      setPurchaseMessage("Enter a valid purchase amount.");
+      return;
+    }
+
+    const confirmed = window.confirm(
+      `Confirm purchase for chapter #${chapter.id} at ${new Intl.NumberFormat("vi-VN").format(price)} VND?`,
+    );
+    if (!confirmed) {
+      return;
+    }
+
+    setPurchaseBusy(true);
+    setPurchaseMessage(null);
+
+    const purchaseResult = await purchaseReaderChapter(
+      {
+        chapterId: chapter.id,
+        novelId: chapter.novelId,
+        price,
+      },
+      token,
+    );
+
+    setPurchaseBusy(false);
+
+    if (!purchaseResult.ok) {
+      setPurchaseMessage(purchaseResult.error.message);
+      return;
+    }
+
+    if (purchaseResult.data.status === "insufficient_balance") {
+      setIsUnlocked(false);
+      setPurchaseMessage("Insufficient deposited balance. Top up your wallet and try again.");
+      return;
+    }
+
+    setIsUnlocked(true);
+    setPurchaseMessage(
+      purchaseResult.data.status === "already_owned"
+        ? "Chapter is already unlocked for your account."
+        : "Purchase successful. Chapter unlocked immediately.",
+    );
+
+    const refreshedChapter = await fetchChapterById(chapter.id);
+    if (refreshedChapter.ok) {
+      setChapter(refreshedChapter.data);
+    }
+
+    const refreshedHistory = await fetchReadingHistory(token, chapter.novelId);
+    if (refreshedHistory.ok) {
+      setHistory(refreshedHistory.data);
+    }
   }
 
   const previousChapter = chapterId > 1 ? buildChapterHref(chapterId - 1, chapter?.novelId) : null;
@@ -221,7 +309,44 @@ export function ChapterReaderView({ chapterId }: { chapterId: number }) {
                 Chapter #{chapter.id} · Novel #{chapter.novelId} · {String(chapter.viewCount)} views
               </p>
             </div>
-            <article className="reader-content">{toDisplayText(chapter.postContent) || "No chapter content."}</article>
+
+            {requiresPurchase && !isUnlocked ? (
+              <article className="reader-locked-box">
+                <h2>Chapter locked</h2>
+                <p>
+                  Purchase this chapter to unlock full reading access. If your deposited balance is low,
+                  top up from wallet and retry.
+                </p>
+
+                <label className="reader-input-group">
+                  <span>Purchase price (VND)</span>
+                  <input
+                    value={purchasePrice}
+                    onChange={(event) => setPurchasePrice(event.target.value)}
+                    inputMode="numeric"
+                  />
+                </label>
+
+                <div className="reader-actions">
+                  <button
+                    className="action-primary"
+                    type="button"
+                    disabled={purchaseBusy}
+                    onClick={purchaseChapterAccess}
+                  >
+                    {purchaseBusy ? "Processing..." : "Purchase and unlock"}
+                  </button>
+                  <Link className="action-secondary" href="/dashboard?section=wallet">
+                    Top up wallet
+                  </Link>
+                </div>
+
+                {purchaseMessage ? <p className="reader-muted">{purchaseMessage}</p> : null}
+              </article>
+            ) : (
+              <article className="reader-content">{toDisplayText(chapter.postContent) || "No chapter content."}</article>
+            )}
+
             <div className="reader-actions">
               {previousChapter ? (
                 <Link className="action-secondary" href={previousChapter}>
@@ -231,9 +356,15 @@ export function ChapterReaderView({ chapterId }: { chapterId: number }) {
               <Link className="action-secondary" href={buildNovelHref(chapter.novelId)}>
                 Back to novel
               </Link>
-              <Link className="action-secondary" href={nextChapter}>
-                Next chapter
-              </Link>
+              {requiresPurchase && !isUnlocked ? (
+                <button className="action-secondary" type="button" disabled>
+                  Next chapter locked
+                </button>
+              ) : (
+                <Link className="action-secondary" href={nextChapter}>
+                  Next chapter
+                </Link>
+              )}
             </div>
           </section>
 

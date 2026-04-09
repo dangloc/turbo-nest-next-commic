@@ -853,3 +853,90 @@ p {
     grid-template-columns: 1fr;
   }
 }
+
+.reader-locked-box {
+  border: 1px dashed var(--line);
+  border-radius: 12px;
+  padding: 12px;
+  display: grid;
+  gap: 10px;
+  background: rgba(255, 250, 242, 0.85);
+}
+
+.reader-locked-box h2 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.dashboard-purchases {
+  display: grid;
+  gap: 14px;
+}
+
+.dashboard-purchases-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.dashboard-purchases-card,
+.dashboard-purchases-list {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+  padding: 14px;
+  display: grid;
+  gap: 8px;
+}
+
+.dashboard-purchases-card p {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.dashboard-purchases-card span {
+  color: #7b5c3f;
+  font-size: 0.86rem;
+}
+
+.dashboard-purchases-list header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.dashboard-purchases-list ul {
+  list-style: none;
+  display: grid;
+  gap: 8px;
+}
+
+.dashboard-purchases-list li {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 10px 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.dashboard-purchases-list li p {
+  margin: 0;
+  font-size: 0.84rem;
+  color: #7b5c3f;
+}
+
+.dashboard-purchases-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 840px) {
+  .dashboard-purchases-grid {
+    grid-template-columns: 1fr;
+  }
+}
