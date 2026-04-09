@@ -1,8 +1,8 @@
 # GSD Workflow State
 
-Current Phase: 26-profile-management-dashboard
+Current Phase: 25-wallet-top-up-and-chapter-purchases
 Current Milestone: 6 (Monetization MVP)
-Status: Phase 26 complete; Phase 25 wave 2 pending
+Status: Phase 25 complete; ready for Phase 27
 
 ---
 
@@ -19,50 +19,51 @@ Status: Phase 26 complete; Phase 25 wave 2 pending
 - Phase 20: Frontend auth integration (Completed)
 - Phase 21-23: Reader/author flows (Completed)
 - Phase 24: Dashboard foundation (Completed)
+- Phase 25: Wallet top-up and chapter purchases (Completed)
 - Phase 26: Profile management dashboard (Completed)
 
-### Active Work
+### Phase 25 Completion
 
-#### Phase 25 (Wallet + Purchases)
-- Wave 1 complete (wallet summary/top-up)
-- Wave 2 pending execution:
-  - Plan 25-02 Task 1: purchase endpoint + unlock propagation
-  - Plan 25-02 Task 2: purchases dashboard section
+Plan 25-01 (Wave 1): complete
+- Wallet summary API + top-up verification flow + transaction history
+- Summary: .planning/phases/25-wallet-top-up-and-chapter-purchases/25-01-SUMMARY.md
 
-#### Phase 26 (Profile Management)
-- Plan 26-01 complete:
-  - Task 1 complete (backend profile contracts + tests)
-  - Task 2 complete (dashboard profile UI + session sync)
-  - Summary created: .planning/phases/26-profile-management-dashboard/26-01-SUMMARY.md
+Plan 25-02 (Wave 2): complete
+- Reader purchase contracts/actions
+- Locked chapter purchase confirmation + insufficient-balance handling
+- Immediate unlock propagation in reader navigation
+- Dashboard purchases activity section
+- Summary: .planning/phases/25-wallet-top-up-and-chapter-purchases/25-02-SUMMARY.md
 
 ---
 
 ## Requirement Status Snapshot
 
-- WAL-01: complete
-- WAL-02: complete
-- BUY-01: pending (Phase 25 wave 2)
-- BUY-02: pending (Phase 25 wave 2)
-- PROF-01: complete
-- PROF-02: complete
+- DASH-01, DASH-02: complete
+- WAL-01, WAL-02: complete
+- BUY-01, BUY-02: complete
+- PROF-01, PROF-02: complete
 - NOTI-01..NOTI-03: pending (Phase 27)
 
 ---
 
 ## Recent Commits
 
-API repository:
-- 183bef3 feat(26-01): add profile read and update auth contracts
+Phase 25 wave 2:
+- 51d6fa0 feat(25-02): add reader purchase contracts and client actions
+- 219a1a6 feat(25-02): wire chapter purchase unlock flow and dashboard purchases
+- (pending docs commit) phase 25-02 summary and tracker sync
 
-Main repository:
+Phase 26:
+- 183bef3 feat(26-01): add profile read and update auth contracts (api repo)
 - 6b9ba5e feat(26-01): add dashboard profile management and identity panel
-- (pending docs commit) phase 26 summary/state/roadmap/requirements sync
+- 9c1c396 docs(26-01): record profile execution summary and status
 
 ---
 
 ## Next Steps
 
-1. Execute remaining Phase 25 wave 2 plan:
-   - /gsd:execute-phase 25 --wave 2
-2. Verify BUY-01 and BUY-02 completion and generate 25-02 summary
-3. Start Phase 27 notification center planning/execution
+1. Plan/execute Phase 27 notification center:
+   - /gsd:plan-phase 27
+   - /gsd:execute-phase 27
+2. Run milestone-level validation/audit before ship

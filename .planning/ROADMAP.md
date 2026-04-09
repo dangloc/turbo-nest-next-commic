@@ -47,8 +47,8 @@ Success Criteria:
 - Purchased chapter access updates immediately in reading experience.
 
 Plans:
-- [ ] 25-01-PLAN.md - wallet summary API, top-up verification UX, and transaction history
-- [ ] 25-02-PLAN.md - chapter purchase UX, insufficient-balance handling, and instant unlock state
+- [x] 25-01-PLAN.md - wallet summary API, top-up verification UX, and transaction history
+- [x] 25-02-PLAN.md - chapter purchase UX, insufficient-balance handling, and instant unlock state
 
 ### Phase 26: Profile Management Dashboard
 
@@ -100,10 +100,10 @@ Phase 24 (Dashboard Foundation)
 | Phase | Requirements | Status | Planned |
 |-------|--------------|--------|---------|
 | 24 | DASH-01..DASH-02 | Completed | 1 plan |
-| 25 | WAL-01..BUY-02 | Planned | 2 plans |
+| 25 | WAL-01..BUY-02 | Completed | 2 plans |
 | 26 | PROF-01..PROF-02 | Completed | 1 plan |
 | 27 | NOTI-01..NOTI-03 | Planned | 1 plan |
 
 ---
 
-Next: /gsd:execute-phase 25 --wave 2
+Next: /gsd:plan-phase 27

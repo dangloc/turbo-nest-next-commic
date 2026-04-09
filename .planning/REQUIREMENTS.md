@@ -12,13 +12,13 @@ Core Value: Deliver a complete signed-in reader dashboard where payments, purcha
 
 ### Wallet & Payments
 
-- [ ] WAL-01: User can initiate wallet top-up and complete verification flow from the dashboard.
-- [ ] WAL-02: User can view current wallet balance and transaction history with clear status labels.
+- [x] WAL-01: User can initiate wallet top-up and complete verification flow from the dashboard.
+- [x] WAL-02: User can view current wallet balance and transaction history with clear status labels.
 
 ### Chapter Purchases
 
-- [ ] BUY-01: User can purchase locked chapters with clear confirmation and insufficient-balance handling.
-- [ ] BUY-02: Purchased access state is reflected immediately in chapter reading/navigation UI.
+- [x] BUY-01: User can purchase locked chapters with clear confirmation and insufficient-balance handling.
+- [x] BUY-02: Purchased access state is reflected immediately in chapter reading/navigation UI.
 
 ### Profile Management
 
@@ -51,10 +51,10 @@ Core Value: Deliver a complete signed-in reader dashboard where payments, purcha
 |-------------|-------|--------|
 | DASH-01 | Phase 24 | Completed |
 | DASH-02 | Phase 24 | Completed |
-| WAL-01 | Phase 25 | Pending |
-| WAL-02 | Phase 25 | Pending |
-| BUY-01 | Phase 25 | Pending |
-| BUY-02 | Phase 25 | Pending |
+| WAL-01 | Phase 25 | Completed |
+| WAL-02 | Phase 25 | Completed |
+| BUY-01 | Phase 25 | Completed |
+| BUY-02 | Phase 25 | Completed |
 | PROF-01 | Phase 26 | Completed |
 | PROF-02 | Phase 26 | Completed |
 | NOTI-01 | Phase 27 | Pending |
