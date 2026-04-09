@@ -21,9 +21,9 @@ import {
   updateProfile,
   type ProfileResponse,
 } from "../profile/api";
+import NotificationsSection from "../notifications/notifications";
 import { bootstrapDashboardSession, resolveDashboardSection } from "./api";
 import type { DashboardSnapshot } from "./types";
-
 type ViewState =
   | { status: "loading" }
   | { status: "ready"; snapshot: DashboardSnapshot }
@@ -778,6 +778,14 @@ export function DashboardView() {
     );
   }
 
+  function renderNotificationsSection() {
+    return (
+      <section className="dashboard-notifications" aria-label="Notifications section">
+        <NotificationsSection />
+      </section>
+    );
+  }
+
   return (
     <main className="dashboard-shell">
       <section className="dashboard-card">
@@ -820,6 +828,8 @@ export function DashboardView() {
           renderPurchasesSection()
         ) : activeSection === "profile" ? (
           renderProfileSection()
+        ) : activeSection === "notifications" ? (
+          renderNotificationsSection()
         ) : (
           <div className="dashboard-grid">
             {snapshot.cards.map((card) => (
