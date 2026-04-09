@@ -16,7 +16,7 @@ v1.10 shipped a complete notification center inside the dashboard:
 - Notification preference controls persisted from dashboard settings.
 - End-to-end API and frontend integration validated (notification API tests + web typecheck/lint).
 
-Next: v1.11 focuses on dynamic content discovery and notification channel expansion.
+Next: v1.11 focuses on reader experience and creator discovery through public author profiles and a fully immersive chapter reading interface.
 
 ## Shipped Milestones
 
@@ -31,22 +31,22 @@ Next: v1.11 focuses on dynamic content discovery and notification channel expans
 - ✅ v1.9: Full Reader Productization (dashboard/wallet/purchases/profile).
 - ✅ v1.10: Notification Center & Dynamic Content (notification inbox and preferences).
 
-## Active Milestone: v1.11 Dynamic Content Discovery & Channel Expansion
+## Active Milestone: v1.11 Reader Experience & Creator Discovery
 
-Goal: Expand discovery relevance and broaden notification delivery beyond in-app inbox actions.
+Goal: Build public creator-facing discovery surfaces and a polished chapter reading flow that keeps readers engaged and synced.
 
 Target features:
-- Genre/tag based dynamic content filtering and retrieval flows.
-- Recommendation baseline from reading history signals.
-- Author follow and digest-ready relationship data.
-- Notification channel expansion foundation (push/email preference channels).
+- Public author profile pages with author metadata, published novels, and aggregate platform stats.
+- Core chapter reading interface with immersive layout and navigation (next/previous chapter and table of contents).
+- Reader customization settings for font size and light/dark reading modes.
+- Safe progression sync for chapter view count triggers and reading-history updates.
 
-Out of scope (v1.11 candidate constraints):
-- Full real-time websocket fan-out.
-- Native mobile application notification integration.
-- Advanced personalization ML ranking.
+Out of scope (v1.11):
+- Native mobile app reader and creator profile experiences.
+- Real-time collaborative/social overlays inside reader.
+- Advanced recommendation ranking/ML personalization.
 
-## Key Decisions (v1.9-v1.10)
+## Key Decisions (v1.9-v1.11)
 
 | Decision | Outcome | Phase |
 |----------|---------|-------|
@@ -55,6 +55,7 @@ Out of scope (v1.11 candidate constraints):
 | Feature-local module structure (types/api/view split) | ✓ Consistent with discovery/reader/social; reduces friction | 24-27 |
 | Deterministic purchase status mapping (including insufficient_balance) | ✓ Clear error paths in UX; prevents silent failures | 25 |
 | Notification inbox + preference controls inside dashboard section model | ✓ Reuses established patterns and keeps account actions centralized | 27 |
+| Reader progression updates must be idempotent and session-safe | — Pending implementation in v1.11 | 30 |
 
 ## Evolution
 
@@ -76,4 +77,4 @@ After each milestone:
 
 ---
 
-*Last updated: 2026-04-09 after v1.10 milestone completion*
+*Last updated: 2026-04-09 after v1.11 milestone initialization*

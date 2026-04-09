@@ -1,8 +1,8 @@
 # GSD Workflow State
 
-Current Phase: 28-dynamic-content-discovery-foundation
-Current Milestone: v1.11 (Dynamic Content Discovery & Channel Expansion)
-Status: v1.10 archived; v1.11 initialized for planning
+Current Phase: 28-public-author-profiles
+Current Milestone: v1.11 (Reader Experience & Creator Discovery)
+Status: Milestone initialized; ready for phase 28 discussion and planning
 
 ---
 
@@ -18,27 +18,21 @@ Status: v1.10 archived; v1.11 initialized for planning
 ### Active Milestone: v1.11
 
 Planning status:
-- Phase 28 defined (dynamic discovery foundation)
-- Phase 29 defined (follow + notification channels)
+- Phase 28 defined (public author profiles)
+- Phase 29 defined (core chapter reader interface)
+- Phase 30 defined (reader customization and progression sync)
 
 ---
 
 ## Requirement Status Snapshot (v1.11)
 
 Planned:
-- CONTENT-01, CONTENT-02 (Phase 28)
-- CONTENT-03, NOTI-04 (Phase 29)
+- AUTHOR-01, AUTHOR-02, AUTHOR-03 (Phase 28)
+- READER-01, READER-02 (Phase 29)
+- READER-03, READER-04, SYNC-01, SYNC-02 (Phase 30)
 
 Deferred:
-- CONTENT-04, NOTI-05, NOTI-06
-
----
-
-## Recent Commits
-
-Phase 27 execution:
-- 30d7b9d feat(27-01): add notification API endpoints, service, and tests (apps/api)
-- 2254857 feat(27-01): wire notification feature module and dashboard integration
+- CREATOR-01, READER-05, SYNC-03
 
 ---
 
