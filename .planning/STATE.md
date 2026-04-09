@@ -1,8 +1,8 @@
 # GSD Workflow State
 
-Current Phase: 28-public-author-profiles
+Current Phase: 29-core-chapter-reader-interface
 Current Milestone: v1.11 (Reader Experience & Creator Discovery)
-Status: Milestone initialized; ready for phase 28 discussion and planning
+Status: Phase 28 executed; ready for phase verification or phase 29 planning
 
 ---
 
@@ -38,9 +38,9 @@ Deferred:
 
 ## Next Steps
 
-1. Discuss and lock Phase 28 decisions:
-   - /gsd:discuss-phase 28
-2. Plan Phase 28:
-   - /gsd:plan-phase 28
-3. Execute Phase 28:
-   - /gsd:execute-phase 28
+1. Verify Phase 28 outcomes:
+   - /gsd:verify-work 28
+2. Plan Phase 29:
+   - /gsd:plan-phase 29
+3. Execute Phase 29:
+   - /gsd:execute-phase 29
