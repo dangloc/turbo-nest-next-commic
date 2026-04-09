@@ -30,7 +30,8 @@ Success Criteria:
 - Aggregate stats render accurately from backend payload.
 
 Plans:
-- [ ] 28-01-PLAN.md - build profile contracts, API query layer, and public profile UI
+- [ ] 28-01-PLAN.md - implement backend author profile contract and public stats endpoint
+- [ ] 28-02-PLAN.md - build public /author/[id] route with discovery-consistent catalog UI
 
 ### Phase 29: Core Chapter Reader Interface
 
@@ -76,7 +77,7 @@ Plans:
 
 | Phase | Requirements | Status | Planned |
 |-------|--------------|--------|---------|
-| 28 | AUTHOR-01..AUTHOR-03 | Planned | 1 plan |
+| 28 | AUTHOR-01..AUTHOR-03 | Planned | 2 plans |
 | 29 | READER-01..READER-02 | Planned | 1 plan |
 | 30 | READER-03..READER-04, SYNC-01..SYNC-02 | Planned | 1 plan |
 
