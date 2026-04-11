@@ -80,7 +80,9 @@ Success Criteria:
 - Reader resume position/history persists and restores correctly.
 
 Plans:
-- [ ] 30-01-PLAN.md - implement reader settings controls and progression sync endpoints
+- [ ] 30-01-PLAN.md - backend idempotent chapter-open sync endpoint and contracts
+- [ ] 30-02-PLAN.md - frontend chapter-open + resume progression integration
+- [ ] 30-03-PLAN.md - in-reader font size/theme preferences with persistence
 
 ## Progress
 
@@ -88,7 +90,7 @@ Plans:
 |-------|--------------|--------|-------|------------|
 | 28 | AUTHOR-01..AUTHOR-03 | Complete | 2 done | 2026-04-11 |
 | 29 | READER-01, READER-02 | Complete | 2 done | 2026-04-11 |
-| 30 | READER-03, READER-04, SYNC-01, SYNC-02 | Planned | 1 planned | - |
+| 30 | READER-03, READER-04, SYNC-01, SYNC-02 | Planned | 3 planned | - |
 
 ---
 
