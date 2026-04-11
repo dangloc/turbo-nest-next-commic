@@ -38,7 +38,7 @@ Plans:
 
 ### Phase 32: Advanced Reader Typography Personalization
 
-Status: Planned
+Status: Complete
 
 Goal: Provide richer in-reader typography controls and persistent reading presets.
 
@@ -56,8 +56,8 @@ Success Criteria:
 - Default reading experience remains usable for users with no saved preferences.
 
 Plans:
-- [ ] 32-01-PLAN.md - define typography preference contracts and persistence model
-- [ ] 32-02-PLAN.md - deliver reader UI controls and style application variants
+- [x] 32-01-PLAN.md - define typography preference contracts and persistence model
+- [x] 32-02-PLAN.md - deliver reader UI controls and style application variants
 
 ### Phase 33: Cross-Device Progression Continuity and Conflict Safety
 
@@ -87,9 +87,9 @@ Plans:
 | Phase | Requirements | Status | Plans | Completion |
 |-------|--------------|--------|-------|------------|
 | 31 | CREATOR-01, CREATOR-02 | Complete | 2/2 complete | 100% |
-| 32 | READER-05, READER-06 | Planned | 2 planned | - |
+| 32 | READER-05, READER-06 | Complete | 2/2 complete | 100% |
 | 33 | SYNC-03, SYNC-04 | Planned | 2 planned | - |
 
 ---
 
-Next Action: Execute Phase 32 using /gsd:execute-phase 32
+Next Action: Plan Phase 33 using /gsd:plan-phase 33

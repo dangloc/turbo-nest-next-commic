@@ -1462,3 +1462,53 @@ p {
   color: var(--accent-strong);
   font-size: 0.88rem;
 }
+
+.reader-content--font-family-serif {
+  font-family: Georgia, "Times New Roman", Times, serif;
+}
+
+.reader-content--font-family-sans {
+  font-family: var(--font-geist-sans), sans-serif;
+}
+
+.reader-content--font-family-mono {
+  font-family: "Courier New", Courier, monospace;
+}
+
+.reader-content--line-height-compact {
+  line-height: 1.5;
+}
+
+.reader-content--line-height-comfortable {
+  line-height: 1.75;
+}
+
+.reader-content--line-height-airy {
+  line-height: 2;
+}
+
+.reader-content--width-narrow {
+  width: 100%;
+  max-width: 56ch;
+  margin-inline: auto;
+}
+
+.reader-content--width-standard {
+  width: 100%;
+  max-width: 68ch;
+  margin-inline: auto;
+}
+
+.reader-content--width-wide {
+  width: 100%;
+  max-width: 84ch;
+  margin-inline: auto;
+}
+
+@media (max-width: 900px) {
+  .reader-content--width-narrow,
+  .reader-content--width-standard,
+  .reader-content--width-wide {
+    max-width: 100%;
+  }
+}

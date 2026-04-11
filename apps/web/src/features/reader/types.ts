@@ -61,6 +61,20 @@ export type ReaderFontSizeOption = "sm" | "md" | "lg";
 
 export type ReaderThemeMode = "light" | "dark";
 
+export type ReaderFontFamilyOption = "serif" | "sans" | "mono";
+
+export type ReaderLineHeightOption = "compact" | "comfortable" | "airy";
+
+export type ReaderContentWidthOption = "narrow" | "standard" | "wide";
+
+export interface ReaderTypographyPreferences {
+  fontSize: ReaderFontSizeOption;
+  themeMode: ReaderThemeMode;
+  fontFamily: ReaderFontFamilyOption;
+  lineHeight: ReaderLineHeightOption;
+  contentWidth: ReaderContentWidthOption;
+}
+
 export interface ReaderNavigationContext {
   novelId: number;
   chapterId: number;

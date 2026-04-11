@@ -7,16 +7,16 @@ Core Value: Deepen creator-reader relationship while improving long-form reading
 
 ### Creator Growth
 
-- [ ] CREATOR-01: Authenticated reader can follow and unfollow a public author.
+- [x] CREATOR-01: Authenticated reader can follow and unfollow a public author.
   - Acceptance: follow state toggles immediately and persists on refresh.
-- [ ] CREATOR-02: Reader can view public follower count and personal follow state on author profile pages.
+- [x] CREATOR-02: Reader can view public follower count and personal follow state on author profile pages.
   - Acceptance: follower count and follow badge/CTA are consistent between backend payload and UI rendering.
 
 ### Reader Personalization
 
-- [ ] READER-05: Reader can configure typography controls in chapter view (font family, line height, content width).
+- [x] READER-05: Reader can configure typography controls in chapter view (font family, line height, content width).
   - Acceptance: preference changes apply immediately while reading.
-- [ ] READER-06: Reader typography preferences persist across chapter navigation and browser reload.
+- [x] READER-06: Reader typography preferences persist across chapter navigation and browser reload.
   - Acceptance: previously selected typography options are rehydrated and applied on chapter open.
 
 ### Cross-Device Progression Sync
@@ -44,20 +44,20 @@ Core Value: Deepen creator-reader relationship while improving long-form reading
 
 | Requirement | Planned Phase | Status | Completed |
 |-------------|---------------|--------|-----------|
-| CREATOR-01 | Phase 31 | Planned | - |
-| CREATOR-02 | Phase 31 | Planned | - |
-| READER-05 | Phase 32 | Planned | - |
-| READER-06 | Phase 32 | Planned | - |
+| CREATOR-01 | Phase 31 | Complete | 2026-04-11 |
+| CREATOR-02 | Phase 31 | Complete | 2026-04-11 |
+| READER-05 | Phase 32 | Complete | 2026-04-11 |
+| READER-06 | Phase 32 | Complete | 2026-04-11 |
 | SYNC-03 | Phase 33 | Planned | - |
 | SYNC-04 | Phase 33 | Planned | - |
 
 Coverage:
 - v1.12 requirements: 6 total
-- Completed: 0
+- Completed: 4
 - Mapped to planned phases: 6
 - Unmapped: 0
 
 ---
 
 Requirements defined: 2026-04-11
-Last updated: 2026-04-11 after milestone initialization
+Last updated: 2026-04-11 after Phase 32 completion

@@ -19,10 +19,18 @@ import {
   purchaseReaderNovelCombo,
   upsertReadingHistory,
 } from "./api";
+import {
+  READER_TYPOGRAPHY_DEFAULTS,
+  loadReaderTypographyPreferences,
+  saveReaderTypographyPreferences,
+} from "./preferences";
 import type {
   ReaderChapter,
   ReaderChapterContext,
+  ReaderContentWidthOption,
+  ReaderFontFamilyOption,
   ReaderFontSizeOption,
+  ReaderLineHeightOption,
   ReaderNovel,
   ReaderThemeMode,
   ReadingHistoryEntry,
@@ -175,25 +183,36 @@ export function ChapterReaderView({ chapterId }: { chapterId: number }) {
   const [chapterPrice, setChapterPrice] = useState<number | null>(null);
   const [comboPrice, setComboPrice] = useState<number | null>(null);
   const [comboDiscountPct, setComboDiscountPct] = useState<number | null>(null);
-  const [fontSize, setFontSize] = useState<ReaderFontSizeOption>("md");
-  const [themeMode, setThemeMode] = useState<ReaderThemeMode>("light");
+  const [fontSize, setFontSize] = useState<ReaderFontSizeOption>(READER_TYPOGRAPHY_DEFAULTS.fontSize);
+  const [themeMode, setThemeMode] = useState<ReaderThemeMode>(READER_TYPOGRAPHY_DEFAULTS.themeMode);
+  const [fontFamily, setFontFamily] = useState<ReaderFontFamilyOption>(READER_TYPOGRAPHY_DEFAULTS.fontFamily);
+  const [lineHeight, setLineHeight] = useState<ReaderLineHeightOption>(READER_TYPOGRAPHY_DEFAULTS.lineHeight);
+  const [contentWidth, setContentWidth] = useState<ReaderContentWidthOption>(READER_TYPOGRAPHY_DEFAULTS.contentWidth);
   const syncedChapterKeysRef = useRef(new Set<string>());
 
+  function saveTypography(next: {
+    fontSize?: ReaderFontSizeOption;
+    themeMode?: ReaderThemeMode;
+    fontFamily?: ReaderFontFamilyOption;
+    lineHeight?: ReaderLineHeightOption;
+    contentWidth?: ReaderContentWidthOption;
+  }) {
+    saveReaderTypographyPreferences({
+      fontSize: next.fontSize ?? fontSize,
+      themeMode: next.themeMode ?? themeMode,
+      fontFamily: next.fontFamily ?? fontFamily,
+      lineHeight: next.lineHeight ?? lineHeight,
+      contentWidth: next.contentWidth ?? contentWidth,
+    });
+  }
+
   useEffect(() => {
-    if (typeof window === "undefined") {
-      return;
-    }
-
-    const savedFont = window.localStorage.getItem("reader:font-size");
-    const savedTheme = window.localStorage.getItem("reader:theme");
-
-    if (savedFont === "sm" || savedFont === "md" || savedFont === "lg") {
-      setFontSize(savedFont);
-    }
-
-    if (savedTheme === "light" || savedTheme === "dark") {
-      setThemeMode(savedTheme);
-    }
+    const loaded = loadReaderTypographyPreferences();
+    setFontSize(loaded.fontSize);
+    setThemeMode(loaded.themeMode);
+    setFontFamily(loaded.fontFamily);
+    setLineHeight(loaded.lineHeight);
+    setContentWidth(loaded.contentWidth);
   }, []);
 
   useEffect(() => {
@@ -443,9 +462,7 @@ export function ChapterReaderView({ chapterId }: { chapterId: number }) {
                   onChange={(event) => {
                     const next = event.target.value as ReaderFontSizeOption;
                     setFontSize(next);
-                    if (typeof window !== "undefined") {
-                      window.localStorage.setItem("reader:font-size", next);
-                    }
+                    saveTypography({ fontSize: next });
                   }}
                 >
                   <option value="sm">Compact</option>
@@ -461,13 +478,59 @@ export function ChapterReaderView({ chapterId }: { chapterId: number }) {
                   onChange={(event) => {
                     const next = event.target.value as ReaderThemeMode;
                     setThemeMode(next);
-                    if (typeof window !== "undefined") {
-                      window.localStorage.setItem("reader:theme", next);
-                    }
+                    saveTypography({ themeMode: next });
                   }}
                 >
                   <option value="light">Light</option>
                   <option value="dark">Dark</option>
+                </select>
+              </label>
+
+              <label className="reader-input-group">
+                <span>Font family</span>
+                <select
+                  value={fontFamily}
+                  onChange={(event) => {
+                    const next = event.target.value as ReaderFontFamilyOption;
+                    setFontFamily(next);
+                    saveTypography({ fontFamily: next });
+                  }}
+                >
+                  <option value="serif">Serif</option>
+                  <option value="sans">Sans</option>
+                  <option value="mono">Monospace</option>
+                </select>
+              </label>
+
+              <label className="reader-input-group">
+                <span>Line height</span>
+                <select
+                  value={lineHeight}
+                  onChange={(event) => {
+                    const next = event.target.value as ReaderLineHeightOption;
+                    setLineHeight(next);
+                    saveTypography({ lineHeight: next });
+                  }}
+                >
+                  <option value="compact">Compact</option>
+                  <option value="comfortable">Comfortable</option>
+                  <option value="airy">Airy</option>
+                </select>
+              </label>
+
+              <label className="reader-input-group">
+                <span>Content width</span>
+                <select
+                  value={contentWidth}
+                  onChange={(event) => {
+                    const next = event.target.value as ReaderContentWidthOption;
+                    setContentWidth(next);
+                    saveTypography({ contentWidth: next });
+                  }}
+                >
+                  <option value="narrow">Narrow</option>
+                  <option value="standard">Standard</option>
+                  <option value="wide">Wide</option>
                 </select>
               </label>
             </div>
@@ -517,7 +580,18 @@ export function ChapterReaderView({ chapterId }: { chapterId: number }) {
                     {purchaseMessage ? <p className="reader-muted">{purchaseMessage}</p> : null}
                   </article>
                 ) : (
-                  <article className={`reader-content reader-content--font-${fontSize} reader-content--theme-${themeMode}`}>{toDisplayText(chapter.postContent) || "No chapter content."}</article>
+                  <article
+                    className={
+                      `reader-content ` +
+                      `reader-content--font-${fontSize} ` +
+                      `reader-content--theme-${themeMode} ` +
+                      `reader-content--font-family-${fontFamily} ` +
+                      `reader-content--line-height-${lineHeight} ` +
+                      `reader-content--width-${contentWidth}`
+                    }
+                  >
+                    {toDisplayText(chapter.postContent) || "No chapter content."}
+                  </article>
                 )}
               </article>
 
