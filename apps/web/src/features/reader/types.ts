@@ -15,6 +15,19 @@ export interface ReaderChapter {
   viewCount: number | string;
 }
 
+export interface ReaderChapterTocItem {
+  id: number;
+  title: string;
+}
+
+export interface ReaderChapterContext {
+  novelId: number;
+  currentChapterId: number;
+  previousChapterId: number | null;
+  nextChapterId: number | null;
+  chapters: ReaderChapterTocItem[];
+}
+
 export interface ReadingHistoryEntry {
   id: number;
   userId: number;
@@ -38,12 +51,24 @@ export interface ReaderNavigationContext {
 export interface ReaderPurchaseAction {
   chapterId: number;
   novelId: number;
-  price: number;
 }
 
-export type ReaderPurchaseStatus = "purchased" | "already_owned" | "insufficient_balance";
+export type ReaderPurchaseStatus =
+  | "purchased"
+  | "already_owned"
+  | "free_chapter"
+  | "insufficient_balance";
 
 export function normalizeChapterId(value: string | number | null | undefined) {
+  const normalized = Number(value);
+  if (!Number.isInteger(normalized) || normalized <= 0) {
+    return null;
+  }
+
+  return normalized;
+}
+
+export function normalizeNovelId(value: string | number | null | undefined) {
   const normalized = Number(value);
   if (!Number.isInteger(normalized) || normalized <= 0) {
     return null;

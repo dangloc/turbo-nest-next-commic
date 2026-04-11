@@ -3,7 +3,7 @@ gsd_state_version: 1.0
 milestone: v1.11
 milestone_name: milestone
 current_phase: 29
-status: executing
+status: complete
 last_updated: "2026-04-11T04:08:41.662Z"
 progress:
   total_phases: 3
@@ -14,9 +14,9 @@ progress:
 
 # GSD Workflow State
 
-Current Phase: 29
+Current Phase: 29 (complete)
 Current Milestone: v1.11 (Reader Experience and Creator Discovery)
-Status: Executing Phase 29 (Wave 2 pending)
+Status: Phase 29 complete; ready for Phase 30 planning
 
 ---
 
@@ -40,10 +40,10 @@ Phases:
   - Requirements: AUTHOR-01, AUTHOR-02, AUTHOR-03 complete
   - Summaries: 28-01-SUMMARY.md, 28-02-SUMMARY.md, 28-COMPLETION-SUMMARY.md
 
-- Phase 29 Core Chapter Reader Interface (in progress)
-  - Scope: distraction-free reader layout, chapter navigation, TOC jumps
-  - Requirements: READER-01, READER-02
-  - Progress: 29-01 complete, 29-02 pending
+- Phase 29 Core Chapter Reader Interface (completed 2026-04-11)
+  - Scope: immersive reader layout, chapter navigation, TOC jumps
+  - Requirements: READER-01, READER-02 complete
+  - Summaries: 29-01-SUMMARY.md, 29-02-SUMMARY.md, 29-COMPLETION-SUMMARY.md
 
 - Phase 30 Reader Preferences and Progression Sync (scheduled after Phase 29)
   - Scope: font size and theme preferences, view count tracking, reading history sync
@@ -54,18 +54,18 @@ Phases:
 
 ## Requirement Status Snapshot (v1.11)
 
-Completed (3/9):
+Completed (5/9):
 
 - AUTHOR-01 - Public author profile page with core creator info
 - AUTHOR-02 - Author novel catalog on profile page
 - AUTHOR-03 - Aggregate creator statistics (total views, novels, latest update)
+- READER-01 - Distraction-free chapter reader UI
+- READER-02 - Chapter navigation and TOC jumps
 
 In Progress: none
 
-Planned (6/9):
+Planned (4/9):
 
-- READER-01 - Distraction-free chapter reader UI (Phase 29)
-- READER-02 - Chapter navigation and TOC (Phase 29)
 - READER-03 - Font size adjustment preference (Phase 30)
 - READER-04 - Light/dark mode toggle (Phase 30)
 - SYNC-01 - View count updates on chapter open (Phase 30)
@@ -81,19 +81,21 @@ Deferred:
 
 ## Recent Completion
 
-### Phase 28 Wrap-up (2026-04-11)
+### Phase 29 Wrap-up (2026-04-11)
 
-Backend and frontend deliverables for public author profiles are implemented, verified, and documented.
+Backend and frontend deliverables for immersive reader interface are implemented, verified, and documented.
 
 Verification:
 
-- npm --prefix apps/api run test -- reader-author-profile
+- npm --prefix apps/api run test -- --runInBand src/reader/__tests__/reader-chapter-navigation.spec.ts src/reader/__tests__/reader-chapter.spec.ts
+- npm --prefix apps/api run check-types
 - npm --prefix apps/web run check-types
+- npm --prefix apps/web run lint -- src/features/reader/reader.tsx src/features/reader/api.ts src/features/reader/types.ts app/reader/chapters/[chapterId]/page.tsx
 
 ---
 
 ## Next Step
 
-Execute 29-02 to complete Phase 29 UI delivery.
+Plan and execute Phase 30 (reader preferences + progression sync).
 
 Last updated: 2026-04-11

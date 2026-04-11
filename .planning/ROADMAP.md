@@ -2,7 +2,7 @@
 
 Milestone: v1.11 - Reader Experience and Creator Discovery
 Created: 2026-04-09
-Status: Phase 28 complete; Phase 29 planning in progress
+Status: Phase 29 complete; Phase 30 planned
 
 ## Milestones
 
@@ -38,7 +38,7 @@ Plans Completed:
 
 ### Phase 29: Core Chapter Reader Interface
 
-Status: Planning (Ready for phase discussion)
+Status: 100% Complete (Shipped 2026-04-11)
 
 Goal: Ship immersive chapter reading UI with stable chapter navigation controls.
 
@@ -57,7 +57,8 @@ Success Criteria:
 
 Plans:
 - [x] 29-01-PLAN.md - add backend chapter context endpoint for TOC and boundary navigation
-- [ ] 29-02-PLAN.md - implement immersive reader UI with prev/next and TOC jumps
+- [x] 29-02-PLAN.md - implement immersive reader UI with prev/next and TOC jumps
+- [x] 29-COMPLETION-SUMMARY.md - full phase completion report
 
 ### Phase 30: Reader Preferences and Progression Sync
 
@@ -86,9 +87,9 @@ Plans:
 | Phase | Requirements | Status | Plans | Completion |
 |-------|--------------|--------|-------|------------|
 | 28 | AUTHOR-01..AUTHOR-03 | Complete | 2 done | 2026-04-11 |
-| 29 | READER-01, READER-02 | Executing | 2 plans (1 done) | - |
+| 29 | READER-01, READER-02 | Complete | 2 done | 2026-04-11 |
 | 30 | READER-03, READER-04, SYNC-01, SYNC-02 | Planned | 1 planned | - |
 
 ---
 
-Next Action: Phase 29 discussion and planning
+Next Action: Plan and execute Phase 30 reader preferences and progression sync

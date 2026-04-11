@@ -16,10 +16,10 @@ Core Value: Connect readers to creators while delivering a focused chapter readi
 
 ### Reader Interface
 
-- [ ] READER-01: Reader can open a distraction-free chapter reading UI optimized for long-form text.
-  - Scheduled: Phase 29
-- [ ] READER-02: Reader can navigate chapters with next/previous controls and table-of-contents jumps.
-  - Scheduled: Phase 29
+- [x] READER-01: Reader can open a distraction-free chapter reading UI optimized for long-form text.
+  - Completed: 2026-04-11 (Phase 29)
+- [x] READER-02: Reader can navigate chapters with next/previous controls and table-of-contents jumps.
+  - Completed: 2026-04-11 (Phase 29)
 
 ### Reader Customization
 
@@ -56,8 +56,8 @@ Core Value: Connect readers to creators while delivering a focused chapter readi
 | AUTHOR-01 | Phase 28 | Done | 2026-04-11 |
 | AUTHOR-02 | Phase 28 | Done | 2026-04-11 |
 | AUTHOR-03 | Phase 28 | Done | 2026-04-11 |
-| READER-01 | Phase 29 | Planned | - |
-| READER-02 | Phase 29 | Planned | - |
+| READER-01 | Phase 29 | Done | 2026-04-11 |
+| READER-02 | Phase 29 | Done | 2026-04-11 |
 | READER-03 | Phase 30 | Planned | - |
 | READER-04 | Phase 30 | Planned | - |
 | SYNC-01 | Phase 30 | Planned | - |
@@ -65,11 +65,11 @@ Core Value: Connect readers to creators while delivering a focused chapter readi
 
 Coverage:
 - v1.11 requirements: 9 total
-- Completed: 3 (AUTHOR-01, AUTHOR-02, AUTHOR-03)
+- Completed: 5 (AUTHOR-01, AUTHOR-02, AUTHOR-03, READER-01, READER-02)
 - Mapped to planned phases: 9
 - Unmapped: 0
 
 ---
 
 Requirements defined: 2026-04-09
-Last updated: 2026-04-11 after Phase 28 completion and wrap-up
+Last updated: 2026-04-11 after Phase 29 completion

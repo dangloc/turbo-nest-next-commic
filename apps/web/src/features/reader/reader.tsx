@@ -8,19 +8,30 @@ import {
   buildChapterHref,
   buildNovelHref,
   fetchChapterById,
+  fetchChapterContextById,
+  fetchFirstChapterByNovelId,
   fetchNovelById,
+  fetchReaderNovelPricing,
   fetchReadingHistory,
   normalizeChapterId,
   purchaseReaderChapter,
+  purchaseReaderNovelCombo,
   upsertReadingHistory,
 } from "./api";
-import type { ReaderChapter, ReaderNovel, ReadingHistoryEntry } from "./types";
+import type {
+  ReaderChapter,
+  ReaderChapterContext,
+  ReaderNovel,
+  ReadingHistoryEntry,
+} from "./types";
 
 function toDisplayText(content: string) {
   return content.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
 }
 
-const DEFAULT_CHAPTER_PRICE = 15000;
+function formatVnd(value: number | null) {
+  return new Intl.NumberFormat("vi-VN").format(value ?? 0);
+}
 
 export function NovelDetailView({ novelId }: { novelId: number }) {
   const [novel, setNovel] = useState<ReaderNovel | null>(null);
@@ -45,15 +56,25 @@ export function NovelDetailView({ novelId }: { novelId: number }) {
 
       setNovel(novelResult.data);
 
+      let preferredChapterId: number | null = null;
+      const firstChapterResult = await fetchFirstChapterByNovelId(novelId);
+      if (firstChapterResult.ok && firstChapterResult.data.chapterId) {
+        preferredChapterId = firstChapterResult.data.chapterId;
+      }
+
       if (token) {
         const historyResult = await fetchReadingHistory(token, novelId);
         if (historyResult.ok) {
           setHistory(historyResult.data);
           const resume = historyResult.data[0]?.chapterId;
           if (resume) {
-            setChapterInput(String(resume));
+            preferredChapterId = resume;
           }
         }
+      }
+
+      if (preferredChapterId) {
+        setChapterInput(String(preferredChapterId));
       }
 
       setLoading(false);
@@ -138,6 +159,7 @@ export function NovelDetailView({ novelId }: { novelId: number }) {
 
 export function ChapterReaderView({ chapterId }: { chapterId: number }) {
   const [chapter, setChapter] = useState<ReaderChapter | null>(null);
+  const [chapterContext, setChapterContext] = useState<ReaderChapterContext | null>(null);
   const [history, setHistory] = useState<ReadingHistoryEntry[]>([]);
   const [progress, setProgress] = useState(10);
   const [loading, setLoading] = useState(true);
@@ -145,10 +167,11 @@ export function ChapterReaderView({ chapterId }: { chapterId: number }) {
   const [saveMessage, setSaveMessage] = useState<string | null>(null);
   const [purchaseBusy, setPurchaseBusy] = useState(false);
   const [purchaseMessage, setPurchaseMessage] = useState<string | null>(null);
-  const [purchasePrice, setPurchasePrice] = useState(String(DEFAULT_CHAPTER_PRICE));
   const [isUnlocked, setIsUnlocked] = useState(chapterId === 1);
-
-  const requiresPurchase = chapterId > 1;
+  const [requiresPurchase, setRequiresPurchase] = useState(chapterId > 1);
+  const [chapterPrice, setChapterPrice] = useState<number | null>(null);
+  const [comboPrice, setComboPrice] = useState<number | null>(null);
+  const [comboDiscountPct, setComboDiscountPct] = useState<number | null>(null);
 
   useEffect(() => {
     const token = getSessionToken() ?? undefined;
@@ -157,7 +180,12 @@ export function ChapterReaderView({ chapterId }: { chapterId: number }) {
     setError(null);
     setSaveMessage(null);
     setPurchaseMessage(null);
+    setChapterContext(null);
     setIsUnlocked(chapterId === 1);
+    setRequiresPurchase(chapterId > 1);
+    setChapterPrice(null);
+    setComboPrice(null);
+    setComboDiscountPct(null);
 
     void (async () => {
       const chapterResult = await fetchChapterById(chapterId);
@@ -169,7 +197,29 @@ export function ChapterReaderView({ chapterId }: { chapterId: number }) {
 
       setChapter(chapterResult.data);
 
+      const contextResult = await fetchChapterContextById(
+        chapterId,
+        chapterResult.data.novelId,
+      );
+      if (contextResult.ok) {
+        setChapterContext(contextResult.data);
+      }
+
       if (token) {
+        const pricingResult = await fetchReaderNovelPricing(chapterResult.data.novelId, token);
+        if (pricingResult.ok) {
+          const chapterPricing = pricingResult.data.chapters.find((item) => item.id === chapterId);
+          if (chapterPricing) {
+            setRequiresPurchase(chapterPricing.isLocked);
+            setChapterPrice(chapterPricing.effectivePrice);
+            if (!chapterPricing.isLocked) {
+              setIsUnlocked(true);
+            }
+          }
+          setComboPrice(pricingResult.data.combo.discountedTotalPrice);
+          setComboDiscountPct(pricingResult.data.settings.comboDiscountPct);
+        }
+
         const historyResult = await fetchReadingHistory(token, chapterResult.data.novelId);
         if (historyResult.ok) {
           setHistory(historyResult.data);
@@ -223,6 +273,51 @@ export function ChapterReaderView({ chapterId }: { chapterId: number }) {
     setSaveMessage("Progress saved.");
   }
 
+  async function purchaseComboAccess() {
+    const token = getSessionToken() ?? undefined;
+    if (!token) {
+      setPurchaseMessage("Sign in before purchasing combo access.");
+      return;
+    }
+
+    if (!chapter) {
+      setPurchaseMessage("Chapter details are unavailable.");
+      return;
+    }
+
+    const confirmed = window.confirm(
+      `Confirm combo purchase for novel #${chapter.novelId} at ${formatVnd(comboPrice)} VND?`,
+    );
+    if (!confirmed) {
+      return;
+    }
+
+    setPurchaseBusy(true);
+    setPurchaseMessage(null);
+
+    const comboResult = await purchaseReaderNovelCombo(chapter.novelId, token);
+
+    setPurchaseBusy(false);
+
+    if (!comboResult.ok) {
+      setPurchaseMessage(comboResult.error.message);
+      return;
+    }
+
+    if (comboResult.data.status === "insufficient_balance") {
+      setIsUnlocked(false);
+      setPurchaseMessage("Insufficient deposited balance. Top up your wallet and try again.");
+      return;
+    }
+
+    setIsUnlocked(true);
+    setPurchaseMessage(
+      comboResult.data.status === "already_owned"
+        ? "All locked chapters are already unlocked for your account."
+        : "Combo purchase successful. Locked chapters unlocked.",
+    );
+  }
+
   async function purchaseChapterAccess() {
     const token = getSessionToken() ?? undefined;
     if (!token) {
@@ -235,14 +330,8 @@ export function ChapterReaderView({ chapterId }: { chapterId: number }) {
       return;
     }
 
-    const price = Number(purchasePrice);
-    if (!Number.isFinite(price) || price <= 0) {
-      setPurchaseMessage("Enter a valid purchase amount.");
-      return;
-    }
-
     const confirmed = window.confirm(
-      `Confirm purchase for chapter #${chapter.id} at ${new Intl.NumberFormat("vi-VN").format(price)} VND?`,
+      `Confirm purchase for chapter #${chapter.id} at ${formatVnd(chapterPrice)} VND?`,
     );
     if (!confirmed) {
       return;
@@ -255,7 +344,6 @@ export function ChapterReaderView({ chapterId }: { chapterId: number }) {
       {
         chapterId: chapter.id,
         novelId: chapter.novelId,
-        price,
       },
       token,
     );
@@ -291,17 +379,21 @@ export function ChapterReaderView({ chapterId }: { chapterId: number }) {
     }
   }
 
-  const previousChapter = chapterId > 1 ? buildChapterHref(chapterId - 1, chapter?.novelId) : null;
-  const nextChapter = buildChapterHref(chapterId + 1, chapter?.novelId);
+  const previousChapterHref = chapterContext?.previousChapterId
+    ? buildChapterHref(chapterContext.previousChapterId, chapterContext.novelId)
+    : null;
+  const nextChapterHref = chapterContext?.nextChapterId
+    ? buildChapterHref(chapterContext.nextChapterId, chapterContext.novelId)
+    : null;
 
   return (
-    <main className="reader-shell">
+    <main className="reader-shell" style={{ width: "min(1200px, calc(100% - 32px))" }}>
       {loading ? <p className="discovery-state">Loading chapter...</p> : null}
       {error ? <p className="discovery-state discovery-state--error">{error}</p> : null}
 
       {chapter ? (
         <>
-          <section className="reader-card">
+          <section className="reader-card" style={{ gap: 16 }}>
             <div className="reader-card__header">
               <span className="home-kicker">Chapter Reader</span>
               <h1>{chapter.title}</h1>
@@ -310,60 +402,104 @@ export function ChapterReaderView({ chapterId }: { chapterId: number }) {
               </p>
             </div>
 
-            {requiresPurchase && !isUnlocked ? (
-              <article className="reader-locked-box">
-                <h2>Chapter locked</h2>
-                <p>
-                  Purchase this chapter to unlock full reading access. If your deposited balance is low,
-                  top up from wallet and retry.
-                </p>
+            <div style={{ display: "grid", gap: 16, gridTemplateColumns: "minmax(0, 2fr) minmax(240px, 1fr)", alignItems: "start" }}>
+              <article style={{ minWidth: 0 }}>
+                {requiresPurchase && !isUnlocked ? (
+                  <article className="reader-locked-box">
+                    <h2>Chapter locked</h2>
+                    <p>
+                      Purchase this chapter to unlock full reading access. If your deposited balance is low,
+                      top up from wallet and retry.
+                    </p>
 
-                <label className="reader-input-group">
-                  <span>Purchase price (VND)</span>
-                  <input
-                    value={purchasePrice}
-                    onChange={(event) => setPurchasePrice(event.target.value)}
-                    inputMode="numeric"
-                  />
-                </label>
+                    <p className="reader-muted">Price: {formatVnd(chapterPrice)} VND</p>
+                    {comboPrice !== null && comboPrice > 0 ? (
+                      <p className="reader-muted">
+                        Combo: {formatVnd(comboPrice)} VND
+                        {comboDiscountPct !== null ? " (" + comboDiscountPct + "% off)" : ""}
+                      </p>
+                    ) : null}
 
-                <div className="reader-actions">
-                  <button
-                    className="action-primary"
-                    type="button"
-                    disabled={purchaseBusy}
-                    onClick={purchaseChapterAccess}
-                  >
-                    {purchaseBusy ? "Processing..." : "Purchase and unlock"}
-                  </button>
-                  <Link className="action-secondary" href="/dashboard?section=wallet">
-                    Top up wallet
-                  </Link>
-                </div>
+                    <div className="reader-actions">
+                      <button
+                        className="action-primary"
+                        type="button"
+                        disabled={purchaseBusy}
+                        onClick={purchaseChapterAccess}
+                      >
+                        {purchaseBusy ? "Processing..." : "Purchase chapter"}
+                      </button>
+                      {comboPrice !== null && comboPrice > 0 ? (
+                        <button
+                          className="action-secondary"
+                          type="button"
+                          disabled={purchaseBusy}
+                          onClick={purchaseComboAccess}
+                        >
+                          Purchase combo
+                        </button>
+                      ) : null}
+                      <Link className="action-secondary" href="/dashboard?section=wallet">
+                        Top up wallet
+                      </Link>
+                    </div>
 
-                {purchaseMessage ? <p className="reader-muted">{purchaseMessage}</p> : null}
+                    {purchaseMessage ? <p className="reader-muted">{purchaseMessage}</p> : null}
+                  </article>
+                ) : (
+                  <article className="reader-content">{toDisplayText(chapter.postContent) || "No chapter content."}</article>
+                )}
               </article>
-            ) : (
-              <article className="reader-content">{toDisplayText(chapter.postContent) || "No chapter content."}</article>
-            )}
+
+              <aside aria-label="Chapter table of contents" style={{ border: "1px solid var(--line)", borderRadius: 12, background: "#fff", padding: 12, display: "grid", gap: 10 }}>
+                <h2>Table of contents</h2>
+                {chapterContext?.chapters.length ? (
+                  <ul style={{ listStyle: "none", display: "grid", gap: 8 }}>
+                    {chapterContext.chapters.map((item) => (
+                      <li key={item.id}>
+                        <Link
+                          className="reader-history-link"
+                          style={item.id === chapter.id ? { textDecoration: "underline" } : undefined}
+                          href={buildChapterHref(item.id, chapterContext.novelId)}
+                        >
+                          {item.title}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="reader-muted">Loading chapter list...</p>
+                )}
+              </aside>
+            </div>
 
             <div className="reader-actions">
-              {previousChapter ? (
-                <Link className="action-secondary" href={previousChapter}>
+              {previousChapterHref ? (
+                <Link className="action-secondary" href={previousChapterHref}>
                   Previous chapter
                 </Link>
-              ) : null}
+              ) : (
+                <button className="action-secondary" type="button" disabled>
+                  First chapter
+                </button>
+              )}
+
               <Link className="action-secondary" href={buildNovelHref(chapter.novelId)}>
                 Back to novel
               </Link>
+
               {requiresPurchase && !isUnlocked ? (
                 <button className="action-secondary" type="button" disabled>
                   Next chapter locked
                 </button>
-              ) : (
-                <Link className="action-secondary" href={nextChapter}>
+              ) : nextChapterHref ? (
+                <Link className="action-secondary" href={nextChapterHref}>
                   Next chapter
                 </Link>
+              ) : (
+                <button className="action-secondary" type="button" disabled>
+                  Last chapter
+                </button>
               )}
             </div>
           </section>
