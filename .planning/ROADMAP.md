@@ -92,4 +92,4 @@ Plans:
 
 ---
 
-Next Action: Plan Phase 33 using /gsd:plan-phase 33
+Next Action: Execute Phase 33 using /gsd:execute-phase 33
