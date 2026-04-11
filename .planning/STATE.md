@@ -1,22 +1,22 @@
 ---
 gsd_state_version: 1.0
 milestone: v1.11
-milestone_name: milestone
-current_phase: 29
+milestone_name: Reader Experience and Creator Discovery
+current_phase: 30
 status: complete
-last_updated: "2026-04-11T04:08:41.662Z"
+last_updated: "2026-04-11T05:05:00.000Z"
 progress:
   total_phases: 3
-  completed_phases: 1
-  total_plans: 4
-  completed_plans: 3
+  completed_phases: 3
+  total_plans: 7
+  completed_plans: 7
 ---
 
 # GSD Workflow State
 
-Current Phase: 29 (complete)
+Current Phase: 30 (complete)
 Current Milestone: v1.11 (Reader Experience and Creator Discovery)
-Status: Phase 29 complete; ready for Phase 30 planning
+Status: Phase 30 complete; milestone execution complete
 
 ---
 
@@ -35,67 +35,60 @@ Status: Phase 29 complete; ready for Phase 30 planning
 Phases:
 
 - Phase 28 Public Author Profiles (completed 2026-04-11)
-  - Backend: public author profile endpoint with aggregate stats and strict ID parsing
-  - Frontend: public /author/[id] route with server-side preflight 404 handling
   - Requirements: AUTHOR-01, AUTHOR-02, AUTHOR-03 complete
   - Summaries: 28-01-SUMMARY.md, 28-02-SUMMARY.md, 28-COMPLETION-SUMMARY.md
 
 - Phase 29 Core Chapter Reader Interface (completed 2026-04-11)
-  - Scope: immersive reader layout, chapter navigation, TOC jumps
   - Requirements: READER-01, READER-02 complete
   - Summaries: 29-01-SUMMARY.md, 29-02-SUMMARY.md, 29-COMPLETION-SUMMARY.md
 
-- Phase 30 Reader Preferences and Progression Sync (scheduled after Phase 29)
-  - Scope: font size and theme preferences, view count tracking, reading history sync
-  - Requirements: READER-03, READER-04, SYNC-01, SYNC-02
-  - Plans: to be created
+- Phase 30 Reader Preferences and Progression Sync (completed 2026-04-11)
+  - Requirements: READER-03, READER-04, SYNC-01, SYNC-02 complete
+  - Summaries: 30-01-SUMMARY.md, 30-02-SUMMARY.md, 30-03-SUMMARY.md
 
 ---
 
 ## Requirement Status Snapshot (v1.11)
 
-Completed (5/9):
+Completed (9/9):
 
-- AUTHOR-01 - Public author profile page with core creator info
-- AUTHOR-02 - Author novel catalog on profile page
-- AUTHOR-03 - Aggregate creator statistics (total views, novels, latest update)
-- READER-01 - Distraction-free chapter reader UI
-- READER-02 - Chapter navigation and TOC jumps
+- AUTHOR-01
+- AUTHOR-02
+- AUTHOR-03
+- READER-01
+- READER-02
+- READER-03
+- READER-04
+- SYNC-01
+- SYNC-02
 
 In Progress: none
 
-Planned (4/9):
-
-- READER-03 - Font size adjustment preference (Phase 30)
-- READER-04 - Light/dark mode toggle (Phase 30)
-- SYNC-01 - View count updates on chapter open (Phase 30)
-- SYNC-02 - Reading history and resume sync (Phase 30)
-
 Deferred:
 
-- CREATOR-01 - Author follower counts and social graph
-- READER-05 - Advanced typography controls
-- SYNC-03 - Cross-device real-time sync
+- CREATOR-01
+- READER-05
+- SYNC-03
 
 ---
 
 ## Recent Completion
 
-### Phase 29 Wrap-up (2026-04-11)
+### Phase 30 Wrap-up (2026-04-11)
 
-Backend and frontend deliverables for immersive reader interface are implemented, verified, and documented.
+Delivered idempotent backend chapter-open progression sync plus frontend reader preference controls (font size and light/dark mode) with local persistence and resume-aware chapter initialization.
 
 Verification:
 
-- npm --prefix apps/api run test -- --runInBand src/reader/__tests__/reader-chapter-navigation.spec.ts src/reader/__tests__/reader-chapter.spec.ts
+- npm --prefix apps/api run test -- --runInBand src/reader/__tests__/reader-progression-sync.spec.ts src/reader/__tests__/reader-personal.spec.ts
 - npm --prefix apps/api run check-types
 - npm --prefix apps/web run check-types
-- npm --prefix apps/web run lint -- src/features/reader/reader.tsx src/features/reader/api.ts src/features/reader/types.ts app/reader/chapters/[chapterId]/page.tsx
+- npm --prefix apps/web run lint -- --no-warn-ignored src/features/reader/reader.tsx src/features/reader/api.ts src/features/reader/types.ts app/globals.css
 
 ---
 
 ## Next Step
 
-Plan and execute Phase 30 (reader preferences + progression sync).
+Start planning next milestone scope (v1.12).
 
 Last updated: 2026-04-11

@@ -2,7 +2,7 @@
 
 Milestone: v1.11 - Reader Experience and Creator Discovery
 Created: 2026-04-09
-Status: Phase 29 complete; Phase 30 planned
+Status: Phase 30 complete; milestone v1.11 delivered
 
 ## Milestones
 
@@ -62,7 +62,7 @@ Plans:
 
 ### Phase 30: Reader Preferences and Progression Sync
 
-Status: Planned (Scheduled after Phase 29)
+Status: 100% Complete (Shipped 2026-04-11)
 
 Goal: Add essential reading preferences and safe backend progression synchronization.
 
@@ -79,10 +79,11 @@ Success Criteria:
 - Backend receives idempotent chapter view updates.
 - Reader resume position/history persists and restores correctly.
 
-Plans:
-- [ ] 30-01-PLAN.md - backend idempotent chapter-open sync endpoint and contracts
-- [ ] 30-02-PLAN.md - frontend chapter-open + resume progression integration
-- [ ] 30-03-PLAN.md - in-reader font size/theme preferences with persistence
+Plans Completed:
+- [x] 30-01-SUMMARY.md - backend idempotent chapter-open sync endpoint and contracts
+- [x] 30-02-SUMMARY.md - frontend chapter-open and resume progression integration
+- [x] 30-03-SUMMARY.md - in-reader font size and theme preferences with persistence
+- [x] 30-COMPLETION-SUMMARY.md - full phase completion report
 
 ## Progress
 
@@ -90,8 +91,8 @@ Plans:
 |-------|--------------|--------|-------|------------|
 | 28 | AUTHOR-01..AUTHOR-03 | Complete | 2 done | 2026-04-11 |
 | 29 | READER-01, READER-02 | Complete | 2 done | 2026-04-11 |
-| 30 | READER-03, READER-04, SYNC-01, SYNC-02 | Planned | 3 planned | - |
+| 30 | READER-03, READER-04, SYNC-01, SYNC-02 | Complete | 3 done | 2026-04-11 |
 
 ---
 
-Next Action: Plan and execute Phase 30 reader preferences and progression sync
+Next Action: Start next milestone planning (v1.12)

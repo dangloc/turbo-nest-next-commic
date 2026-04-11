@@ -23,17 +23,17 @@ Core Value: Connect readers to creators while delivering a focused chapter readi
 
 ### Reader Customization
 
-- [ ] READER-03: Reader can adjust font size in-reader and preference applies immediately.
-  - Scheduled: Phase 30
-- [ ] READER-04: Reader can toggle light/dark reading mode in-reader and preference applies immediately.
-  - Scheduled: Phase 30
+- [x] READER-03: Reader can adjust font size in-reader and preference applies immediately.
+  - Completed: 2026-04-11 (Phase 30)
+- [x] READER-04: Reader can toggle light/dark reading mode in-reader and preference applies immediately.
+  - Completed: 2026-04-11 (Phase 30)
 
 ### Progression Sync
 
-- [ ] SYNC-01: Reader chapter opens safely trigger backend view count updates.
-  - Scheduled: Phase 30
-- [ ] SYNC-02: Reader position and history update so authenticated users can resume without losing place.
-  - Scheduled: Phase 30
+- [x] SYNC-01: Reader chapter opens safely trigger backend view count updates.
+  - Completed: 2026-04-11 (Phase 30)
+- [x] SYNC-02: Reader position and history update so authenticated users can resume without losing place.
+  - Completed: 2026-04-11 (Phase 30)
 
 ## Future Requirements (Deferred)
 
@@ -58,18 +58,18 @@ Core Value: Connect readers to creators while delivering a focused chapter readi
 | AUTHOR-03 | Phase 28 | Done | 2026-04-11 |
 | READER-01 | Phase 29 | Done | 2026-04-11 |
 | READER-02 | Phase 29 | Done | 2026-04-11 |
-| READER-03 | Phase 30 | Planned | - |
-| READER-04 | Phase 30 | Planned | - |
-| SYNC-01 | Phase 30 | Planned | - |
-| SYNC-02 | Phase 30 | Planned | - |
+| READER-03 | Phase 30 | Done | 2026-04-11 |
+| READER-04 | Phase 30 | Done | 2026-04-11 |
+| SYNC-01 | Phase 30 | Done | 2026-04-11 |
+| SYNC-02 | Phase 30 | Done | 2026-04-11 |
 
 Coverage:
 - v1.11 requirements: 9 total
-- Completed: 5 (AUTHOR-01, AUTHOR-02, AUTHOR-03, READER-01, READER-02)
+- Completed: 9 (AUTHOR-01, AUTHOR-02, AUTHOR-03, READER-01, READER-02, READER-03, READER-04, SYNC-01, SYNC-02)
 - Mapped to planned phases: 9
 - Unmapped: 0
 
 ---
 
 Requirements defined: 2026-04-09
-Last updated: 2026-04-11 after Phase 29 completion
+Last updated: 2026-04-11 after Phase 30 completion
