@@ -16,12 +16,14 @@ v1.11 shipped and archived:
 - Reader progression sync with authenticated idempotent chapter-open tracking and resume continuity.
 - In-reader preference controls for persisted font size and light/dark theme.
 
-## Next Milestone Goals
+## Current Milestone: v1.12 Creator Growth and Reader Personalization
 
-v1.12 planning is not started yet. Recommended kickoff:
-- Run `/gsd:new-milestone`.
-- Define new REQUIREMENTS.md scope based on v1.11 outcomes.
-- Create next roadmap phase set with explicit requirement mapping.
+Goal: Increase creator retention and reader session quality by introducing social following, richer reading customization, and cross-device resume continuity.
+
+Target features:
+- Author follow graph and follower visibility on public author surfaces.
+- Advanced typography controls (font family, line height, content width) for long-form reading comfort.
+- Cross-device progression sync so authenticated readers can resume from their latest position across devices.
 
 ## Shipped Milestones
 
@@ -37,7 +39,7 @@ v1.12 planning is not started yet. Recommended kickoff:
 - ✅ v1.10: Notification Center & Dynamic Content (notification inbox and preferences).
 - ✅ v1.11: Reader Experience & Creator Discovery (author profiles, chapter reader, progression sync, preferences).
 
-## Key Decisions (v1.9-v1.11)
+## Key Decisions (v1.9-v1.12)
 
 | Decision | Outcome | Phase |
 |----------|---------|-------|
@@ -47,6 +49,8 @@ v1.12 planning is not started yet. Recommended kickoff:
 | Deterministic purchase status mapping (including insufficient_balance) | ✓ Clear error paths in UX; prevents silent failures | 25 |
 | Notification inbox + preference controls inside dashboard section model | ✓ Reuses established patterns and keeps account actions centralized | 27 |
 | Reader progression updates must be idempotent and session-safe | ✓ Implemented via authenticated chapter-open sync contract and guarded client integration | 30 |
+| Follow graph must remain public-read but authenticated-write | — Planned in v1.12 | 31 |
+| Cross-device resume sync must be conflict-safe and deterministic | — Planned in v1.12 | 33 |
 
 ## Evolution
 
@@ -68,4 +72,4 @@ After each milestone:
 
 ---
 
-*Last updated: 2026-04-11 after v1.11 milestone completion*
+*Last updated: 2026-04-11 after v1.12 milestone initialization*
