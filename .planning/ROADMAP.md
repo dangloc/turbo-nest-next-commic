@@ -92,4 +92,4 @@ Plans:
 
 ---
 
-Next Action: Plan and execute Phase 32 (Advanced Reader Typography Personalization)
+Next Action: Execute Phase 32 using /gsd:execute-phase 32
