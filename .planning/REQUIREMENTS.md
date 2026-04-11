@@ -21,9 +21,9 @@ Core Value: Deepen creator-reader relationship while improving long-form reading
 
 ### Cross-Device Progression Sync
 
-- [ ] SYNC-03: Authenticated reader can resume chapter progress on a second device/session from their latest synced position.
+- [x] SYNC-03: Authenticated reader can resume chapter progress on a second device/session from their latest synced position.
   - Acceptance: latest server progression is visible when opening the same novel on another device.
-- [ ] SYNC-04: Progression merge remains conflict-safe when multiple sessions update nearby progress values.
+- [x] SYNC-04: Progression merge remains conflict-safe when multiple sessions update nearby progress values.
   - Acceptance: deterministic last-write policy is applied and documented in sync response metadata.
 
 ## Future Requirements (Deferred)
@@ -48,16 +48,16 @@ Core Value: Deepen creator-reader relationship while improving long-form reading
 | CREATOR-02 | Phase 31 | Complete | 2026-04-11 |
 | READER-05 | Phase 32 | Complete | 2026-04-11 |
 | READER-06 | Phase 32 | Complete | 2026-04-11 |
-| SYNC-03 | Phase 33 | Planned | - |
-| SYNC-04 | Phase 33 | Planned | - |
+| SYNC-03 | Phase 33 | Complete | 2026-04-11 |
+| SYNC-04 | Phase 33 | Complete | 2026-04-11 |
 
 Coverage:
 - v1.12 requirements: 6 total
-- Completed: 4
+- Completed: 6
 - Mapped to planned phases: 6
 - Unmapped: 0
 
 ---
 
 Requirements defined: 2026-04-11
-Last updated: 2026-04-11 after Phase 32 completion
+Last updated: 2026-04-11 after Phase 33 completion

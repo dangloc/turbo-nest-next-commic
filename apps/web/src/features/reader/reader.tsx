@@ -176,6 +176,7 @@ export function ChapterReaderView({ chapterId }: { chapterId: number }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [saveMessage, setSaveMessage] = useState<string | null>(null);
+  const [syncStatus, setSyncStatus] = useState<string | null>(null);
   const [purchaseBusy, setPurchaseBusy] = useState(false);
   const [purchaseMessage, setPurchaseMessage] = useState<string | null>(null);
   const [isUnlocked, setIsUnlocked] = useState(chapterId === 1);
@@ -221,6 +222,7 @@ export function ChapterReaderView({ chapterId }: { chapterId: number }) {
     setLoading(true);
     setError(null);
     setSaveMessage(null);
+    setSyncStatus(null);
     setPurchaseMessage(null);
     setChapterContext(null);
     setIsUnlocked(chapterId === 1);
@@ -263,11 +265,14 @@ export function ChapterReaderView({ chapterId }: { chapterId: number }) {
         }
 
         const historyResult = await fetchReadingHistory(token, chapterResult.data.novelId);
+        const localHistoryEntry = historyResult.ok
+          ? historyResult.data.find((item) => item.chapterId === chapterId)
+          : undefined;
+
         if (historyResult.ok) {
           setHistory(historyResult.data);
-          const current = historyResult.data.find((item) => item.chapterId === chapterId);
-          if (current) {
-            setProgress(current.progressPercent);
+          if (localHistoryEntry) {
+            setProgress(localHistoryEntry.progressPercent);
             setIsUnlocked(true);
           }
         }
@@ -279,15 +284,22 @@ export function ChapterReaderView({ chapterId }: { chapterId: number }) {
             {
               novelId: chapterResult.data.novelId,
               chapterId,
-              progressPercent: historyResult.ok
-                ? (historyResult.data.find((item) => item.chapterId === chapterId)?.progressPercent ?? 5)
-                : 5,
+              progressPercent: localHistoryEntry?.progressPercent ?? 5,
+              clientUpdatedAt: localHistoryEntry?.lastReadAt ?? new Date().toISOString(),
             },
             token,
           );
 
           if (!syncResult.ok) {
             syncedChapterKeysRef.current.delete(syncKey);
+            setSyncStatus("Unable to verify latest progress across devices.");
+          } else {
+            setProgress(syncResult.data.effectiveProgressPercent);
+            if (syncResult.data.conflictDetected && !syncResult.data.serverAcceptedProgress) {
+              setSyncStatus("Server kept a newer checkpoint from another session.");
+            } else if (!syncResult.data.firstOpen) {
+              setSyncStatus("Progress synchronized across devices.");
+            }
           }
         }
       }
@@ -665,6 +677,16 @@ export function ChapterReaderView({ chapterId }: { chapterId: number }) {
               </button>
             </div>
             {saveMessage ? <p className="reader-muted">{saveMessage}</p> : null}
+            {syncStatus ? (
+              <p
+                className={
+                  "reader-sync-status " +
+                  (syncStatus.includes("kept") ? "reader-sync-status--warning" : "reader-sync-status--ok")
+                }
+              >
+                {syncStatus}
+              </p>
+            ) : null}
 
             {history.length > 0 ? (
               <ul className="reader-history-list">

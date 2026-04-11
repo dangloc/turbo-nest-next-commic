@@ -47,13 +47,25 @@ export interface ReaderChapterOpenInput {
   chapterId: number;
   novelId?: number;
   progressPercent?: number;
+  clientUpdatedAt?: string;
 }
+
+export type ReaderSyncPolicy =
+  | "first-open-create"
+  | "last-write-accept-client"
+  | "last-write-keep-server";
 
 export interface ReaderChapterOpenResult {
   chapterId: number;
   novelId: number;
   firstOpen: boolean;
   progressPercent: number;
+  effectiveProgressPercent: number;
+  serverAcceptedProgress: boolean;
+  conflictDetected: boolean;
+  appliedPolicy: ReaderSyncPolicy;
+  clientUpdatedAt: string | null;
+  serverLastReadAt: string;
   lastReadAt: string;
 }
 

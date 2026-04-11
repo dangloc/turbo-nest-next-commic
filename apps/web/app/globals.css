@@ -397,6 +397,20 @@ p {
   color: #6f563c;
 }
 
+.reader-sync-status {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.reader-sync-status--ok {
+  color: #2f6b37;
+}
+
+.reader-sync-status--warning {
+  color: #8c401e;
+}
+
 @media (max-width: 720px) {
   .reader-progress-row {
     grid-template-columns: 1fr;

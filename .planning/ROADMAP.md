@@ -2,14 +2,14 @@
 
 Milestone: v1.12 - Creator Growth and Reader Personalization
 Created: 2026-04-11
-Status: Planned
+Status: Complete
 
 ## Milestones
 
 - [done] v1.9 Full Reader Productization (shipped 2026-04-09) - see .planning/milestones/v1.9-ROADMAP.md
 - [done] v1.10 Notification Center and Dynamic Content (shipped 2026-04-09) - see .planning/milestones/v1.10-ROADMAP.md
 - [done] v1.11 Reader Experience and Creator Discovery (shipped 2026-04-11) - see .planning/milestones/v1.11-ROADMAP.md
-- [active] v1.12 Creator Growth and Reader Personalization (in progress)
+- [active] v1.12 Creator Growth and Reader Personalization (complete, pending archive)
 
 ## Phases
 
@@ -61,7 +61,7 @@ Plans:
 
 ### Phase 33: Cross-Device Progression Continuity and Conflict Safety
 
-Status: Planned
+Status: Complete
 
 Goal: Synchronize reading progression across devices with deterministic conflict handling.
 
@@ -79,8 +79,8 @@ Success Criteria:
 - Resume behavior remains stable under rapid chapter switching.
 
 Plans:
-- [ ] 33-01-PLAN.md - implement backend cross-device progression merge and metadata contracts
-- [ ] 33-02-PLAN.md - integrate frontend cross-device resume reconciliation flow
+- [x] 33-01-PLAN.md - implement backend cross-device progression merge and metadata contracts
+- [x] 33-02-PLAN.md - integrate frontend cross-device resume reconciliation flow
 
 ## Progress
 
@@ -88,8 +88,8 @@ Plans:
 |-------|--------------|--------|-------|------------|
 | 31 | CREATOR-01, CREATOR-02 | Complete | 2/2 complete | 100% |
 | 32 | READER-05, READER-06 | Complete | 2/2 complete | 100% |
-| 33 | SYNC-03, SYNC-04 | Planned | 2 planned | - |
+| 33 | SYNC-03, SYNC-04 | Complete | 2/2 complete | 100% |
 
 ---
 
-Next Action: Execute Phase 33 using /gsd:execute-phase 33
+Next Action: Run /gsd:complete-milestone v1.12 to archive and prepare next milestone.
