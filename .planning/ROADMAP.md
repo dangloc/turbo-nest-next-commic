@@ -56,7 +56,7 @@ Success Criteria:
 - Navigation handles first/last chapter boundaries safely.
 
 Plans:
-- [ ] 29-01-PLAN.md - add backend chapter context endpoint for TOC and boundary navigation
+- [x] 29-01-PLAN.md - add backend chapter context endpoint for TOC and boundary navigation
 - [ ] 29-02-PLAN.md - implement immersive reader UI with prev/next and TOC jumps
 
 ### Phase 30: Reader Preferences and Progression Sync
@@ -86,7 +86,7 @@ Plans:
 | Phase | Requirements | Status | Plans | Completion |
 |-------|--------------|--------|-------|------------|
 | 28 | AUTHOR-01..AUTHOR-03 | Complete | 2 done | 2026-04-11 |
-| 29 | READER-01, READER-02 | Planning | 1 planned | - |
+| 29 | READER-01, READER-02 | Executing | 2 plans (1 done) | - |
 | 30 | READER-03, READER-04, SYNC-01, SYNC-02 | Planned | 1 planned | - |
 
 ---
