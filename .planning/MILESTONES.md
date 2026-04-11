@@ -1,5 +1,21 @@
 # Project Milestones: WordPress to NestJS Migration
 
+## v1.12 Creator Growth and Reader Personalization (Shipped: 2026-04-11)
+
+**Delivered:** Creator follow growth features, advanced typography personalization, and deterministic cross-device progression sync with conflict-safe merge behavior.
+
+**Phases completed:** 3 phases, 6 plans, 12 tasks
+
+**Key accomplishments:**
+
+- Added authenticated follow and unfollow actions with public follower visibility on author profiles.
+- Delivered advanced reader typography controls with persistent preferences for font family, line height, and content width.
+- Implemented deterministic backend progression merge policy with explicit conflict metadata for stale-vs-newer updates.
+- Integrated frontend reconciliation flow that applies effective server progress across sessions.
+- Added explicit reader sync status feedback to communicate accepted updates and server-kept checkpoints.
+
+---
+
 ## v1.11 Reader Experience and Creator Discovery (Shipped: 2026-04-11)
 
 **Delivered:** Public author discovery surfaces plus an immersive chapter-reading experience with progression sync and in-reader preference controls.
@@ -73,17 +89,4 @@
 
 ---
 
-## v1.6 Core Reader API & Social Experience (Shipped: 2026-04-08)
-
-**Phases completed:** 2 phases, 2 plans, 6 tasks
-
-**Key accomplishments:**
-
-- Novel and chapter retrieval with multi-level filtering shipped.
-- Comment crud, nested replies, and character counting completed.
-- Reaction endpoints (add/remove) for chapters and comments delivered.
-- Author novel list and user profile endpoints shipped with pagination.
-
----
-
-*Latest update: 2026-04-11 after v1.11 completion*
+Latest update: 2026-04-11 after v1.12 completion

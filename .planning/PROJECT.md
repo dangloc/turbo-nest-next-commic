@@ -10,20 +10,19 @@ Preserve every identity-sensitive and financial record with exact IDs and relati
 
 ## Current State
 
-v1.11 shipped and archived:
-- Public author profile discovery surface with creator identity, catalog visibility, and aggregate stats.
-- Core chapter reader interface with immersive layout, TOC navigation, and boundary-safe previous/next controls.
-- Reader progression sync with authenticated idempotent chapter-open tracking and resume continuity.
-- In-reader preference controls for persisted font size and light/dark theme.
+v1.12 shipped and archived:
+- Creator follow graph with authenticated follow and unfollow actions plus public follower visibility.
+- Advanced reader typography personalization with persisted font family, line height, and content width.
+- Cross-device progression sync with deterministic conflict handling and metadata-driven reconciliation UX.
 
-## Current Milestone: v1.12 Creator Growth and Reader Personalization
+## Next Milestone Goals
 
-Goal: Increase creator retention and reader session quality by introducing social following, richer reading customization, and cross-device resume continuity.
+Pending definition.
 
-Target features:
-- Author follow graph and follower visibility on public author surfaces.
-- Advanced typography controls (font family, line height, content width) for long-form reading comfort.
-- Cross-device progression sync so authenticated readers can resume from their latest position across devices.
+Start next cycle with /gsd:new-milestone to:
+- Define v1.13 requirements.
+- Set roadmap phases and dependencies.
+- Establish milestone success criteria.
 
 ## Shipped Milestones
 
@@ -36,8 +35,9 @@ Target features:
 - ✅ v1.7: Financial Engine & Payment Integration.
 - ✅ v1.8: Frontend Web Foundation (auth/discovery/reader/social).
 - ✅ v1.9: Full Reader Productization (dashboard/wallet/purchases/profile).
-- ✅ v1.10: Notification Center & Dynamic Content (notification inbox and preferences).
-- ✅ v1.11: Reader Experience & Creator Discovery (author profiles, chapter reader, progression sync, preferences).
+- ✅ v1.10: Notification Center & Dynamic Content.
+- ✅ v1.11: Reader Experience & Creator Discovery.
+- ✅ v1.12: Creator Growth & Reader Personalization.
 
 ## Key Decisions (v1.9-v1.12)
 
@@ -49,27 +49,9 @@ Target features:
 | Deterministic purchase status mapping (including insufficient_balance) | ✓ Clear error paths in UX; prevents silent failures | 25 |
 | Notification inbox + preference controls inside dashboard section model | ✓ Reuses established patterns and keeps account actions centralized | 27 |
 | Reader progression updates must be idempotent and session-safe | ✓ Implemented via authenticated chapter-open sync contract and guarded client integration | 30 |
-| Follow graph must remain public-read but authenticated-write | — Planned in v1.12 | 31 |
-| Cross-device resume sync must be conflict-safe and deterministic | — Planned in v1.12 | 33 |
-
-## Evolution
-
-This document evolves at phase transitions and milestone boundaries.
-
-After each phase:
-1. Requirements invalidated? Move to Out of Scope with reason.
-2. Requirements validated? Move to Shipped with phase reference.
-3. New requirements emerged? Add to Active.
-4. Decisions to log? Add to Key Decisions.
-5. What This Is still accurate? Update if drifted.
-
-After each milestone:
-1. Full review of all sections.
-2. Core Value check - still the one thing?
-3. Out-of-Scope audit - still valid reasoning?
-4. Context refresh with current delivered state.
-5. Shift milestones: Shipped -> previous, Active -> next.
+| Follow graph must remain public-read but authenticated-write | ✓ Shipped | 31 |
+| Cross-device resume sync must be conflict-safe and deterministic | ✓ Shipped | 33 |
 
 ---
 
-*Last updated: 2026-04-11 after v1.12 milestone initialization*
+Last updated: 2026-04-11 after v1.12 milestone completion
