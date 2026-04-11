@@ -10,13 +10,18 @@ Preserve every identity-sensitive and financial record with exact IDs and relati
 
 ## Current State
 
-v1.10 shipped a complete notification center inside the dashboard:
-- Notification inbox grouped into unread/read collections.
-- Single and batch mark-as-read actions with persistent backend state.
-- Notification preference controls persisted from dashboard settings.
-- End-to-end API and frontend integration validated (notification API tests + web typecheck/lint).
+v1.11 shipped and archived:
+- Public author profile discovery surface with creator identity, catalog visibility, and aggregate stats.
+- Core chapter reader interface with immersive layout, TOC navigation, and boundary-safe previous/next controls.
+- Reader progression sync with authenticated idempotent chapter-open tracking and resume continuity.
+- In-reader preference controls for persisted font size and light/dark theme.
 
-Next: v1.11 focuses on reader experience and creator discovery through public author profiles and a fully immersive chapter reading interface.
+## Next Milestone Goals
+
+v1.12 planning is not started yet. Recommended kickoff:
+- Run `/gsd:new-milestone`.
+- Define new REQUIREMENTS.md scope based on v1.11 outcomes.
+- Create next roadmap phase set with explicit requirement mapping.
 
 ## Shipped Milestones
 
@@ -30,21 +35,7 @@ Next: v1.11 focuses on reader experience and creator discovery through public au
 - ✅ v1.8: Frontend Web Foundation (auth/discovery/reader/social).
 - ✅ v1.9: Full Reader Productization (dashboard/wallet/purchases/profile).
 - ✅ v1.10: Notification Center & Dynamic Content (notification inbox and preferences).
-
-## Active Milestone: v1.11 Reader Experience & Creator Discovery
-
-Goal: Build public creator-facing discovery surfaces and a polished chapter reading flow that keeps readers engaged and synced.
-
-Target features:
-- Public author profile pages with author metadata, published novels, and aggregate platform stats.
-- Core chapter reading interface with immersive layout and navigation (next/previous chapter and table of contents).
-- Reader customization settings for font size and light/dark reading modes.
-- Safe progression sync for chapter view count triggers and reading-history updates.
-
-Out of scope (v1.11):
-- Native mobile app reader and creator profile experiences.
-- Real-time collaborative/social overlays inside reader.
-- Advanced recommendation ranking/ML personalization.
+- ✅ v1.11: Reader Experience & Creator Discovery (author profiles, chapter reader, progression sync, preferences).
 
 ## Key Decisions (v1.9-v1.11)
 
@@ -55,7 +46,7 @@ Out of scope (v1.11):
 | Feature-local module structure (types/api/view split) | ✓ Consistent with discovery/reader/social; reduces friction | 24-27 |
 | Deterministic purchase status mapping (including insufficient_balance) | ✓ Clear error paths in UX; prevents silent failures | 25 |
 | Notification inbox + preference controls inside dashboard section model | ✓ Reuses established patterns and keeps account actions centralized | 27 |
-| Reader progression updates must be idempotent and session-safe | — Pending implementation in v1.11 | 30 |
+| Reader progression updates must be idempotent and session-safe | ✓ Implemented via authenticated chapter-open sync contract and guarded client integration | 30 |
 
 ## Evolution
 
@@ -70,11 +61,11 @@ After each phase:
 
 After each milestone:
 1. Full review of all sections.
-2. Core Value check — still the one thing?
-3. Out-of-Scope audit — still valid reasoning?
+2. Core Value check - still the one thing?
+3. Out-of-Scope audit - still valid reasoning?
 4. Context refresh with current delivered state.
-5. Shift milestones: Shipped → previous, Active → next.
+5. Shift milestones: Shipped -> previous, Active -> next.
 
 ---
 
-*Last updated: 2026-04-09 after v1.11 milestone initialization*
+*Last updated: 2026-04-11 after v1.11 milestone completion*

@@ -1,5 +1,21 @@
 # Project Milestones: WordPress to NestJS Migration
 
+## v1.11 Reader Experience and Creator Discovery (Shipped: 2026-04-11)
+
+**Delivered:** Public author discovery surfaces plus an immersive chapter-reading experience with progression sync and in-reader preference controls.
+
+**Phases completed:** 3 phases, 7 plans, 12 tasks
+
+**Key accomplishments:**
+
+- Shipped public author profile pages with identity metadata, author catalog discovery, and aggregate platform statistics.
+- Delivered core chapter reader navigation contracts and deterministic previous/next plus table-of-contents flow.
+- Added authenticated idempotent chapter-open progression sync endpoint to prevent duplicate view-count increments.
+- Integrated frontend resume-aware chapter sync so authenticated readers retain consistent reading continuity.
+- Added in-reader persisted preferences for font size and light/dark reading mode with immediate visual application.
+
+---
+
 ## v1.10 Notification Center & Dynamic Content (Shipped: 2026-04-09)
 
 **Phases completed:** 1 phase, 1 plan, 2 tasks
@@ -70,4 +86,4 @@
 
 ---
 
-*Latest update: 2026-04-09 after v1.10 completion*
+*Latest update: 2026-04-11 after v1.11 completion*
