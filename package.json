@@ -15,7 +15,8 @@
     "check-types": "turbo run check-types",
     "check-types:web": "turbo run check-types --filter=web",
     "check-types:api": "turbo run check-types --filter=api",
-    "etl:migrate": "turbo run etl:migrate --filter=api --cache=local:r,remote:r"
+    "etl:migrate": "turbo run etl:migrate --filter=api --cache=local:r,remote:r",
+    "guard:prisma-migrations": "node scripts/prisma-migration-guard.mjs --base=origin/main"
   },
   "devDependencies": {
     "prettier": "^3.7.4",
