@@ -1413,3 +1413,52 @@ p {
     align-items: stretch;
   }
 }
+
+.author-follow-cta,
+.author-follow-login {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  font-size: 0.9rem;
+  transition: transform 120ms ease, background-color 120ms ease, border-color 120ms ease;
+}
+
+.author-follow-cta {
+  background: var(--accent);
+  color: #fff;
+}
+
+.author-follow-cta:hover:not(:disabled) {
+  background: var(--accent-strong);
+  transform: translateY(-1px);
+}
+
+.author-follow-cta:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.author-follow-cta--active {
+  background: #fff;
+  border-color: rgba(184, 92, 47, 0.35);
+  color: var(--accent-strong);
+}
+
+.author-follow-login {
+  border-color: rgba(184, 92, 47, 0.3);
+  background: var(--accent-soft);
+  color: var(--accent-strong);
+}
+
+.author-follow-login:hover {
+  transform: translateY(-1px);
+}
+
+.author-follow-inline-error {
+  margin-top: -4px;
+  color: var(--accent-strong);
+  font-size: 0.88rem;
+}

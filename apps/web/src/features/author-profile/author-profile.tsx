@@ -4,15 +4,18 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { getSessionToken } from "../../lib/auth/session-store";
 import {
   fetchAuthorProfile,
+  followAuthor,
   getAuthorProfileHref,
   normalizeAuthorProfileQuery,
   parseAuthorProfileSearchParams,
+  unfollowAuthor,
   type AuthorProfileQuery,
   type AuthorProfileResponse,
 } from "./api";
-import type { AuthorCatalogItem } from "./types";
+import type { AuthorCatalogItem, AuthorFollowResult } from "./types";
 
 interface AuthorProfileViewProps {
   authorId: number;
@@ -99,6 +102,13 @@ export function AuthorProfileView({ authorId }: AuthorProfileViewProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isNotFound, setIsNotFound] = useState(false);
+  const [followBusy, setFollowBusy] = useState(false);
+  const [followError, setFollowError] = useState<string | null>(null);
+  const [sessionToken, setSessionToken] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    setSessionToken(getSessionToken() ?? undefined);
+  }, []);
 
   useEffect(() => {
     setQuery(initialQuery);
@@ -112,7 +122,7 @@ export function AuthorProfileView({ authorId }: AuthorProfileViewProps) {
     setIsNotFound(false);
 
     void (async () => {
-      const response = await fetchAuthorProfile(authorId, query, controller.signal);
+      const response = await fetchAuthorProfile(authorId, query, controller.signal, sessionToken);
       if (controller.signal.aborted) {
         return;
       }
@@ -135,7 +145,7 @@ export function AuthorProfileView({ authorId }: AuthorProfileViewProps) {
     })();
 
     return () => controller.abort();
-  }, [authorId, query]);
+  }, [authorId, query, sessionToken]);
 
   function syncQuery(next: AuthorProfileQuery) {
     const normalized = normalizeAuthorProfileQuery(next);
@@ -147,8 +157,50 @@ export function AuthorProfileView({ authorId }: AuthorProfileViewProps) {
     syncQuery({ ...query, page: Math.max(1, nextPage) });
   }
 
+  function applyFollowState(next: AuthorFollowResult) {
+    setResult((current) => {
+      if (!current) {
+        return current;
+      }
+
+      return {
+        ...current,
+        stats: {
+          ...current.stats,
+          followerCount: next.followerCount,
+          viewerFollowsAuthor: next.viewerFollowsAuthor,
+        },
+      };
+    });
+  }
+
+  async function handleFollowToggle(nextState: "follow" | "unfollow") {
+    if (!sessionToken) {
+      setFollowError("Sign in to follow this author.");
+      return;
+    }
+
+    setFollowBusy(true);
+    setFollowError(null);
+
+    const response =
+      nextState === "follow"
+        ? await followAuthor(authorId, sessionToken)
+        : await unfollowAuthor(authorId, sessionToken);
+
+    if (!response.ok) {
+      setFollowBusy(false);
+      setFollowError(response.error.message);
+      return;
+    }
+
+    applyFollowState(response.data);
+    setFollowBusy(false);
+  }
+
   const emptyState = !loading && !error && !isNotFound && result?.catalog.total === 0;
   const totalPages = result?.catalog.totalPages ?? 1;
+  const viewerFollowsAuthor = Boolean(result?.stats.viewerFollowsAuthor);
 
   return (
     <main className="discovery-shell author-profile-shell">
@@ -157,6 +209,7 @@ export function AuthorProfileView({ authorId }: AuthorProfileViewProps) {
           <span className="home-kicker">Author Profile</span>
           <h1>{result?.author.displayName ?? "Loading author..."}</h1>
           <p>{result?.author.bio ?? "This author is setting up their profile details."}</p>
+          {followError ? <p className="author-follow-inline-error">{followError}</p> : null}
         </div>
         <div className="author-profile-hero__meta">
           {result?.author.avatar ? (
@@ -176,8 +229,23 @@ export function AuthorProfileView({ authorId }: AuthorProfileViewProps) {
           <div className="author-profile-stats">
             <span className="discovery-chip">{(result?.stats.totalPublishedNovels ?? 0).toLocaleString()} novels</span>
             <span className="discovery-chip">{(result?.stats.totalViews ?? 0).toLocaleString()} total views</span>
+            <span className="discovery-chip">{(result?.stats.followerCount ?? 0).toLocaleString()} followers</span>
             <span className="discovery-chip">Latest update: {formatDate(result?.stats.latestUpdateAt ?? null)}</span>
           </div>
+          {sessionToken ? (
+            <button
+              className={viewerFollowsAuthor ? "author-follow-cta author-follow-cta--active" : "author-follow-cta"}
+              type="button"
+              onClick={() => handleFollowToggle(viewerFollowsAuthor ? "unfollow" : "follow")}
+              disabled={followBusy || loading || !result}
+            >
+              {followBusy ? "Saving..." : viewerFollowsAuthor ? "Following" : "Follow author"}
+            </button>
+          ) : (
+            <Link className="author-follow-login" href="/auth/login">
+              Sign in to follow
+            </Link>
+          )}
         </div>
       </section>
 

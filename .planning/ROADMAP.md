@@ -15,7 +15,7 @@ Status: Planned
 
 ### Phase 31: Author Follow Graph and Public Social Visibility
 
-Status: Planned
+Status: Complete
 
 Goal: Introduce authenticated follow/unfollow actions and public follower visibility on author profile surfaces.
 
@@ -33,8 +33,8 @@ Success Criteria:
 - Follow state persists across reload and re-login.
 
 Plans:
-- [ ] 31-01-PLAN.md - implement backend author follow graph contracts and endpoints
-- [ ] 31-02-PLAN.md - integrate follow state and follower count in author profile UI
+- [x] 31-01-PLAN.md - implement backend author follow graph contracts and endpoints
+- [x] 31-02-PLAN.md - integrate follow state and follower count in author profile UI
 
 ### Phase 32: Advanced Reader Typography Personalization
 
@@ -86,10 +86,10 @@ Plans:
 
 | Phase | Requirements | Status | Plans | Completion |
 |-------|--------------|--------|-------|------------|
-| 31 | CREATOR-01, CREATOR-02 | Planned | 2 planned | - |
+| 31 | CREATOR-01, CREATOR-02 | Complete | 2/2 complete | 100% |
 | 32 | READER-05, READER-06 | Planned | 2 planned | - |
 | 33 | SYNC-03, SYNC-04 | Planned | 2 planned | - |
 
 ---
 
-Next Action: Plan Phase 31 and begin milestone v1.12 execution
+Next Action: Plan and execute Phase 32 (Advanced Reader Typography Personalization)

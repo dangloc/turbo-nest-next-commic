@@ -21,6 +21,8 @@ export interface AuthorStats {
   totalPublishedNovels: number;
   totalViews: number;
   latestUpdateAt: string | null;
+  followerCount: number;
+  viewerFollowsAuthor: boolean;
 }
 
 export interface AuthorIdentity {
@@ -30,6 +32,12 @@ export interface AuthorIdentity {
   penName: string | null;
   avatar: string | null;
   bio: string | null;
+}
+
+export interface AuthorFollowResult {
+  authorId: number;
+  followerCount: number;
+  viewerFollowsAuthor: boolean;
 }
 
 export interface AuthorProfileResponse {
