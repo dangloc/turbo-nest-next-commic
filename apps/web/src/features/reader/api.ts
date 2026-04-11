@@ -17,6 +17,8 @@ import {
   type ReaderPurchaseAction,
   type ReadingHistoryEntry,
   type ReadingHistoryUpsertInput,
+  type ReaderChapterOpenInput,
+  type ReaderChapterOpenResult,
 } from "./types";
 import { apiRequest } from "../../lib/api/http";
 
@@ -90,6 +92,18 @@ export async function upsertReadingHistory(
 ): Promise<ApiResult<ReadingHistoryEntry>> {
   return apiRequest<ReadingHistoryEntry>("/reader/me/reading-history", {
     method: "PUT",
+    headers: authHeaders(token),
+    body: input,
+    includeCredentials: true,
+  });
+}
+
+export async function syncReaderChapterOpen(
+  input: ReaderChapterOpenInput,
+  token?: string,
+): Promise<ApiResult<ReaderChapterOpenResult>> {
+  return apiRequest<ReaderChapterOpenResult>("/reader/me/chapter-opens", {
+    method: "POST",
     headers: authHeaders(token),
     body: input,
     includeCredentials: true,

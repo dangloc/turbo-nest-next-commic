@@ -43,6 +43,24 @@ export interface ReadingHistoryUpsertInput {
   progressPercent: number;
 }
 
+export interface ReaderChapterOpenInput {
+  chapterId: number;
+  novelId?: number;
+  progressPercent?: number;
+}
+
+export interface ReaderChapterOpenResult {
+  chapterId: number;
+  novelId: number;
+  firstOpen: boolean;
+  progressPercent: number;
+  lastReadAt: string;
+}
+
+export type ReaderFontSizeOption = "sm" | "md" | "lg";
+
+export type ReaderThemeMode = "light" | "dark";
+
 export interface ReaderNavigationContext {
   novelId: number;
   chapterId: number;

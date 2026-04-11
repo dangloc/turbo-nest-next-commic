@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { getSessionToken } from "../../lib/auth/session-store";
 import { SocialThread } from "../social/social";
 import {
@@ -13,6 +13,7 @@ import {
   fetchNovelById,
   fetchReaderNovelPricing,
   fetchReadingHistory,
+  syncReaderChapterOpen,
   normalizeChapterId,
   purchaseReaderChapter,
   purchaseReaderNovelCombo,
@@ -21,7 +22,9 @@ import {
 import type {
   ReaderChapter,
   ReaderChapterContext,
+  ReaderFontSizeOption,
   ReaderNovel,
+  ReaderThemeMode,
   ReadingHistoryEntry,
 } from "./types";
 
@@ -172,6 +175,26 @@ export function ChapterReaderView({ chapterId }: { chapterId: number }) {
   const [chapterPrice, setChapterPrice] = useState<number | null>(null);
   const [comboPrice, setComboPrice] = useState<number | null>(null);
   const [comboDiscountPct, setComboDiscountPct] = useState<number | null>(null);
+  const [fontSize, setFontSize] = useState<ReaderFontSizeOption>("md");
+  const [themeMode, setThemeMode] = useState<ReaderThemeMode>("light");
+  const syncedChapterKeysRef = useRef(new Set<string>());
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const savedFont = window.localStorage.getItem("reader:font-size");
+    const savedTheme = window.localStorage.getItem("reader:theme");
+
+    if (savedFont === "sm" || savedFont === "md" || savedFont === "lg") {
+      setFontSize(savedFont);
+    }
+
+    if (savedTheme === "light" || savedTheme === "dark") {
+      setThemeMode(savedTheme);
+    }
+  }, []);
 
   useEffect(() => {
     const token = getSessionToken() ?? undefined;
@@ -230,14 +253,24 @@ export function ChapterReaderView({ chapterId }: { chapterId: number }) {
           }
         }
 
-        await upsertReadingHistory(
-          {
-            novelId: chapterResult.data.novelId,
-            chapterId,
-            progressPercent: 5,
-          },
-          token,
-        );
+        const syncKey = String(chapterResult.data.novelId) + ":" + String(chapterId);
+        if (!syncedChapterKeysRef.current.has(syncKey)) {
+          syncedChapterKeysRef.current.add(syncKey);
+          const syncResult = await syncReaderChapterOpen(
+            {
+              novelId: chapterResult.data.novelId,
+              chapterId,
+              progressPercent: historyResult.ok
+                ? (historyResult.data.find((item) => item.chapterId === chapterId)?.progressPercent ?? 5)
+                : 5,
+            },
+            token,
+          );
+
+          if (!syncResult.ok) {
+            syncedChapterKeysRef.current.delete(syncKey);
+          }
+        }
       }
 
       setLoading(false);
@@ -402,6 +435,43 @@ export function ChapterReaderView({ chapterId }: { chapterId: number }) {
               </p>
             </div>
 
+            <div className="reader-preference-bar" role="group" aria-label="Reading preferences">
+              <label className="reader-input-group">
+                <span>Font size</span>
+                <select
+                  value={fontSize}
+                  onChange={(event) => {
+                    const next = event.target.value as ReaderFontSizeOption;
+                    setFontSize(next);
+                    if (typeof window !== "undefined") {
+                      window.localStorage.setItem("reader:font-size", next);
+                    }
+                  }}
+                >
+                  <option value="sm">Compact</option>
+                  <option value="md">Comfort</option>
+                  <option value="lg">Large</option>
+                </select>
+              </label>
+
+              <label className="reader-input-group">
+                <span>Theme</span>
+                <select
+                  value={themeMode}
+                  onChange={(event) => {
+                    const next = event.target.value as ReaderThemeMode;
+                    setThemeMode(next);
+                    if (typeof window !== "undefined") {
+                      window.localStorage.setItem("reader:theme", next);
+                    }
+                  }}
+                >
+                  <option value="light">Light</option>
+                  <option value="dark">Dark</option>
+                </select>
+              </label>
+            </div>
+
             <div style={{ display: "grid", gap: 16, gridTemplateColumns: "minmax(0, 2fr) minmax(240px, 1fr)", alignItems: "start" }}>
               <article style={{ minWidth: 0 }}>
                 {requiresPurchase && !isUnlocked ? (
@@ -447,7 +517,7 @@ export function ChapterReaderView({ chapterId }: { chapterId: number }) {
                     {purchaseMessage ? <p className="reader-muted">{purchaseMessage}</p> : null}
                   </article>
                 ) : (
-                  <article className="reader-content">{toDisplayText(chapter.postContent) || "No chapter content."}</article>
+                  <article className={`reader-content reader-content--font-${fontSize} reader-content--theme-${themeMode}`}>{toDisplayText(chapter.postContent) || "No chapter content."}</article>
                 )}
               </article>
 
