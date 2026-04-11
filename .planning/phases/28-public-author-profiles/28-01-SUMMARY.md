@@ -1,48 +1,61 @@
-# Phase 28 Plan 01 Summary: Public Author Profile Backend Contract
+# Phase 28 Plan 01 Summary: Public Author Profile
 
 Status: Complete
-Requirements Addressed: AUTHOR-01, AUTHOR-03
 Phase: 28-public-author-profiles
-Plan: 01 of 02
-Wave: 1 of 2
+Plan: 01
+Completed: 2026-04-11
+Requirements Addressed: AUTHOR-01, AUTHOR-02, AUTHOR-03
 
-## What Was Built
+## Outcome
 
-Implemented a public author profile API contract in the reader module with identity fallback, live aggregate stats, and paginated author catalog payload.
+Implemented and validated the public Author Profile feature using the locked decisions for routing, profile identity data, catalog behavior, aggregate stats, and public-access edge cases.
 
-### Task 1 (RED + contracts)
+## Locked Decision Alignment
 
-- Added author profile response/query contracts in `apps/api/src/reader/types.ts`.
-- Added failing RED tests in `apps/api/src/reader/__tests__/reader-author-profile.spec.ts` for:
-  - penName -> nickname display fallback
-  - not-found behavior for missing author user
-  - aggregate stats shape and values
+1. Routing (`/author/[id]`)
+- Implemented route at `apps/web/app/author/[id]/page.tsx`.
+- Added strict route validation and hard `notFound()` handling for invalid or non-existent IDs.
 
-### Task 2 (GREEN implementation)
+2. Profile Data (penName fallback, avatar, bio, safe fallback)
+- Backend identity payload includes `penName`, `nickname`, `avatar`, `bio`.
+- Display name fallback is `penName -> nickname -> Author #id`.
+- Frontend renders fallback bio and avatar placeholder for incomplete profiles.
 
-- Added `GET /reader/authors/:id` in `apps/api/src/reader/reader-discovery.controller.ts`.
-- Implemented `getAuthorProfile()` in `apps/api/src/reader/reader.service.ts` with:
-  - public access (no auth guard)
-  - `AuthorProfile` + `User` identity payload (displayName fallback)
-  - aggregate stats computed live (`count`, `_sum(viewCount)`, latest update date)
-  - paginated catalog sorted by query params (default latest updated first)
-  - deterministic 404 for unknown author IDs
-- Updated Prisma schema with optional `AuthorProfile.bio` in `apps/api/prisma/schema.prisma`.
+3. Catalog (discovery card reuse, latest updated, pagination)
+- Reused discovery card-style rendering pattern in author profile catalog.
+- Default sort remains `updatedAt desc` (latest updated first).
+- Pagination contract and controls implemented.
+
+4. Aggregate Stats (live values)
+- Backend computes and returns:
+  - total published novels
+  - total views across all novels
+  - latest update date
+- Aggregation is live via Prisma queries (no caching layer).
+
+5. Access and Edge Cases (public, 404, empty state)
+- Endpoint is public (no auth required).
+- Unknown author ID returns backend not-found and route-level 404 behavior.
+- Friendly empty state is rendered for authors with zero published novels.
+
+## Backend Deliverables
+
+- `GET /reader/authors/:id` endpoint and query params (`page`, `limit`, `sortBy`, `sortDir`).
+- Strong `id` validation in controller via `ParseIntPipe`.
+- Typed response contract with author identity, aggregate stats, and paginated catalog.
+
+## Frontend Deliverables
+
+- Public page route at `/author/[id]`.
+- Server-side preflight check for route-level 404.
+- Author profile UI module with discovery-consistent catalog and fallback/empty states.
 
 ## Verification
 
-Automated checks run:
-- `npm test -- --runInBand src/reader/__tests__/reader-author-profile.spec.ts` (RED checkpoint before implementation) -> FAIL as expected
-- `npm run prisma:generate` -> PASS
-- `npm test -- --runInBand src/reader/__tests__/reader-author-profile.spec.ts src/reader/__tests__/reader-discovery.spec.ts` -> PASS
-- `npm run check-types` -> PASS
-
-## Commits (apps/api)
-
-- `291e6ec` test(28-01): add failing author profile contracts and specs
-- `268d58c` feat(28-01): add public author profile endpoint and live stats
+Automated checks passed:
+- `npm --prefix apps/api run test -- reader-author-profile`
+- `npm --prefix apps/web run check-types`
 
 ## Notes
 
-- `AuthorProfile.bio` was introduced to satisfy the locked profile data contract requiring bio support.
-- Catalog `viewCount` is normalized to `number` in API response for frontend contract compatibility.
+- This summary reflects the final shipped behavior after validation hardening for route-level 404 and controller ID parsing.

@@ -1,27 +1,29 @@
 # Roadmap: WordPress to NestJS Migration
 
-Milestone: v1.11 - Reader Experience & Creator Discovery
+Milestone: v1.11 - Reader Experience and Creator Discovery
 Created: 2026-04-09
-Status: planning
+Status: Phase 28 complete; Phase 29 planning in progress
 
 ## Milestones
 
 - [done] v1.9 Full Reader Productization (shipped 2026-04-09) - see .planning/milestones/v1.9-ROADMAP.md
-- [done] v1.10 Notification Center & Dynamic Content (shipped 2026-04-09) - see .planning/milestones/v1.10-ROADMAP.md
-- [active] v1.11 Reader Experience & Creator Discovery (in progress)
+- [done] v1.10 Notification Center and Dynamic Content (shipped 2026-04-09) - see .planning/milestones/v1.10-ROADMAP.md
+- [active] v1.11 Reader Experience and Creator Discovery (in progress)
 
 ## Phases
 
 ### Phase 28: Public Author Profiles
 
+Status: 100% Complete (Shipped 2026-04-11)
+
 Goal: Deliver public creator profile pages that expose author identity, catalog, and aggregate platform stats.
 
-Requirements: AUTHOR-01, AUTHOR-02, AUTHOR-03
+Requirements: AUTHOR-01 complete, AUTHOR-02 complete, AUTHOR-03 complete
 
 Scope:
 - Public author profile route and server/API data contract.
 - Author metadata rendering with safe empty-state handling.
-- Author novel catalog listing with links into discovery/reader flow.
+- Author novel catalog listing with links into discovery and reader flow.
 - Aggregate creator stats section (including total views baseline).
 
 Success Criteria:
@@ -29,11 +31,14 @@ Success Criteria:
 - Reader can browse authored novels from the profile page.
 - Aggregate stats render accurately from backend payload.
 
-Plans:
-- [x] 28-01-PLAN.md - implement backend author profile contract and public stats endpoint
-- [x] 28-02-PLAN.md - build public /author/[id] route with discovery-consistent catalog UI
+Plans Completed:
+- [x] 28-01-SUMMARY.md - Backend author profile contract and public stats endpoint
+- [x] 28-02-SUMMARY.md - Public /author/[id] route with discovery-consistent catalog UI
+- [x] 28-COMPLETION-SUMMARY.md - Full phase completion report
 
 ### Phase 29: Core Chapter Reader Interface
+
+Status: Planning (Ready for phase discussion)
 
 Goal: Ship immersive chapter reading UI with stable chapter navigation controls.
 
@@ -55,6 +60,8 @@ Plans:
 
 ### Phase 30: Reader Preferences and Progression Sync
 
+Status: Planned (Scheduled after Phase 29)
+
 Goal: Add essential reading preferences and safe backend progression synchronization.
 
 Requirements: READER-03, READER-04, SYNC-01, SYNC-02
@@ -75,12 +82,12 @@ Plans:
 
 ## Progress
 
-| Phase | Requirements | Status | Planned |
-|-------|--------------|--------|---------|
-| 28 | AUTHOR-01..AUTHOR-03 | Complete | 2 plans |
-| 29 | READER-01..READER-02 | Planned | 1 plan |
-| 30 | READER-03..READER-04, SYNC-01..SYNC-02 | Planned | 1 plan |
+| Phase | Requirements | Status | Plans | Completion |
+|-------|--------------|--------|-------|------------|
+| 28 | AUTHOR-01..AUTHOR-03 | Complete | 2 done | 2026-04-11 |
+| 29 | READER-01, READER-02 | Planning | 1 planned | - |
+| 30 | READER-03, READER-04, SYNC-01, SYNC-02 | Planned | 1 planned | - |
 
 ---
 
-Next: /gsd:discuss-phase 28
+Next Action: Phase 29 discussion and planning

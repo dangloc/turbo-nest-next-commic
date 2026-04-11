@@ -1,46 +1,79 @@
 # GSD Workflow State
 
-Current Phase: 29-core-chapter-reader-interface
-Current Milestone: v1.11 (Reader Experience & Creator Discovery)
-Status: Phase 28 executed; ready for phase verification or phase 29 planning
+Current Phase: 28-public-author-profiles
+Current Milestone: v1.11 (Reader Experience and Creator Discovery)
+Status: Phase 28 complete; ready for Phase 29 planning
 
 ---
 
 ## Progress
 
 ### Completed Milestones
-- ✅ v1.10: Notification Center & Dynamic Content (shipped 2026-04-09)
-- ✅ v1.9: Full Reader Productization (shipped 2026-04-09)
-- ✅ v1.8: Frontend Web Foundation (shipped 2026-04-08)
-- ✅ v1.7: Financial Engine & Payment Integration (shipped 2026-04-08)
-- ✅ v1.6: Core Reader API & Social Experience (shipped 2026-04-08)
+- v1.10: Notification Center and Dynamic Content (shipped 2026-04-09)
+- v1.9: Full Reader Productization (shipped 2026-04-09)
+- v1.8: Frontend Web Foundation (shipped 2026-04-08)
+- v1.7: Financial Engine and Payment Integration (shipped 2026-04-08)
+- v1.6: Core Reader API and Social Experience (shipped 2026-04-08)
 
 ### Active Milestone: v1.11
 
-Planning status:
-- Phase 28 defined (public author profiles)
-- Phase 29 defined (core chapter reader interface)
-- Phase 30 defined (reader customization and progression sync)
+Phases:
+- Phase 28 Public Author Profiles (completed 2026-04-11)
+  - Backend: public author profile endpoint with aggregate stats and strict ID parsing
+  - Frontend: public /author/[id] route with server-side preflight 404 handling
+  - Requirements: AUTHOR-01, AUTHOR-02, AUTHOR-03 complete
+  - Summaries: 28-01-SUMMARY.md, 28-02-SUMMARY.md, 28-COMPLETION-SUMMARY.md
+
+- Phase 29 Core Chapter Reader Interface (ready for planning)
+  - Scope: distraction-free reader layout, chapter navigation, TOC jumps
+  - Requirements: READER-01, READER-02
+  - Plans: to be created
+
+- Phase 30 Reader Preferences and Progression Sync (scheduled after Phase 29)
+  - Scope: font size and theme preferences, view count tracking, reading history sync
+  - Requirements: READER-03, READER-04, SYNC-01, SYNC-02
+  - Plans: to be created
 
 ---
 
 ## Requirement Status Snapshot (v1.11)
 
-Planned:
-- AUTHOR-01, AUTHOR-02, AUTHOR-03 (Phase 28)
-- READER-01, READER-02 (Phase 29)
-- READER-03, READER-04, SYNC-01, SYNC-02 (Phase 30)
+Completed (3/9):
+- AUTHOR-01 - Public author profile page with core creator info
+- AUTHOR-02 - Author novel catalog on profile page
+- AUTHOR-03 - Aggregate creator statistics (total views, novels, latest update)
+
+In Progress: none
+
+Planned (6/9):
+- READER-01 - Distraction-free chapter reader UI (Phase 29)
+- READER-02 - Chapter navigation and TOC (Phase 29)
+- READER-03 - Font size adjustment preference (Phase 30)
+- READER-04 - Light/dark mode toggle (Phase 30)
+- SYNC-01 - View count updates on chapter open (Phase 30)
+- SYNC-02 - Reading history and resume sync (Phase 30)
 
 Deferred:
-- CREATOR-01, READER-05, SYNC-03
+- CREATOR-01 - Author follower counts and social graph
+- READER-05 - Advanced typography controls
+- SYNC-03 - Cross-device real-time sync
 
 ---
 
-## Next Steps
+## Recent Completion
 
-1. Verify Phase 28 outcomes:
-   - /gsd:verify-work 28
-2. Plan Phase 29:
-   - /gsd:plan-phase 29
-3. Execute Phase 29:
-   - /gsd:execute-phase 29
+### Phase 28 Wrap-up (2026-04-11)
+
+Backend and frontend deliverables for public author profiles are implemented, verified, and documented.
+
+Verification:
+- npm --prefix apps/api run test -- reader-author-profile
+- npm --prefix apps/web run check-types
+
+---
+
+## Next Step
+
+Run Phase 29 discussion and planning.
+
+Last updated: 2026-04-11
