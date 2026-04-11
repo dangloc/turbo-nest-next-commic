@@ -56,7 +56,8 @@ Success Criteria:
 - Navigation handles first/last chapter boundaries safely.
 
 Plans:
-- [ ] 29-01-PLAN.md - implement immersive reader layout and chapter navigation wiring
+- [ ] 29-01-PLAN.md - add backend chapter context endpoint for TOC and boundary navigation
+- [ ] 29-02-PLAN.md - implement immersive reader UI with prev/next and TOC jumps
 
 ### Phase 30: Reader Preferences and Progression Sync
 
