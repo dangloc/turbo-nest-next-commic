@@ -33,7 +33,7 @@ Success Criteria:
 - Forms display client-side validation errors before submission.
 
 Plans:
-- [ ] 35-01-PLAN.md (pending planning phase)
+- [ ] 35-01-PLAN.md - implement local auth feature module and login/register UI integration
 
 ### Phase 36: User Profile & Security Management
 
