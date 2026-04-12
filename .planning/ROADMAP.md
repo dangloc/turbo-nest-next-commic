@@ -58,7 +58,7 @@ Success Criteria:
 - Form validation prevents empty fields and invalid formats.
 
 Plans:
-- [ ] 36-01-PLAN.md (pending planning phase)
+- [ ] 36-01-PLAN.md - extend dashboard profile identity editing and secure password change
 
 ### Phase 37: Wallet and Purchase History Dashboard
 
