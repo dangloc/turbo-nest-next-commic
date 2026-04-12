@@ -82,7 +82,7 @@ Success Criteria:
 - Dashboard integrates with existing account section navigation.
 
 Plans:
-- [ ] 37-01-PLAN.md (pending planning phase)
+- [ ] 37-01-PLAN.md - add VIP tier projection and paginated purchase-history dashboard integration
 
 ## Progress
 
@@ -90,8 +90,8 @@ Plans:
 |-------|--------------|--------|-------|------------|
 | 35 | AUTH-01, AUTH-02 | Planned | 0/1 | 0% |
 | 36 | ACCOUNT-01 | Planned | 0/1 | 0% |
-| 37 | ACCOUNT-02 | Planned | 0/1 | 0% |
+| 37 | ACCOUNT-02 | Planned | 1/1 | 0% |
 
 ---
 
-Next Action: Run `/gsd:plan-phase 35` to create detailed execution plan for Phase 35.
+Next Action: Run `/gsd:execute-phase 37` to execute the approved phase-37 plan.
