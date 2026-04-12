@@ -10,20 +10,26 @@ import {
 } from "../../lib/auth/session-store";
 import { AppContext } from "../../providers/app-provider";
 import {
+  fetchNovelPricing,
   fetchWalletSummary,
   initiateTopUp,
+  purchaseNovelCombo,
   verifyTopUp,
+  type NovelPricingResponse,
   type PaymentProvider,
   type WalletSummaryResponse,
 } from "../finance/api";
 import {
+  changePassword,
   fetchProfile,
   updateProfile,
   type ProfileResponse,
 } from "../profile/api";
 import NotificationsSection from "../notifications/notifications";
 import { bootstrapDashboardSession, resolveDashboardSection } from "./api";
+import { buildComboPurchaseOutcome, buildPurchasePricingModel } from "./purchase-ui";
 import type { DashboardSnapshot } from "./types";
+
 type ViewState =
   | { status: "loading" }
   | { status: "ready"; snapshot: DashboardSnapshot }
@@ -41,8 +47,19 @@ interface VerifyFormState {
 }
 
 interface ProfileFormState {
-  nickname: string;
+  displayName: string;
+  email: string;
   avatar: string;
+}
+
+interface PasswordFormState {
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+}
+
+interface PurchasePricingFormState {
+  novelId: string;
 }
 
 const DEFAULT_TOP_UP_FORM: TopUpFormState = {
@@ -111,17 +128,35 @@ export function DashboardView() {
   const [walletMessage, setWalletMessage] = useState<string | null>(null);
   const [walletBusy, setWalletBusy] = useState(false);
 
+  const [purchasePricingForm, setPurchasePricingForm] =
+    useState<PurchasePricingFormState>({ novelId: "" });
+  const [pricingState, setPricingState] = useState<
+    | { status: "idle" | "loading" }
+    | { status: "ready"; data: NovelPricingResponse }
+    | { status: "error"; message: string }
+  >({ status: "idle" });
+  const [comboBusy, setComboBusy] = useState(false);
+  const [purchaseMessage, setPurchaseMessage] = useState<string | null>(null);
+
   const [profileState, setProfileState] = useState<
     | { status: "idle" | "loading" }
     | { status: "ready"; data: ProfileResponse }
     | { status: "error"; message: string }
   >({ status: "idle" });
   const [profileForm, setProfileForm] = useState<ProfileFormState>({
-    nickname: "",
+    displayName: "",
+    email: "",
     avatar: "",
   });
+  const [passwordForm, setPasswordForm] = useState<PasswordFormState>({
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
   const [profileMessage, setProfileMessage] = useState<string | null>(null);
+  const [passwordMessage, setPasswordMessage] = useState<string | null>(null);
   const [profileBusy, setProfileBusy] = useState(false);
+  const [passwordBusy, setPasswordBusy] = useState(false);
 
   useEffect(() => {
     if (!loaded) {
@@ -192,6 +227,30 @@ export function DashboardView() {
     [],
   );
 
+  const loadNovelPricing = useMemo(
+    () => async (novelId: number) => {
+      const token = getSessionToken() ?? undefined;
+      setPricingState((previous) =>
+        previous.status === "ready"
+          ? { status: "ready", data: previous.data }
+          : { status: "loading" },
+      );
+
+      const result = await fetchNovelPricing(novelId, token);
+      if (!result.ok) {
+        setPricingState({
+          status: "error",
+          message: result.error.message,
+        });
+        return false;
+      }
+
+      setPricingState({ status: "ready", data: result.data });
+      return true;
+    },
+    [],
+  );
+
   const loadProfile = useMemo(
     () => async (signal?: AbortSignal) => {
       const token = getSessionToken() ?? undefined;
@@ -215,7 +274,8 @@ export function DashboardView() {
 
       setProfileState({ status: "ready", data: result.data });
       setProfileForm({
-        nickname: result.data.profile.nickname ?? "",
+        displayName: result.data.profile.nickname ?? "",
+        email: result.data.profile.email,
         avatar: result.data.profile.avatar ?? "",
       });
       return true;
@@ -369,6 +429,49 @@ export function DashboardView() {
     }
   }
 
+  async function onLoadPricingSummary(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    const novelId = Number(purchasePricingForm.novelId);
+    if (!Number.isInteger(novelId) || novelId <= 0) {
+      setPurchaseMessage("Enter a valid novel ID.");
+      return;
+    }
+
+    setPurchaseMessage(null);
+    await loadNovelPricing(novelId);
+  }
+
+  async function onExecuteComboPurchase() {
+    if (pricingState.status !== "ready") {
+      setPurchaseMessage("Load pricing summary before purchasing combo.");
+      return;
+    }
+
+    setComboBusy(true);
+    setPurchaseMessage(null);
+
+    const token = getSessionToken() ?? undefined;
+    const result = await purchaseNovelCombo(pricingState.data.novelId, token);
+
+    setComboBusy(false);
+
+    if (!result.ok) {
+      setPurchaseMessage(result.error.message);
+      return;
+    }
+
+    const outcome = buildComboPurchaseOutcome(result.data, formatCurrency);
+    setPurchaseMessage(outcome.message);
+
+    if (outcome.refreshWallet) {
+      void loadWalletSummary();
+    }
+
+    if (outcome.refreshPricing) {
+      void loadNovelPricing(pricingState.data.novelId);
+    }
+  }
   async function onSubmitProfile(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setProfileBusy(true);
@@ -377,7 +480,8 @@ export function DashboardView() {
     const token = getSessionToken() ?? undefined;
     const result = await updateProfile(
       {
-        nickname: profileForm.nickname,
+        displayName: profileForm.displayName,
+        email: profileForm.email,
         avatar: profileForm.avatar,
       },
       token,
@@ -391,7 +495,8 @@ export function DashboardView() {
 
     setProfileState({ status: "ready", data: result.data });
     setProfileForm({
-      nickname: result.data.profile.nickname ?? "",
+      displayName: result.data.profile.nickname ?? "",
+      email: result.data.profile.email,
       avatar: result.data.profile.avatar ?? "",
     });
 
@@ -411,6 +516,46 @@ export function DashboardView() {
     );
 
     setProfileMessage("Profile saved successfully.");
+  }
+
+
+  async function onSubmitPassword(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    if (!passwordForm.currentPassword) {
+      setPasswordMessage("Current password is required.");
+      return;
+    }
+
+    if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+      setPasswordMessage("New password and confirmation do not match.");
+      return;
+    }
+
+    setPasswordBusy(true);
+    setPasswordMessage(null);
+
+    const token = getSessionToken() ?? undefined;
+    const result = await changePassword(
+      {
+        currentPassword: passwordForm.currentPassword,
+        newPassword: passwordForm.newPassword,
+      },
+      token,
+    );
+
+    setPasswordBusy(false);
+    if (!result.ok) {
+      setPasswordMessage(result.error.message);
+      return;
+    }
+
+    setPasswordForm({
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: "",
+    });
+    setPasswordMessage("Password updated successfully.");
   }
 
   function renderWalletSection() {
@@ -607,19 +752,29 @@ export function DashboardView() {
         ? walletState.data.transactions.filter(
             (item) =>
               item.type === "PURCHASE_CHAPTER" ||
+              item.type === "COMBO_PURCHASE" ||
               item.label.toLowerCase().includes("purchase"),
           )
         : [];
 
-    const totalSpent = purchaseTransactions.reduce((sum, item) => sum + item.amount, 0);
+    const purchaseSummary =
+      walletState.status === "ready" ? walletState.data.purchaseSummary : null;
+
+    const recentPurchaseActions =
+      purchaseSummary?.recentActions ?? purchaseTransactions.length;
+    const totalSpent =
+      purchaseSummary?.recentSpent ??
+      purchaseTransactions.reduce((sum, item) => sum + item.amount, 0);
+    const pricing = pricingState.status === "ready" ? pricingState.data : null;
+    const pricingDisplay = pricing ? buildPurchasePricingModel(pricing, formatCurrency) : null;
 
     return (
       <section className="dashboard-purchases" aria-label="Purchases section">
         <div className="dashboard-purchases-grid">
           <article className="dashboard-purchases-card">
             <h3>Recent purchase actions</h3>
-            <p>{purchaseTransactions.length}</p>
-            <span>Detected chapter purchase transactions from wallet ledger.</span>
+            <p>{recentPurchaseActions}</p>
+            <span>Includes imported chapter unlock history and recent wallet purchase ledger actions.</span>
           </article>
           <article className="dashboard-purchases-card">
             <h3>Total spent (recent)</h3>
@@ -627,6 +782,104 @@ export function DashboardView() {
             <span>Calculated from latest purchase transactions in your account.</span>
           </article>
         </div>
+
+        <article className="dashboard-purchases-pricing">
+          <header>
+            <h3>Novel pricing summary</h3>
+            <p>
+              Load pricing to inspect free chapter thresholds, chapter-level overrides,
+              and combo discount before purchasing.
+            </p>
+          </header>
+
+          <form className="dashboard-purchases-pricing-form" onSubmit={onLoadPricingSummary}>
+            <label>
+              Novel ID
+              <input
+                type="number"
+                min={1}
+                value={purchasePricingForm.novelId}
+                onChange={(event) => setPurchasePricingForm({ novelId: event.target.value })}
+                placeholder="Enter novel id"
+                required
+              />
+            </label>
+            <button className="action-primary" type="submit" disabled={pricingState.status === "loading"}>
+              {pricingState.status === "loading" ? "Loading..." : "Load pricing"}
+            </button>
+          </form>
+
+          {pricingState.status === "error" ? (
+            <p className="dashboard-wallet-error">{pricingState.message}</p>
+          ) : null}
+
+          {pricingDisplay ? (
+            <div className="dashboard-pricing-summary">
+              <div className="dashboard-pricing-metrics">
+                <article>
+                  <h4>Default chapter price</h4>
+                  <p>{pricingDisplay.defaultChapterPriceLabel}</p>
+                </article>
+                <article>
+                  <h4>Free chapters</h4>
+                  <p>{pricingDisplay.freeChapterCountLabel}</p>
+                </article>
+                <article>
+                  <h4>Combo discount</h4>
+                  <p>{pricingDisplay.comboDiscountLabel}</p>
+                </article>
+                <article>
+                  <h4>Combo payable</h4>
+                  <p>{pricingDisplay.discountedTotalLabel}</p>
+                </article>
+              </div>
+
+              <p className="dashboard-pricing-note">
+                Locked chapters: {pricingDisplay.lockedChapterCount}. Original total{" "}
+                {pricingDisplay.originalTotalLabel}.
+                {pricingDisplay.hasZeroPayable ? " Zero payable amount detected." : ""}
+              </p>
+
+              <div className="dashboard-purchases-actions">
+                <button className="action-primary" type="button" disabled={comboBusy} onClick={onExecuteComboPurchase}>
+                  {comboBusy ? "Processing combo..." : "Purchase combo unlock"}
+                </button>
+                <Link className="action-secondary" href="/dashboard?section=wallet">
+                  Top up wallet
+                </Link>
+              </div>
+
+              <div className="dashboard-pricing-table-wrap">
+                <table className="dashboard-pricing-table">
+                  <thead>
+                    <tr>
+                      <th>Chapter</th>
+                      <th>Access</th>
+                      <th>Effective price</th>
+                      <th>Source</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {pricingDisplay.chapterRows.map((chapter: any) => (
+                      <tr key={chapter.id}>
+                        <td>
+                          <strong>#{chapter.chapterNumber}</strong> {chapter.title}
+                        </td>
+                        <td>{chapter.accessLabel}</td>
+                        <td>{chapter.effectivePriceLabel}</td>
+                        <td>{chapter.sourceLabel}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          ) : (
+            <p className="dashboard-pricing-note">No pricing loaded yet.</p>
+          )}
+
+          {purchaseMessage ? <p className="dashboard-wallet-message">{purchaseMessage}</p> : null}
+        </article>
 
         <article className="dashboard-purchases-list">
           <header>
@@ -664,19 +917,9 @@ export function DashboardView() {
             </ul>
           )}
         </article>
-
-        <div className="dashboard-purchases-actions">
-          <Link className="action-secondary" href="/dashboard?section=wallet">
-            Top up wallet
-          </Link>
-          <Link className="action-secondary" href="/novels/1">
-            Open reader and unlock chapters
-          </Link>
-        </div>
       </section>
     );
   }
-
   function renderProfileSection() {
     const profileReady = profileState.status === "ready" ? profileState.data : null;
 
@@ -685,22 +928,38 @@ export function DashboardView() {
         <div className="dashboard-profile-grid">
           <article className="dashboard-profile-card">
             <h3>Profile settings</h3>
-            <p>Update nickname and avatar metadata used across dashboard and social views.</p>
+            <p>Update display name and account email used across dashboard and reader flows.</p>
             <form onSubmit={onSubmitProfile}>
               <label>
-                Nickname
+                Display name
                 <input
                   maxLength={40}
                   minLength={2}
-                  name="nickname"
+                  name="displayName"
                   onChange={(event) =>
                     setProfileForm((current) => ({
                       ...current,
-                      nickname: event.target.value,
+                      displayName: event.target.value,
                     }))
                   }
-                  placeholder="Enter nickname"
-                  value={profileForm.nickname}
+                  placeholder="Enter display name"
+                  value={profileForm.displayName}
+                />
+              </label>
+
+              <label>
+                Email
+                <input
+                  name="email"
+                  onChange={(event) =>
+                    setProfileForm((current) => ({
+                      ...current,
+                      email: event.target.value,
+                    }))
+                  }
+                  placeholder="reader@example.com"
+                  type="email"
+                  value={profileForm.email}
                 />
               </label>
 
@@ -731,7 +990,69 @@ export function DashboardView() {
             ) : null}
           </article>
 
-          <article className="dashboard-profile-card">
+          <article className="dashboard-profile-card dashboard-profile-card--security">
+            <h3>Password security</h3>
+            <p>Change password securely using your current password and a strong replacement.</p>
+            <form onSubmit={onSubmitPassword}>
+              <label>
+                Current password
+                <input
+                  autoComplete="current-password"
+                  name="currentPassword"
+                  onChange={(event) =>
+                    setPasswordForm((current) => ({
+                      ...current,
+                      currentPassword: event.target.value,
+                    }))
+                  }
+                  placeholder="Current password"
+                  type="password"
+                  value={passwordForm.currentPassword}
+                />
+              </label>
+
+              <label>
+                New password
+                <input
+                  autoComplete="new-password"
+                  name="newPassword"
+                  onChange={(event) =>
+                    setPasswordForm((current) => ({
+                      ...current,
+                      newPassword: event.target.value,
+                    }))
+                  }
+                  placeholder="New password"
+                  type="password"
+                  value={passwordForm.newPassword}
+                />
+              </label>
+
+              <label>
+                Confirm new password
+                <input
+                  autoComplete="new-password"
+                  name="confirmPassword"
+                  onChange={(event) =>
+                    setPasswordForm((current) => ({
+                      ...current,
+                      confirmPassword: event.target.value,
+                    }))
+                  }
+                  placeholder="Confirm new password"
+                  type="password"
+                  value={passwordForm.confirmPassword}
+                />
+              </label>
+
+              <button className="action-primary" disabled={passwordBusy} type="submit">
+                {passwordBusy ? "Updating..." : "Change password"}
+              </button>
+            </form>
+            {passwordMessage ? <p className="dashboard-profile-message">{passwordMessage}</p> : null}
+          </article>
+
+          <article className="dashboard-profile-card dashboard-profile-card--details">
             <h3>Identity and session details</h3>
             {profileState.status === "loading" || profileState.status === "idle" ? (
               <p>Loading profile details...</p>
@@ -746,6 +1067,10 @@ export function DashboardView() {
                 <div>
                   <dt>Email</dt>
                   <dd>{profileReady?.profile.email}</dd>
+                </div>
+                <div>
+                  <dt>Display name</dt>
+                  <dd>{profileReady?.profile.nickname || "(not set)"}</dd>
                 </div>
                 <div>
                   <dt>Role</dt>

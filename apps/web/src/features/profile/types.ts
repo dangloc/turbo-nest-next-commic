@@ -17,6 +17,13 @@ export interface ProfileResponse {
 }
 
 export interface UpdateProfileInput {
+  email?: string;
+  displayName?: string | null;
   nickname?: string | null;
   avatar?: string | null;
+}
+
+export interface ChangePasswordInput {
+  currentPassword: string;
+  newPassword: string;
 }

@@ -1633,3 +1633,15 @@ p {
   display: grid;
   gap: 10px;
 }
+
+.dashboard-profile-card--security {
+  align-content: start;
+}
+
+.dashboard-profile-card--details {
+  grid-column: 1 / -1;
+}
+
+.dashboard-profile-card--security input[type="password"] {
+  letter-spacing: 0.03em;
+}
