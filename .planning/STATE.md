@@ -1,59 +1,63 @@
 ---
 gsd_state_version: 1.0
 milestone: v1.14
-milestone_name: To Be Defined
+milestone_name: Identity & Account Experience
 current_phase: null
-status: between_milestones
-last_updated: "2026-04-12T15:45:00.000Z"
-last_activity: 2026-04-12 -- Archived v1.13, ready for next milestone planning
+status: planning
+last_updated: "2026-04-12T16:00:00.000Z"
+last_activity: 2026-04-12 -- Started v1.14 milestone, phase 35 ready for planning
 progress:
-  total_phases: 0
+  total_phases: 3
   completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
   ready_for_planning: true
 ---
 
 # GSD Workflow State
 
-## Current Position
-
-Status: Between Milestones
-Previous Milestone: v1.13 (Complete, Archived)
-Next Milestone: To be defined via /gsd:new-milestone
+Current Milestone: v1.14 (Identity & Account Experience)
+Current Phase: Defining requirements and roadmap
+Status: Ready to plan Phase 35
 
 ---
 
-## Milestone Summary
+## Current Position
 
-### v1.13 - Archived ✅
+Milestone: v1.14 - Identity & Account Experience
+Start Date: 2026-04-12
+Phase Count: 3 planned (Phases 35, 36, 37)
+Roadmap Status: Complete
 
-Duration: 1 phase, 1 plan
-Requirements: 3 (all completed)
-- ETL-01: Legacy balance and VIP extraction via wp_usermeta pivot
-- ETL-02: PHP-serialized chapter purchase transformation
-- ETL-03: Prisma bulk loading with idempotent operations
+---
 
-Shipped: 2026-04-12
+## Milestone Scope Snapshot (v1.14)
 
-Achievements:
-- Single-query financial pivot reduces loading time from O(N) to O(1) per user
-- Reliable serialization transformation with full edge case coverage
-- Bulk inserts with skipDuplicates enable safe, idempotent reruns
-- All test coverage passing (100%)
+**Goal:** Implement frontend UIs for authentication and account management, consuming local auth endpoints and imported legacy financial data.
+
+Requirements (4 total):
+- AUTH-01: Frontend Login Form
+- AUTH-02: Frontend Registration Form  
+- ACCOUNT-01: Profile Management & Password Change
+- ACCOUNT-02: Wallet and Purchase History Dashboard
+
+**Phase Breakdown:**
+- Phase 35: Frontend Local Authentication (AUTH-01, AUTH-02)
+- Phase 36: User Profile & Security Management (ACCOUNT-01)
+- Phase 37: Wallet and Purchase History Dashboard (ACCOUNT-02)
 
 ---
 
 ## Next Steps
 
-1. **Define v1.14 requirements** → Run `/gsd:new-milestone`
-2. **Gather v1.14 context** → Review product roadmap, user feedback, technical debt
-3. **Plan v1.14 phases** → Create detailed phase plans with task breakdown
-4. **Execute v1.14 phases** → Implement features phase by phase
-
-## Available Milestones Reference
-
-- v1.0 - v1.13: Archived in `.planning/milestones/`
-- v1.14+: To be created
+1. Plan Phase 35 → Run `/gsd:plan-phase 35`
+2. Execute Phase 35 → Run `/gsd:execute-phase 35`
+3. Plan Phase 36 → Run `/gsd:plan-phase 36`
+4. Execute Phase 36 → Run `/gsd:execute-phase 36`
+5. Plan Phase 37 → Run `/gsd:plan-phase 37`
+6. Execute Phase 37 → Run `/gsd:execute-phase 37`
+7. Complete Milestone → Run `/gsd:complete-milestone v1.14`
 
 ---
 
-Last updated: 2026-04-12 after v1.13 milestone completion
+Last updated: 2026-04-12 after v1.14 milestone definition

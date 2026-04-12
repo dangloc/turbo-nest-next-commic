@@ -1,0 +1,58 @@
+# Requirements: v1.14 Identity & Account Experience
+
+Defined: 2026-04-12
+Core Value: Enable users to authenticate locally and manage their accounts and financial history through responsive, accessible frontend UIs.
+
+## v1.14 Requirements
+
+### Frontend Authentication
+
+- [ ] AUTH-01: Frontend Login Form. User can enter username or email with password; receives bearer token on success or explicit error on failure; integrates with existing session management.
+  - Acceptance: Responsive form with client-side validation (password required), error messages for invalid credentials or network failures, token stored and session active immediately after login.
+
+- [ ] AUTH-02: Frontend Registration Form. User can create a new account with username, email, and password; receives success confirmation and is logged in automatically; duplicate email/username returns clear error.
+  - Acceptance: Responsive form with password strength indicators, client-side validation (8+ chars, letter + number), duplicate detection feedback, automatic login on success, commic_session cookie set.
+
+### Account Management
+
+- [ ] ACCOUNT-01: Profile Management & Password Change. User can view and edit their profile (name, email) and change their password securely.
+  - Acceptance: Profile form shows current user data prefilled, edit success confirms changes, password change requires current password verification, new password subject to same strength rules as registration.
+
+- [ ] ACCOUNT-02: Wallet and Purchase History. User can view their wallet balance, VIP level (from legacy ETL data), and list of purchased chapters with unlock status.
+  - Acceptance: Dashboard section displays wallet balance and VIP tier, purchased chapters list shows title/author, purchase date, unlock status; integrates with chapter reader access control.
+
+## Future Requirements (Deferred)
+
+- AUTH-03: Multi-factor authentication (2FA via email or authenticator app)
+- AUTH-04: Social login via local account linking (connect existing Google OAuth to username account)
+- ACCOUNT-03: Account deletion and data export
+- ACCOUNT-04: Purchase receipt and transaction history export
+
+## Out of Scope (v1.14)
+
+| Feature | Reason |
+|---------|--------|
+| Password reset via email link | Local auth infrastructure (email verification) not yet available; defer to v1.15 auth security phase |
+| Subscription management UI | Financial product roadmap separate from account experience; addressed in v1.15+ monetization features |
+| Two-device sync for profile changes | Profile updates stored in single DB; eventual consistency acceptable |
+| Admin account management panel | Creator dashboard separate from user account UX; scheduled for v1.15+creator tools |
+
+## Traceability
+
+| Requirement | Planned Phase | Status | Assigned |
+|-------------|---------------|--------|----------|
+| AUTH-01 | Phase 35 | Active | Pending |
+| AUTH-02 | Phase 35 | Active | Pending |
+| ACCOUNT-01 | Phase 36 | Active | Pending |
+| ACCOUNT-02 | Phase 37 | Active | Pending |
+
+Coverage:
+- v1.14 requirements: 4 total
+- Assigned to phases: 4 (100%)
+- Deferred: 4
+- Out of scope: 4
+
+---
+
+Requirements defined: 2026-04-12
+Last updated: 2026-04-12 after v1.14 initialization

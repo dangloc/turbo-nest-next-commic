@@ -17,6 +17,15 @@ v1.13 shipped and archived:
 
 Complete financial ETL pipeline now available for production migration scenarios.
 
+## Current Milestone: v1.14 Identity & Account Experience
+
+**Goal:** Implement frontend UIs for authentication and account management, fully consuming local auth endpoints and newly imported legacy financial data.
+
+**Target features:**
+- **AUTH-01:** Frontend Local Authentication with responsive login/register forms, client-side validation, error handling, and session integration
+- **ACCOUNT-01:** User Profile & Security management UI with password change functionality
+- **ACCOUNT-02:** Purchase History Dashboard displaying unlocked chapters and wallet balance from ETL'd legacy data
+
 ## Shipped Milestones
 
 - ✅ v1.0: WordPress migration foundation.
@@ -33,15 +42,7 @@ Complete financial ETL pipeline now available for production migration scenarios
 - ✅ v1.12: Creator Growth & Reader Personalization.
 - ✅ v1.13: Legacy Financial ETL Import.
 
-## Next Milestone
-
-v1.14 to be defined via `/gsd:new-milestone`. Areas of potential focus:
-- Data validation and post-migration reconciliation UX
-- Additional creator tools and monetization features
-- Advanced content discovery and recommendations
-- Platform stability and performance optimization
-
-## Key Decisions (v1.9-v1.13)
+## Key Decisions (v1.9-v1.14)
 
 | Decision | Outcome | Phase |
 |----------|---------|-------|
@@ -55,15 +56,11 @@ v1.14 to be defined via `/gsd:new-milestone`. Areas of potential focus:
 | Cross-device resume sync must be conflict-safe and deterministic | ✓ Shipped | 33 |
 | Legacy financial ETL must source truth from wp_usermeta pivots, not wp_users | ✓ Implemented via single grouped CASE WHEN query with bulk Prisma loading | 34 |
 
-## Active Requirements for Next Milestone
-
-(To be defined in v1.14 requirements document)
-
 ## Evolution Notes
 
 - **After v1.12:** Added cross-device sync, advanced personalization.
 - **After v1.13:** Financial migration pipeline complete; all legacy user data now importable via ETL.
-- **After v1.14:** To be determined based on roadmap priorities and user feedback.
+- **v1.14 Focus:** Activate local auth and historical financial data via frontend UIs—login/register, profiles, and wallet history.
 
 This document evolves at phase transitions and milestone boundaries:
 
@@ -73,6 +70,24 @@ This document evolves at phase transitions and milestone boundaries:
 4. Core Value check → still the one thing? (Yes, preserving fidelity while enabling great UX)
 5. What This Is accuracy → accurate after each phase
 
+## Evolution
+
+This document evolves at phase transitions and milestone boundaries.
+
+**After each phase transition** (via phase completion):
+1. Requirements invalidated? → Move to Out of Scope with reason
+2. Requirements validated? → Move to Validated with phase reference
+3. New requirements emerged? → Add to Active
+4. Decisions to log? → Add to Key Decisions
+5. "What This Is" still accurate? → Update if drifted
+
+**After each milestone** (via `/gsd:complete-milestone`):
+1. Full review of all sections
+2. Core Value check — still the right priority?
+3. Audit Out of Scope — reasons still valid?
+4. Update Context with current state
+5. Shift milestones: Shipped → previous, Active → next
+
 ---
 
-*Last updated: 2026-04-12 after v1.13 milestone completion*
+*Last updated: 2026-04-12 after v1.14 milestone initialization*
