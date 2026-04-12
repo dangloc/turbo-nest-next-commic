@@ -10,19 +10,12 @@ Preserve every identity-sensitive and financial record with exact IDs and relati
 
 ## Current State
 
-v1.12 shipped and archived:
-- Creator follow graph with authenticated follow and unfollow actions plus public follower visibility.
-- Advanced reader typography personalization with persisted font family, line height, and content width.
-- Cross-device progression sync with deterministic conflict handling and metadata-driven reconciliation UX.
+v1.13 shipped and archived:
+- Legacy WordPress user financial data migration using single `wp_usermeta` pivot queries as source of truth.
+- PHP-serialized chapter purchase transformation and normalization.
+- Bulk Prisma loading for wallet balance, VIP level, and purchase history (fully idempotent with skipDuplicates).
 
-## Current Milestone: v1.13 Legacy Financial ETL Import
-
-**Goal:** Migrate legacy WordPress user financials and chapter purchase history into PostgreSQL using a single usmeta pivot source of truth.
-
-**Target features:**
-- Legacy balance and VIP extraction from wp_usermeta, ignoring deprecated wp_users financial columns.
-- PHP-serialized purchased chapter transformation into Prisma-ready rows.
-- Bulk Prisma loading for user financial updates and purchase history inserts.
+Complete financial ETL pipeline now available for production migration scenarios.
 
 ## Shipped Milestones
 
@@ -38,6 +31,15 @@ v1.12 shipped and archived:
 - ✅ v1.10: Notification Center & Dynamic Content.
 - ✅ v1.11: Reader Experience & Creator Discovery.
 - ✅ v1.12: Creator Growth & Reader Personalization.
+- ✅ v1.13: Legacy Financial ETL Import.
+
+## Next Milestone
+
+v1.14 to be defined via `/gsd:new-milestone`. Areas of potential focus:
+- Data validation and post-migration reconciliation UX
+- Additional creator tools and monetization features
+- Advanced content discovery and recommendations
+- Platform stability and performance optimization
 
 ## Key Decisions (v1.9-v1.13)
 
@@ -51,26 +53,26 @@ v1.12 shipped and archived:
 | Reader progression updates must be idempotent and session-safe | ✓ Implemented via authenticated chapter-open sync contract and guarded client integration | 30 |
 | Follow graph must remain public-read but authenticated-write | ✓ Shipped | 31 |
 | Cross-device resume sync must be conflict-safe and deterministic | ✓ Shipped | 33 |
-| Legacy financial ETL must source truth from wp_usermeta pivots, not wp_users | — Planned | 34 |
+| Legacy financial ETL must source truth from wp_usermeta pivots, not wp_users | ✓ Implemented via single grouped CASE WHEN query with bulk Prisma loading | 34 |
 
-## Evolution
+## Active Requirements for Next Milestone
 
-This document evolves at phase transitions and milestone boundaries.
+(To be defined in v1.14 requirements document)
 
-After each phase:
-1. Requirements invalidated? Move to Out of Scope with reason.
-2. Requirements validated? Move to Shipped with phase reference.
-3. New requirements emerged? Add to Active.
-4. Decisions to log? Add to Key Decisions.
-5. What This Is still accurate? Update if drifted.
+## Evolution Notes
 
-After each milestone:
-1. Full review of all sections.
-2. Core Value check - still the one thing?
-3. Out-of-Scope audit - still valid reasoning?
-4. Context refresh with current delivered state.
-5. Shift milestones: Shipped -> previous, Active -> next.
+- **After v1.12:** Added cross-device sync, advanced personalization.
+- **After v1.13:** Financial migration pipeline complete; all legacy user data now importable via ETL.
+- **After v1.14:** To be determined based on roadmap priorities and user feedback.
+
+This document evolves at phase transitions and milestone boundaries:
+
+1. Requirements validated in shipped milestone → move to archived milestone REQUIREMENTS.md
+2. New requirements defined in next milestone → create fresh REQUIREMENTS.md
+3. Key Decisions → logged with outcome for historical reference
+4. Core Value check → still the one thing? (Yes, preserving fidelity while enabling great UX)
+5. What This Is accuracy → accurate after each phase
 
 ---
 
-*Last updated: 2026-04-12 after v1.13 milestone initialization*
+*Last updated: 2026-04-12 after v1.13 milestone completion*
