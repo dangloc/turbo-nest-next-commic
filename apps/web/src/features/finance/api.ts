@@ -2,12 +2,15 @@ import { apiRequest } from "../../lib/api/http";
 import type { ApiResult } from "../../lib/api/types";
 import { getSessionToken } from "../../lib/auth/session-store";
 import type {
+  ComboPurchaseResult,
   InitiateTopUpInput,
-  PaymentProvider,
   InitiateTopUpResponse,
+  NovelPricingResponse,
+  PaymentProvider,
   PurchaseChapterInput,
   PurchaseChapterResponse,
   PurchaseChapterResult,
+  PurchaseHistoryResponse,
   VerifyTopUpInput,
   VerifyTopUpResponse,
   WalletSummaryResponse,
@@ -29,6 +32,28 @@ export async function fetchWalletSummary(
   signal?: AbortSignal,
 ): Promise<ApiResult<WalletSummaryResponse>> {
   return apiRequest<WalletSummaryResponse>("/finance/wallet/summary", {
+    method: "GET",
+    headers: authHeaders(token),
+    includeCredentials: true,
+    signal,
+  });
+}
+
+export async function fetchPurchaseHistory(
+  page: number,
+  pageSize: number,
+  token?: string,
+  signal?: AbortSignal,
+): Promise<ApiResult<PurchaseHistoryResponse>> {
+  const safePage = Number.isInteger(page) && page > 0 ? page : 1;
+  const safePageSize = Number.isInteger(pageSize) && pageSize > 0 ? pageSize : 20;
+
+  const params = new URLSearchParams({
+    page: String(safePage),
+    pageSize: String(safePageSize),
+  });
+
+  return apiRequest<PurchaseHistoryResponse>(`/finance/purchases/history?${params.toString()}`, {
     method: "GET",
     headers: authHeaders(token),
     includeCredentials: true,
@@ -60,6 +85,27 @@ export async function verifyTopUp(
   });
 }
 
+export async function fetchNovelPricing(
+  novelId: number,
+  token?: string,
+): Promise<ApiResult<NovelPricingResponse>> {
+  if (!Number.isInteger(novelId) || novelId <= 0) {
+    return {
+      ok: false,
+      error: {
+        status: 400,
+        message: "novelId must be a positive integer.",
+      },
+    };
+  }
+
+  return apiRequest<NovelPricingResponse>(`/finance/purchases/novels/${novelId}/pricing`, {
+    method: "GET",
+    headers: authHeaders(token),
+    includeCredentials: true,
+  });
+}
+
 export async function purchaseChapter(
   input: PurchaseChapterInput,
   token?: string,
@@ -84,16 +130,6 @@ export async function purchaseChapter(
     };
   }
 
-  if (!Number.isFinite(input.price) || input.price <= 0) {
-    return {
-      ok: false,
-      error: {
-        status: 400,
-        message: "price must be a positive number.",
-      },
-    };
-  }
-
   const result = await apiRequest<PurchaseChapterResponse>(
     `/finance/purchases/chapters/${input.chapterId}`,
     {
@@ -101,14 +137,16 @@ export async function purchaseChapter(
       headers: authHeaders(token),
       body: {
         novelId: input.novelId,
-        price: input.price,
       },
       includeCredentials: true,
     },
   );
 
   if (!result.ok) {
-    if (result.error.status === 400 && /insufficient deposited balance/i.test(result.error.message)) {
+    if (
+      result.error.status === 400 &&
+      /insufficient deposited balance/i.test(result.error.message)
+    ) {
       return {
         ok: true,
         data: {
@@ -132,16 +170,65 @@ export async function purchaseChapter(
       purchasedChapterId: result.data.purchasedChapterId,
       transactionId: result.data.transactionId,
       depositedBalance: result.data.depositedBalance,
+      effectivePrice: result.data.effectivePrice,
     },
   };
 }
 
+export async function purchaseNovelCombo(
+  novelId: number,
+  token?: string,
+): Promise<ApiResult<ComboPurchaseResult>> {
+  if (!Number.isInteger(novelId) || novelId <= 0) {
+    return {
+      ok: false,
+      error: {
+        status: 400,
+        message: "novelId must be a positive integer.",
+      },
+    };
+  }
+
+  const result = await apiRequest<ComboPurchaseResult>(
+    `/finance/purchases/novels/${novelId}/combo`,
+    {
+      method: "POST",
+      headers: authHeaders(token),
+      includeCredentials: true,
+    },
+  );
+
+  if (!result.ok) {
+    if (
+      result.error.status === 400 &&
+      /insufficient deposited balance/i.test(result.error.message)
+    ) {
+      return {
+        ok: true,
+        data: {
+          status: "insufficient_balance",
+          novelId,
+          purchasedChapterCount: 0,
+          chargedAmount: 0,
+        },
+      };
+    }
+
+    return result;
+  }
+
+  return result;
+}
+
 export type {
+  ComboPurchaseResult,
   InitiateTopUpInput,
   InitiateTopUpResponse,
+  NovelPricingResponse,
   PaymentProvider,
   PurchaseChapterInput,
   PurchaseChapterResult,
+  PurchaseHistoryResponse,
   VerifyTopUpInput,
   VerifyTopUpResponse,
   WalletSummaryResponse,

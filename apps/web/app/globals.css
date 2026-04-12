@@ -1645,3 +1645,63 @@ p {
 .dashboard-profile-card--security input[type="password"] {
   letter-spacing: 0.03em;
 }
+
+.dashboard-wallet-card--vip span {
+  color: #6f563c;
+  font-size: 0.85rem;
+}
+
+.dashboard-purchase-history-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+}
+
+.dashboard-purchase-history-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 820px;
+}
+
+.dashboard-purchase-history-table th,
+.dashboard-purchase-history-table td {
+  border-bottom: 1px solid var(--line);
+  padding: 10px 12px;
+  text-align: left;
+  font-size: 0.9rem;
+}
+
+.dashboard-purchase-history-table th {
+  background: rgba(215, 201, 178, 0.18);
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #7b5c3f;
+}
+
+.dashboard-history-status {
+  display: inline-flex;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.dashboard-history-status--ok {
+  background: rgba(47, 107, 55, 0.14);
+  color: #2f6b37;
+}
+
+.dashboard-history-status--warn {
+  background: rgba(140, 64, 30, 0.14);
+  color: #8c401e;
+}
+
+.dashboard-history-pagination {
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}

@@ -48,35 +48,103 @@ export interface WalletSummaryItem {
   transactionDate: string;
 }
 
+export interface WalletVipTier {
+  id: number;
+  name: string;
+  vndValue: number;
+  colorCode: string | null;
+  iconUrl: string | null;
+}
+
 export interface WalletSummaryResponse {
   balances: {
     depositedBalance: number;
     earnedBalance: number;
     totalDeposited: number;
   };
+  purchaseSummary: {
+    recentActions: number;
+    recentSpent: number;
+  };
+  vipTier: WalletVipTier | null;
   transactions: WalletSummaryItem[];
+}
+
+export interface PurchaseHistoryItem {
+  purchasedChapterId: number;
+  chapterId: number;
+  chapterTitle: string;
+  novelId: number;
+  novelTitle: string;
+  authorId: number;
+  authorDisplayName: string;
+  purchasedAt: string;
+  pricePaid: number;
+  unlockStatus: "UNLOCKED" | "UNAVAILABLE";
+}
+
+export interface PurchaseHistoryResponse {
+  items: PurchaseHistoryItem[];
+  page: number;
+  pageSize: number;
+  total: number;
+  totalPages: number;
 }
 
 export interface PurchaseChapterInput {
   chapterId: number;
   novelId: number;
-  price: number;
 }
 
 export interface PurchaseChapterResponse {
-  status: "purchased" | "already_owned";
+  status: "purchased" | "already_owned" | "free_chapter";
   chapterId: number;
   novelId: number;
   purchasedChapterId: number | null;
   transactionId?: number;
   depositedBalance?: number;
+  effectivePrice?: number;
 }
 
 export interface PurchaseChapterResult {
-  status: "purchased" | "already_owned" | "insufficient_balance";
+  status: "purchased" | "already_owned" | "free_chapter" | "insufficient_balance";
   chapterId: number;
   novelId: number;
   purchasedChapterId: number | null;
+  transactionId?: number;
+  depositedBalance?: number;
+  effectivePrice?: number;
+}
+
+export interface NovelPricingResponse {
+  novelId: number;
+  uploaderId: number;
+  settings: {
+    defaultChapterPrice: number;
+    freeChapterCount: number;
+    comboDiscountPct: number;
+  };
+  combo: {
+    lockedChapterCount: number;
+    originalTotalPrice: number;
+    discountedTotalPrice: number;
+  };
+  chapters: Array<{
+    id: number;
+    title: string;
+    chapterNumber: number;
+    isLocked: boolean;
+    effectivePrice: number;
+    priceSource: "chapter_override" | "novel_default";
+  }>;
+}
+
+export interface ComboPurchaseResult {
+  status: "purchased" | "already_owned" | "no_locked_chapters" | "insufficient_balance";
+  novelId: number;
+  purchasedChapterCount: number;
+  chargedAmount: number;
+  discountPct?: number;
   transactionId?: number;
   depositedBalance?: number;
 }

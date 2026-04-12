@@ -11,12 +11,14 @@ import {
 import { AppContext } from "../../providers/app-provider";
 import {
   fetchNovelPricing,
+  fetchPurchaseHistory,
   fetchWalletSummary,
   initiateTopUp,
   purchaseNovelCombo,
   verifyTopUp,
   type NovelPricingResponse,
   type PaymentProvider,
+  type PurchaseHistoryResponse,
   type WalletSummaryResponse,
 } from "../finance/api";
 import {
@@ -60,6 +62,11 @@ interface PasswordFormState {
 
 interface PurchasePricingFormState {
   novelId: string;
+}
+
+interface PurchaseHistoryPaginationState {
+  page: number;
+  pageSize: number;
 }
 
 const DEFAULT_TOP_UP_FORM: TopUpFormState = {
@@ -137,6 +144,13 @@ export function DashboardView() {
   >({ status: "idle" });
   const [comboBusy, setComboBusy] = useState(false);
   const [purchaseMessage, setPurchaseMessage] = useState<string | null>(null);
+  const [purchaseHistoryState, setPurchaseHistoryState] = useState<
+    | { status: "idle" | "loading" }
+    | { status: "ready"; data: PurchaseHistoryResponse }
+    | { status: "error"; message: string }
+  >({ status: "idle" });
+  const [purchaseHistoryPagination, setPurchaseHistoryPagination] =
+    useState<PurchaseHistoryPaginationState>({ page: 1, pageSize: 20 });
 
   const [profileState, setProfileState] = useState<
     | { status: "idle" | "loading" }
@@ -251,6 +265,35 @@ export function DashboardView() {
     [],
   );
 
+  const loadPurchaseHistory = useMemo(
+    () => async (
+      page = purchaseHistoryPagination.page,
+      pageSize = purchaseHistoryPagination.pageSize,
+      signal?: AbortSignal,
+    ) => {
+      const token = getSessionToken() ?? undefined;
+      setPurchaseHistoryState((previous) =>
+        previous.status === "ready"
+          ? { status: "ready", data: previous.data }
+          : { status: "loading" },
+      );
+
+      const result = await fetchPurchaseHistory(page, pageSize, token, signal);
+      if (!result.ok) {
+        setPurchaseHistoryState({
+          status: "error",
+          message: result.error.message,
+        });
+        return false;
+      }
+
+      setPurchaseHistoryPagination({ page: result.data.page, pageSize: result.data.pageSize });
+      setPurchaseHistoryState({ status: "ready", data: result.data });
+      return true;
+    },
+    [purchaseHistoryPagination.page, purchaseHistoryPagination.pageSize],
+  );
+
   const loadProfile = useMemo(
     () => async (signal?: AbortSignal) => {
       const token = getSessionToken() ?? undefined;
@@ -288,9 +331,22 @@ export function DashboardView() {
       return;
     }
 
-    if (activeSection === "wallet" || activeSection === "purchases") {
+    if (activeSection === "wallet") {
       const abortController = new AbortController();
       void loadWalletSummary(abortController.signal);
+      return () => {
+        abortController.abort();
+      };
+    }
+
+    if (activeSection === "purchases") {
+      const abortController = new AbortController();
+      void loadWalletSummary(abortController.signal);
+      void loadPurchaseHistory(
+        purchaseHistoryPagination.page,
+        purchaseHistoryPagination.pageSize,
+        abortController.signal,
+      );
       return () => {
         abortController.abort();
       };
@@ -303,7 +359,15 @@ export function DashboardView() {
         abortController.abort();
       };
     }
-  }, [activeSection, loadProfile, loadWalletSummary, viewState.status]);
+  }, [
+    activeSection,
+    loadProfile,
+    loadPurchaseHistory,
+    loadWalletSummary,
+    purchaseHistoryPagination.page,
+    purchaseHistoryPagination.pageSize,
+    viewState.status,
+  ]);
 
   if (viewState.status === "loading") {
     return (
@@ -440,6 +504,22 @@ export function DashboardView() {
 
     setPurchaseMessage(null);
     await loadNovelPricing(novelId);
+  }
+
+  async function onPurchaseHistoryPageChange(nextPage: number) {
+    if (nextPage <= 0) {
+      return;
+    }
+
+    const totalPages =
+      purchaseHistoryState.status === "ready" ? purchaseHistoryState.data.totalPages : 1;
+
+    if (nextPage > totalPages) {
+      return;
+    }
+
+    setPurchaseHistoryPagination((current) => ({ ...current, page: nextPage }));
+    await loadPurchaseHistory(nextPage, purchaseHistoryPagination.pageSize);
   }
 
   async function onExecuteComboPurchase() {
@@ -583,6 +663,19 @@ export function DashboardView() {
           <article className="dashboard-wallet-card">
             <h3>Total deposited</h3>
             <p>{formatCurrency(balances.totalDeposited)}</p>
+          </article>
+          <article className="dashboard-wallet-card dashboard-wallet-card--vip">
+            <h3>Current VIP tier</h3>
+            <p>
+              {walletState.status === "ready" && walletState.data.vipTier
+                ? walletState.data.vipTier.name
+                : "No tier yet"}
+            </p>
+            <span>
+              {walletState.status === "ready" && walletState.data.vipTier
+                ? "Unlock threshold " + formatCurrency(walletState.data.vipTier.vndValue)
+                : "Keep topping up to unlock tier benefits"}
+            </span>
           </article>
         </div>
 
@@ -747,26 +840,21 @@ export function DashboardView() {
   }
 
   function renderPurchasesSection() {
-    const purchaseTransactions =
-      walletState.status === "ready"
-        ? walletState.data.transactions.filter(
-            (item) =>
-              item.type === "PURCHASE_CHAPTER" ||
-              item.type === "COMBO_PURCHASE" ||
-              item.label.toLowerCase().includes("purchase"),
-          )
-        : [];
-
     const purchaseSummary =
       walletState.status === "ready" ? walletState.data.purchaseSummary : null;
 
     const recentPurchaseActions =
-      purchaseSummary?.recentActions ?? purchaseTransactions.length;
+      purchaseSummary?.recentActions ??
+      (purchaseHistoryState.status === "ready" ? purchaseHistoryState.data.total : 0);
     const totalSpent =
       purchaseSummary?.recentSpent ??
-      purchaseTransactions.reduce((sum, item) => sum + item.amount, 0);
+      (purchaseHistoryState.status === "ready"
+        ? purchaseHistoryState.data.items.reduce((sum, item) => sum + item.pricePaid, 0)
+        : 0);
     const pricing = pricingState.status === "ready" ? pricingState.data : null;
     const pricingDisplay = pricing ? buildPurchasePricingModel(pricing, formatCurrency) : null;
+    const purchaseReady = purchaseHistoryState.status === "ready" ? purchaseHistoryState.data : null;
+    const purchaseRows = purchaseReady?.items ?? [];
 
     return (
       <section className="dashboard-purchases" aria-label="Purchases section">
@@ -779,7 +867,7 @@ export function DashboardView() {
           <article className="dashboard-purchases-card">
             <h3>Total spent (recent)</h3>
             <p>{formatCurrency(totalSpent)}</p>
-            <span>Calculated from latest purchase transactions in your account.</span>
+            <span>Calculated from latest purchase transactions and imported chapter history.</span>
           </article>
         </div>
 
@@ -835,7 +923,7 @@ export function DashboardView() {
               </div>
 
               <p className="dashboard-pricing-note">
-                Locked chapters: {pricingDisplay.lockedChapterCount}. Original total{" "}
+                Locked chapters: {pricingDisplay.lockedChapterCount}. Original total {" "}
                 {pricingDisplay.originalTotalLabel}.
                 {pricingDisplay.hasZeroPayable ? " Zero payable amount detected." : ""}
               </p>
@@ -848,31 +936,6 @@ export function DashboardView() {
                   Top up wallet
                 </Link>
               </div>
-
-              <div className="dashboard-pricing-table-wrap">
-                <table className="dashboard-pricing-table">
-                  <thead>
-                    <tr>
-                      <th>Chapter</th>
-                      <th>Access</th>
-                      <th>Effective price</th>
-                      <th>Source</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {pricingDisplay.chapterRows.map((chapter: any) => (
-                      <tr key={chapter.id}>
-                        <td>
-                          <strong>#{chapter.chapterNumber}</strong> {chapter.title}
-                        </td>
-                        <td>{chapter.accessLabel}</td>
-                        <td>{chapter.effectivePriceLabel}</td>
-                        <td>{chapter.sourceLabel}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
             </div>
           ) : (
             <p className="dashboard-pricing-note">No pricing loaded yet.</p>
@@ -883,38 +946,108 @@ export function DashboardView() {
 
         <article className="dashboard-purchases-list">
           <header>
-            <h3>Purchase timeline</h3>
+            <h3>Purchased chapter history</h3>
             <button
               className="action-secondary"
               type="button"
               onClick={() => {
-                void loadWalletSummary();
+                void loadPurchaseHistory(
+                  purchaseHistoryPagination.page,
+                  purchaseHistoryPagination.pageSize,
+                );
               }}
-              disabled={walletState.status === "loading"}
+              disabled={purchaseHistoryState.status === "loading"}
             >
               Refresh
             </button>
           </header>
 
-          {walletState.status === "loading" || walletState.status === "idle" ? (
-            <p>Loading purchase activity...</p>
-          ) : purchaseTransactions.length === 0 ? (
-            <p>
-              No purchase transactions yet. Open a locked chapter and complete purchase flow,
-              then return here to confirm unlock activity.
-            </p>
+          {purchaseHistoryState.status === "loading" || purchaseHistoryState.status === "idle" ? (
+            <p>Loading purchase history...</p>
+          ) : purchaseHistoryState.status === "error" ? (
+            <p className="dashboard-wallet-error">{purchaseHistoryState.message}</p>
+          ) : purchaseRows.length === 0 ? (
+            <p>No purchased chapters yet. Unlock chapters in reader and check back here.</p>
           ) : (
-            <ul>
-              {purchaseTransactions.slice(0, 10).map((item) => (
-                <li key={item.id}>
-                  <div>
-                    <strong>{item.label}</strong>
-                    <p>{formatDate(item.transactionDate)}</p>
-                  </div>
-                  <strong>{formatCurrency(item.amount)}</strong>
-                </li>
-              ))}
-            </ul>
+            <>
+              <div className="dashboard-purchase-history-table-wrap">
+                <table className="dashboard-purchase-history-table">
+                  <thead>
+                    <tr>
+                      <th>Chapter</th>
+                      <th>Novel</th>
+                      <th>Author</th>
+                      <th>Purchased at</th>
+                      <th>Price</th>
+                      <th>Status</th>
+                      <th>Reader</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {purchaseRows.map((item) => (
+                      <tr key={item.purchasedChapterId}>
+                        <td>{item.chapterTitle}</td>
+                        <td>{item.novelTitle}</td>
+                        <td>{item.authorDisplayName}</td>
+                        <td>{formatDate(item.purchasedAt)}</td>
+                        <td>{formatCurrency(item.pricePaid)}</td>
+                        <td>
+                          <span
+                            className={
+                              item.unlockStatus === "UNLOCKED"
+                                ? "dashboard-history-status dashboard-history-status--ok"
+                                : "dashboard-history-status dashboard-history-status--warn"
+                            }
+                          >
+                            {item.unlockStatus}
+                          </span>
+                        </td>
+                        <td>
+                          {item.unlockStatus === "UNLOCKED" ? (
+                            <Link
+                              className="action-secondary"
+                              href={"/reader/chapters/" + item.chapterId + "?novelId=" + item.novelId}
+                            >
+                              Open chapter
+                            </Link>
+                          ) : (
+                            <span>Unavailable</span>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              <div className="dashboard-history-pagination">
+                <button
+                  className="action-secondary"
+                  disabled={purchaseHistoryPagination.page <= 1}
+                  onClick={() => {
+                    void onPurchaseHistoryPageChange(purchaseHistoryPagination.page - 1);
+                  }}
+                  type="button"
+                >
+                  Previous
+                </button>
+                <p>
+                  Page {purchaseHistoryPagination.page} / {purchaseReady?.totalPages ?? 1}
+                </p>
+                <button
+                  className="action-secondary"
+                  disabled={
+                    purchaseHistoryPagination.page >= (purchaseReady?.totalPages ?? 1)
+                  }
+                  onClick={() => {
+                    void onPurchaseHistoryPageChange(purchaseHistoryPagination.page + 1);
+                  }}
+                  type="button"
+                >
+                  Next
+                </button>
+              </div>
+            </>
           )}
         </article>
       </section>
