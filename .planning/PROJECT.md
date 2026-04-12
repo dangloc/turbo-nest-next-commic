@@ -15,14 +15,14 @@ v1.12 shipped and archived:
 - Advanced reader typography personalization with persisted font family, line height, and content width.
 - Cross-device progression sync with deterministic conflict handling and metadata-driven reconciliation UX.
 
-## Next Milestone Goals
+## Current Milestone: v1.13 Legacy Financial ETL Import
 
-Pending definition.
+**Goal:** Migrate legacy WordPress user financials and chapter purchase history into PostgreSQL using a single usmeta pivot source of truth.
 
-Start next cycle with /gsd:new-milestone to:
-- Define v1.13 requirements.
-- Set roadmap phases and dependencies.
-- Establish milestone success criteria.
+**Target features:**
+- Legacy balance and VIP extraction from wp_usermeta, ignoring deprecated wp_users financial columns.
+- PHP-serialized purchased chapter transformation into Prisma-ready rows.
+- Bulk Prisma loading for user financial updates and purchase history inserts.
 
 ## Shipped Milestones
 
@@ -39,7 +39,7 @@ Start next cycle with /gsd:new-milestone to:
 - ✅ v1.11: Reader Experience & Creator Discovery.
 - ✅ v1.12: Creator Growth & Reader Personalization.
 
-## Key Decisions (v1.9-v1.12)
+## Key Decisions (v1.9-v1.13)
 
 | Decision | Outcome | Phase |
 |----------|---------|-------|
@@ -51,7 +51,26 @@ Start next cycle with /gsd:new-milestone to:
 | Reader progression updates must be idempotent and session-safe | ✓ Implemented via authenticated chapter-open sync contract and guarded client integration | 30 |
 | Follow graph must remain public-read but authenticated-write | ✓ Shipped | 31 |
 | Cross-device resume sync must be conflict-safe and deterministic | ✓ Shipped | 33 |
+| Legacy financial ETL must source truth from wp_usermeta pivots, not wp_users | — Planned | 34 |
+
+## Evolution
+
+This document evolves at phase transitions and milestone boundaries.
+
+After each phase:
+1. Requirements invalidated? Move to Out of Scope with reason.
+2. Requirements validated? Move to Shipped with phase reference.
+3. New requirements emerged? Add to Active.
+4. Decisions to log? Add to Key Decisions.
+5. What This Is still accurate? Update if drifted.
+
+After each milestone:
+1. Full review of all sections.
+2. Core Value check - still the one thing?
+3. Out-of-Scope audit - still valid reasoning?
+4. Context refresh with current delivered state.
+5. Shift milestones: Shipped -> previous, Active -> next.
 
 ---
 
-Last updated: 2026-04-11 after v1.12 milestone completion
+*Last updated: 2026-04-12 after v1.13 milestone initialization*
