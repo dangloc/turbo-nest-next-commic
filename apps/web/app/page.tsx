@@ -60,7 +60,7 @@ export default function Home() {
           <div className="home-actions">
             {!user ? (
               <Link className="action-primary" href="/auth/login">
-                Sign in with Google
+                Sign in or register
               </Link>
             ) : (
               <>
