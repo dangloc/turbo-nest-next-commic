@@ -1,5 +1,33 @@
 # Project Milestones: WordPress to NestJS Migration
 
+## v1.14 Identity & Account Experience (Shipped: 2026-04-13)
+
+**Delivered:** Local authentication, profile/security management, and wallet/purchase-history dashboard flows for the account experience.
+
+**Phases completed:** 5 phases, 5 plans, 0 tasks
+
+**Key accomplishments:**
+
+- Delivered local login/register UI with client-side validation, inline errors, and session bootstrap integration.
+- Added profile-management and password-change verification across dashboard and API wiring.
+- Exposed wallet balance, VIP metadata, and paginated purchase history in the dashboard.
+- Added phase-level verification artifacts for account requirements so milestone audit can pass.
+- Closed the milestone audit with verified requirement coverage and no blocking integration gaps.
+
+**Stats:**
+
+- 10 files created/modified
+- 404 lines of code (primary language)
+- 5 phases, 5 plans, 0 tasks
+- 1 day from initialization to ship
+
+**Git range:** `docs(35)` → `feat(39-01)`
+
+**What's next:** Project complete or next milestone planning after stakeholder review.
+
+
+---
+
 ## v1.12 Creator Growth and Reader Personalization (Shipped: 2026-04-11)
 
 **Delivered:** Creator follow growth features, advanced typography personalization, and deterministic cross-device progression sync with conflict-safe merge behavior.
