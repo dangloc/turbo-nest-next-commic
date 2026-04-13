@@ -4,12 +4,12 @@ milestone: v1.14
 milestone_name: milestone
 current_phase: 40
 status: Milestone archived
-last_updated: "2026-04-13T13:40:00Z"
+last_updated: "2026-04-13T14:52:30.649Z"
 progress:
   total_phases: 40
-  completed_phases: 39
+  completed_phases: 40
   total_plans: 57
-  completed_plans: 63
+  completed_plans: 64
 ---
 
 # GSD Workflow State
@@ -22,13 +22,13 @@ Status: Milestone archived
 
 ## Current Position
 
-Phase: 40 (purchase-segmentation) — EXECUTING
-Plan: 2 of 2 (40-01 complete)
+Phase: 40 (purchase-segmentation) — COMPLETE
+Plan: 2 of 2 (40-02 complete)
 Milestone: v1.14 - Identity & Account Experience
 Start Date: 2026-04-12
 Phase Count: 5 phases completed (35-39)
 Roadmap Status: Archived
-Last Session: 2026-04-13 — Completed 40-01-PLAN.md (backend purchase-history segmentation)
+Last Session: 2026-04-13 — Completed 40-02-PLAN.md (frontend purchase-history segmentation)
 
 ---
 
@@ -64,7 +64,9 @@ Requirements (4 total):
 
 - Combo purchase history sourced from Transaction table (COMBO_PURCHASE type) not purchasedChapter — ensures traceability to original financial event
 - Novel titles batch-loaded via single novel.findMany after extracting novelIds from transaction content strings
+- Frontend combo history pagination fixed at page 1 / pageSize 20 — low-volume events, no pagination needed currently
+- Chapter pricing rows table rendered conditionally (non-empty chapters array) — keeps pricing card clean for standard novels
 
 ---
 
-Last updated: 2026-04-13 — 40-01 complete: backend purchase-history segmentation
+Last updated: 2026-04-13 — 40-02 complete: frontend purchase-history segmentation (split tables, combo history stream)
