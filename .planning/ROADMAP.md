@@ -138,7 +138,7 @@ Plans:
 | 36 | ACCOUNT-01 | Planned | 0/1 | 0% |
 | 37 | ACCOUNT-02 | Planned | 1/1 | 0% |
 | 38 | AUTH-01, AUTH-02 | Planned | 1/1 | 0% |
-| 39 | ACCOUNT-01, ACCOUNT-02 | Planned | 0/1 | 0% |
+| 39 | ACCOUNT-01, ACCOUNT-02 | Planned | 1/1 | 0% |
 
 ---
 
