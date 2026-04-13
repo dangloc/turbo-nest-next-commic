@@ -8,7 +8,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint --max-warnings 0",
-    "check-types": "next typegen && tsc --noEmit"
+    "check-types": "next typegen && tsc --noEmit",
+    "test:dashboard-purchase": "node --test src/features/dashboard/__tests__/purchase-ui.test.js",
+    "test:dashboard-dom": "vitest run src/features/dashboard/__tests__/dashboard-view.dom.test.jsx",
+    "test:dashboard": "npm run test:dashboard-purchase && npm run test:dashboard-dom"
   },
   "dependencies": {
     "@repo/ui": "*",
@@ -19,10 +22,15 @@
   "devDependencies": {
     "@repo/eslint-config": "*",
     "@repo/typescript-config": "*",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
     "@types/node": "^22.15.3",
     "@types/react": "19.2.2",
     "@types/react-dom": "19.2.2",
+    "@vitejs/plugin-react": "^6.0.1",
     "eslint": "^9.39.1",
-    "typescript": "5.9.2"
+    "jsdom": "^29.0.2",
+    "typescript": "5.9.2",
+    "vitest": "^4.1.4"
   }
 }

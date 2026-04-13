@@ -1,0 +1,340 @@
+
+> web@0.1.0 test:dashboard-dom
+> vitest run src/features/dashboard/__tests__/dashboard-view.dom.test.jsx
+
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.4 [39m[90mD:/webappcommic/next-nest-turbo/apps/web[39m
+
+ [31m❯[39m src/features/dashboard/__tests__/dashboard-view.dom.test.jsx [2m([22m[2m3 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[33m 1301[2mms[22m[39m
+     [32m✓[39m renders pricing summary and combo UI from loaded pricing state[32m 184[2mms[22m[39m
+[31m     [31m×[31m clicking combo purchase triggers API call and refresh transitions[39m[33m 1054[2mms[22m[39m
+     [32m✓[39m shows insufficient balance feedback without triggering refresh[32m 62[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 1 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m src/features/dashboard/__tests__/dashboard-view.dom.test.jsx[2m > [22mDashboardView purchases DOM[2m > [22mclicking combo purchase triggers API call and refresh transitions
+[31m[1mAssertionError[22m[39m: expected "vi.fn()" to be called with arguments: [ 77, 'token-1' ][90m
+
+Received:
+
+[1m  1st vi.fn() call:
+
+[22m[2m  [[22m
+[2m    77,[22m
+[32m-   "token-1",[90m
+[31m+   undefined,[90m
+[2m  ][22m
+[39m[90m
+
+Number of calls: [1m1[22m
+[39m
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<main[39m
+        [33mclass[39m=[32m"dashboard-shell"[39m
+      [36m>[39m
+        [36m<section[39m
+          [33mclass[39m=[32m"dashboard-card"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"dashboard-heading-row"[39m
+          [36m>[39m
+            [36m<div>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"home-kicker"[39m
+              [36m>[39m
+                [0mReader Dashboard[0m
+              [36m</span>[39m
+              [36m<h1>[39m
+                [0mWelcome, [0m
+                [0mReader[0m
+              [36m</h1>[39m
+              [36m<p>[39m
+                [0mYour account hub centralizes wallet, purchases, profile, and notifications.[0m
+              [36m</p>[39m
+            [36m</div>[39m
+            [36m<a[39m
+              [33mclass[39m=[32m"action-secondary"[39m
+              [33mhref[39m=[32m"/"[39m
+            [36m>[39m
+              [0mBack to storefront[0m
+            [36m</a>[39m
+          [36m</div>[39m
+          [36m<nav[39m
+            [33maria-label[39m=[32m"Dashboard sections"[39m
+            [33mclass[39m=[32m"dashboard-nav"[39m
+          [36m>[39m
+            [36m<a[39m
+              [33mclass[39m=[32m"dashboard-nav-link dashboard-nav-link--active"[39m
+              [33mhref[39m=[32m"/dashboard?section=purchases"[39m
+            [36m>[39m
+              [36m<span>[39m
+                [0mPurchases[0m
+              [36m</span>[39m
+              [36m<small>[39m
+                [0mPhase 25[0m
+              [36m</small>[39m
+            [36m</a>[39m
+          [36m</nav>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"dashboard-highlight"[39m
+            [33mrole[39m=[32m"status"[39m
+          [36m>[39m
+            [36m<strong>[39m
+              [0mPurchases[0m
+              [0m focus:[0m
+            [36m</strong>[39m
+            [0m [0m
+            [0mTrack purchases[0m
+          [36m</div>[39m
+          [36m<section[39m
+            [33maria-label[39m=[32m"Purchases section"[39m
+            [33mclass[39m=[32m"dashboard-purchases"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"dashboard-purchases-grid"[39m
+            [36m>[39m
+              [36m<article[39m
+                [33mclass[39m=[32m"dashboard-purchases-card"[39m
+              [36m>[39m
+                [36m<h3>[39m
+                  [0mRecent purchase actions[0m
+                [36m</h3>[39m
+                [36m<p>[39m
+                  [0m0[0m
+                [36m</p>[39m
+                [36m<span>[39m
+                  [0mIncludes single chapter and combo purchases from wallet ledger.[0m
+                [36m</span>[39m
+              [36m</article>[39m
+              [36m<article[39m
+                [33mclass[39m=[32m"dashboard-purchases-card"[39m
+              [36m>[39m
+                [36m<h3>[39m
+                  [0mTotal spent (recent)[0m
+                [36m</h3>[39m
+                [36m<p>[39m
+                  [0m0 ₫[0m
+                [36m</p>[39m
+                [36m<span>[39m
+                  [0mCalculated from latest purchase transactions in your account.[0m
+                [36m</span>[39m
+              [36m</article>[39m
+            [36m</div>[39m
+            [36m<article[39m
+              [33mclass[39m=[32m"dashboard-purchases-pricing"[39m
+            [36m>[39m
+              [36m<header>[39m
+                [36m<h3>[39m
+                  [0mNovel pricing summary[0m
+                [36m</h3>[39m
+                [36m<p>[39m
+                  [0mLoad pricing to inspect free chapter thresholds, chapter-level overrides, and combo discount before purchasing.[0m
+                [36m</p>[39m
+              [36m</header>[39m
+              [36m<form[39m
+                [33mclass[39m=[32m"dashboard-purchases-pricing-form"[39m
+              [36m>[39m
+                [36m<label>[39m
+                  [0mNovel ID[0m
+                  [36m<input[39m
+                    [33mmin[39m=[32m"1"[39m
+                    [33mplaceholder[39m=[32m"Enter novel id"[39m
+                    [33mrequired[39m=[32m""[39m
+                    [33mtype[39m=[32m"number"[39m
+                    [33mvalue[39m=[32m"77"[39m
+                  [36m/>[39m
+                [36m</label>[39m
+                [36m<button[39m
+                  [33mclass[39m=[32m"action-primary"[39m
+                  [33mtype[39m=[32m"submit"[39m
+                [36m>[39m
+                  [0mLoad pricing[0m
+                [36m</button>[39m
+              [36m</form>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"dashboard-pricing-summary"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"dashboard-pricing-metrics"[39m
+                [36m>[39m
+                  [36m<article>[39m
+                    [36m<h4>[39m
+                      [0mDefault chapter price[0m
+                    [36m</h4>[39m
+                    [36m<p>[39m
+                      [0m15.000 ₫[0m
+                    [36m</p>[39m
+                  [36m</article>[39m
+                  [36m<article>[39m
+                    [36m<h4>[39m
+                      [0mFree chapters[0m
+                    [36m</h4>[39m
+                    [36m<p>[39m
+                      [0m2 free chapters[0m
+                    [36m</p>[39m
+                  [36m</article>[39m
+                  [36m<article>[39m
+                    [36m<h4>[39m
+                      [0mCombo discount[0m
+                    [36m</h4>[39m
+                    [36m<p>[39m
+                      [0m25%[0m
+                    [36m</p>[39m
+                  [36m</article>[39m
+                  [36m<article>[39m
+                    [36m<h4>[39m
+                      [0mCombo payable[0m
+                    [36m</h4>[39m
+                    [36m<p>[39m
+                      [0m26.250 ₫[0m
+                    [36m</p>[39m
+                  [36m</article>[39m
+                [36m</div>[39m
+                [36m<p[39m
+                  [33mclass[39m=[32m"dashboard-pricing-note"[39m
+                [36m>[39m
+                  [0mLocked chapters: [0m
+                  [0m2[0m
+                  [0m. Original total[0m
+                  [0m [0m
+                  [0m35.000 ₫[0m
+                  [0m.[0m
+                [36m</p>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"dashboard-purchases-actions"[39m
+                [36m>[39m
+                  [36m<button[39m
+                    [33mclass[39m=[32m"action-primary"[39m
+                    [33mtype[39m=[32m"button"[39m
+                  [36m>[39m
+                    [0mPurchase combo unlock[0m
+                  [36m</button>[39m
+                  [36m<a[39m
+                    [33mclass[39m=[32m"action-secondary"[39m
+                    [33mhref[39m=[32m"/dashboard?section=wallet"[39m
+                  [36m>[39m
+                    [0mTop up wallet[0m
+                  [36m</a>[39m
+                [36m</div>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"dashboard-pricing-table-wrap"[39m
+                [36m>[39m
+                  [36m<table[39m
+                    [33mclass[39m=[32m"dashboard-pricing-table"[39m
+                  [36m>[39m
+                    [36m<thead>[39m
+                      [36m<tr>[39m
+                        [36m<th>[39m
+                          [0mChapter[0m
+                        [36m</th>[39m
+                        [36m<th>[39m
+                          [0mAccess[0m
+                        [36m</th>[39m
+                        [36m<th>[39m
+                          [0mEffective price[0m
+                        [36m</th>[39m
+                        [36m<th>[39m
+                          [0mSource[0m
+                        [36m</th>[39m
+                      [36m</tr>[39m
+                    [36m</thead>[39m
+                    [36m<tbody>[39m
+                      [36m<tr>[39m
+                        [36m<td>[39m
+                          [36m<strong>[39m
+                            [0m#[0m
+                            [0m1[0m
+                          [36m</strong>[39m
+                          [0m [0m
+                          [0mCh 1[0m
+                        [36m</td>[39m
+                        [36m<td>[39m
+                          [0mFree[0m
+                        [36m</td>[39m
+                        [36m<td>[39m
+                          [0m0 ₫[0m
+                        [36m</td>[39m
+                        [36m<td>[39m
+                          [0mNovel default[0m
+                        [36m</td>[39m
+                      [36m</tr>[39m
+                      [36m<tr>[39m
+                        [36m<td>[39m
+                          [36m<strong>[39m
+                            [0m#[0m
+                            [0m3[0m
+                          [36m</strong>[39m
+                          [0m [0m
+                          [0mCh 3[0m
+                        [36m</td>[39m
+                        [36m<td>[39m
+                          [0mLocked[0m
+                        [36m</td>[39m
+                        [36m<td>[39m
+                          [0m25.000 ₫[0m
+                        [36m</td>[39m
+                        [36m<td>[39m
+                          [0mPer-chapter override[0m
+                        [36m</td>[39m
+                      [36m</tr>[39m
+                    [36m</tbody>[39m
+                  [36m</table>[39m
+                [36m</div>[39m
+              [36m</div>[39m
+              [36m<p[39m
+                [33mclass[39m=[32m"dashboard-wallet-message"[39m
+              [36m>[39m
+                [0mCombo purchase successful. Charged 26.250 ₫ and unlocked 2 chapter(s).[0m
+              [36m</p>[39m
+            [36m</article>[39m
+            [36m<article[39m
+              [33mclass[39m=[32m"dashboard-purchases-list"[39m
+            [36m>[39m
+              [36m<header>[39m
+                [36m<h3>[39m
+                  [0mPurchase timeline[0m
+                [36m</h3>[39m
+                [36m<button[39m
+                  [33mclass[39m=[32m"action-secondary"[39m
+                  [33mtype[39m=[32m"button"[39m
+                [36m>[39m
+                  [0mRefresh[0m
+                [36m</button>[39m
+              [36m</header>[39m
+              [36m<p>[39m
+                [0mNo purchase transactions yet. Open a locked chapter and complete purchase flow, then return here to confirm unlock activity.[0m
+              [36m</p>[39m
+            [36m</article>[39m
+          [36m</section>[39m
+        [36m</section>[39m
+      [36m</main>[39m
+    [36m</div>[39m
+  [36m</body>[39m
+[36m</html>[39m
+[36m [2m❯[22m src/features/dashboard/__tests__/dashboard-view.dom.test.jsx:[2m199:38[22m[39m
+    [90m197|[39m
+    [90m198|[39m     [35mawait[39m [34mwaitFor[39m(() [33m=>[39m {
+    [90m199|[39m       expect(purchaseNovelComboMock).toHaveBeenCalledWith(77, "token-1…
+    [90m   |[39m                                      [31m^[39m
+    [90m200|[39m     })[33m;[39m
+    [90m201|[39m
+[90m [2m❯[22m runWithExpensiveErrorDiagnosticsDisabled ../../node_modules/@testing-library/dom/dist/config.js:[2m47:12[22m[39m
+[90m [2m❯[22m checkCallback ../../node_modules/@testing-library/dom/dist/wait-for.js:[2m124:77[22m[39m
+[90m [2m❯[22m MutationObserver.checkRealTimersCallback ../../node_modules/@testing-library/dom/dist/wait-for.js:[2m118:16[22m[39m
+[90m [2m❯[22m MutationObserver.invokeTheCallbackFunction ../../node_modules/jsdom/lib/generated/idl/MutationCallback.js:[2m19:26[22m[39m
+[90m [2m❯[22m notifyMutationObservers ../../node_modules/jsdom/lib/jsdom/living/helpers/mutation-observers.js:[2m160:22[22m[39m
+[90m [2m❯[22m ../../node_modules/jsdom/lib/jsdom/living/helpers/mutation-observers.js:[2m133:5[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m2 passed[39m[22m[90m (3)[39m
+[2m   Start at [22m 10:43:43
+[2m   Duration [22m 2.36s[2m (transform 128ms, setup 0ms, import 257ms, tests 1.30s, environment 663ms)[22m
+

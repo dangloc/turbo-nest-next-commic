@@ -1,8 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { getSessionToken } from "../../lib/auth/session-store";
+import { AppContext } from "../../providers/app-provider";
+import { formatAppCurrency, formatAppNumber } from "../../lib/i18n";
 import { SocialThread } from "../social/social";
 import {
   buildChapterHref,
@@ -40,11 +42,183 @@ function toDisplayText(content: string) {
   return content.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
 }
 
-function formatVnd(value: number | null) {
-  return new Intl.NumberFormat("vi-VN").format(value ?? 0);
+function formatMoney(value: number | null, locale: "vi" | "en") {
+  return formatAppCurrency(value ?? 0, locale);
+}
+
+function getNovelCopy(locale: "vi" | "en") {
+  return locale === "vi"
+    ? {
+        loadingNovelDetails: "Đang tải chi tiết truyện...",
+        novelNotFound: "Không tìm thấy truyện",
+        readerExperience: "Trải nghiệm đọc",
+        novelLabel: "Truyện",
+        viewsLabel: "lượt xem",
+        noSummaryAvailableYet: "Chưa có tóm tắt.",
+        chapterIdLabel: "Mã chương",
+        chapterIdPlaceholder: "Nhập mã chương",
+        startReading: "Bắt đầu đọc",
+        enterValidChapter: "Nhập chương hợp lệ",
+        viewPurchaseActivity: "Xem hoạt động mua",
+        backToDiscovery: "Quay lại khám phá",
+        recentReadingHistory: "Lịch sử đọc gần đây",
+        signInAndOpenChapters: "Đăng nhập và mở chương để lưu lịch sử đọc.",
+        resumeChapter: "Tiếp tục chương",
+        discussionTitle: "Thảo luận truyện",
+        discussionEmpty: "Chưa có bình luận. Hãy bắt đầu cuộc thảo luận về truyện này.",
+      }
+    : {
+        loadingNovelDetails: "Loading novel details...",
+        novelNotFound: "Novel not found",
+        readerExperience: "Reader experience",
+        novelLabel: "Novel",
+        viewsLabel: "views",
+        noSummaryAvailableYet: "No summary available yet.",
+        chapterIdLabel: "Chapter ID",
+        chapterIdPlaceholder: "Enter chapter id",
+        startReading: "Start reading",
+        enterValidChapter: "Enter valid chapter",
+        viewPurchaseActivity: "View purchase activity",
+        backToDiscovery: "Back to discovery",
+        recentReadingHistory: "Recent reading history",
+        signInAndOpenChapters: "Sign in and open chapters to build resume history.",
+        resumeChapter: "Resume chapter",
+        discussionTitle: "Novel discussion",
+        discussionEmpty: "No comments yet. Start the novel discussion.",
+      };
+}
+
+function getChapterCopy(locale: "vi" | "en") {
+  return locale === "vi"
+    ? {
+        loadingChapter: "Đang tải chương...",
+        chapterReader: "Trình đọc chương",
+        chapterLabel: "Chương",
+        novelLabel: "Truyện",
+        viewsLabel: "lượt xem",
+        readingPreferences: "Tùy chọn đọc",
+        fontSize: "Cỡ chữ",
+        compact: "Gọn",
+        comfort: "Thoải mái",
+        large: "Lớn",
+        theme: "Giao diện",
+        light: "Sáng",
+        dark: "Tối",
+        fontFamily: "Kiểu chữ",
+        serif: "Có chân",
+        sans: "Không chân",
+        monospace: "Đơn cách",
+        lineHeight: "Giãn dòng",
+        contentWidth: "Độ rộng nội dung",
+        chapterLockedTitle: "Chương bị khóa",
+        chapterLockedBody:
+          "Mua chương này để mở khóa toàn bộ nội dung. Nếu số dư đã nạp thấp, hãy nạp thêm ví rồi thử lại.",
+        priceLabel: "Giá",
+        comboLabel: "Combo",
+        discountSuffix: "giảm",
+        processing: "Đang xử lý...",
+        purchaseChapter: "Mua chương",
+        purchaseCombo: "Mua combo",
+        topUpWallet: "Nạp ví",
+        noChapterContent: "Chưa có nội dung chương.",
+        tableOfContents: "Mục lục",
+        loadingChapterList: "Đang tải danh sách chương...",
+        previousChapter: "Chương trước",
+        firstChapter: "Chương đầu",
+        backToNovel: "Quay lại truyện",
+        nextChapterLocked: "Chương tiếp theo đang khóa",
+        nextChapter: "Chương tiếp theo",
+        lastChapter: "Chương cuối",
+        readingProgress: "Tiến độ đọc",
+        progressSavedForAuthenticatedReaders: "Tiến độ được lưu cho người đọc đã xác thực qua /reader/me/reading-history.",
+        signInToPersistReadingHistory: "Đăng nhập để lưu lịch sử đọc.",
+        purchaseThisChapterBeforeSavingProgress: "Mua chương này trước khi lưu tiến độ.",
+        progressSaved: "Đã lưu tiến độ.",
+        signInBeforePurchasingComboAccess: "Đăng nhập trước khi mua quyền truy cập combo.",
+        signInBeforePurchasingChapter: "Đăng nhập trước khi mua chương.",
+        chapterDetailsUnavailable: "Chi tiết chương hiện không khả dụng.",
+        confirmComboPurchase: "Xác nhận mua combo cho truyện #",
+        confirmChapterPurchase: "Xác nhận mua chương #",
+        insufficientDepositedBalance: "Số dư đã nạp không đủ.",
+        topUpWalletAndTryAgain: "Hãy nạp ví rồi thử lại.",
+        comboPurchaseSuccessful: "Mua combo thành công. Đã mở khóa các chương bị khóa.",
+        allLockedChaptersAlreadyUnlocked: "Tất cả chương bị khóa đã được mở khóa cho tài khoản của bạn.",
+        chapterAlreadyUnlockedForYourAccount: "Chương đã được mở khóa sẵn cho tài khoản của bạn.",
+        chapterUnlockedImmediately: "Mua thành công. Chương được mở khóa ngay lập tức.",
+        unableToVerifyLatestProgressAcrossDevices: "Không thể xác minh tiến độ mới nhất giữa các thiết bị.",
+        serverKeptNewerCheckpointFromAnotherSession: "Máy chủ giữ lại mốc mới hơn từ một phiên khác.",
+        progressSynchronizedAcrossDevices: "Đã đồng bộ tiến độ giữa các thiết bị.",
+        historyChapterLabel: "Chương",
+        noRepliesTitle: "Thảo luận chương",
+        noRepliesHint: "Chưa có phản hồi. Hãy là người đầu tiên thảo luận chương này.",
+      }
+    : {
+        loadingChapter: "Loading chapter...",
+        chapterReader: "Chapter reader",
+        chapterLabel: "Chapter",
+        novelLabel: "Novel",
+        viewsLabel: "views",
+        readingPreferences: "Reading preferences",
+        fontSize: "Font size",
+        compact: "Compact",
+        comfort: "Comfort",
+        large: "Large",
+        theme: "Theme",
+        light: "Light",
+        dark: "Dark",
+        fontFamily: "Font family",
+        serif: "Serif",
+        sans: "Sans",
+        monospace: "Monospace",
+        lineHeight: "Line height",
+        contentWidth: "Content width",
+        chapterLockedTitle: "Chapter locked",
+        chapterLockedBody:
+          "Purchase this chapter to unlock full reading access. If your deposited balance is low, top up from wallet and retry.",
+        priceLabel: "Price",
+        comboLabel: "Combo",
+        discountSuffix: "off",
+        processing: "Processing...",
+        purchaseChapter: "Purchase chapter",
+        purchaseCombo: "Purchase combo",
+        topUpWallet: "Top up wallet",
+        noChapterContent: "No chapter content.",
+        tableOfContents: "Table of contents",
+        loadingChapterList: "Loading chapter list...",
+        previousChapter: "Previous chapter",
+        firstChapter: "First chapter",
+        backToNovel: "Back to novel",
+        nextChapterLocked: "Next chapter locked",
+        nextChapter: "Next chapter",
+        lastChapter: "Last chapter",
+        readingProgress: "Reading progress",
+        progressSavedForAuthenticatedReaders: "Progress is saved for authenticated readers via /reader/me/reading-history.",
+        signInToPersistReadingHistory: "Sign in to persist reading history.",
+        purchaseThisChapterBeforeSavingProgress: "Purchase this chapter before saving progress.",
+        progressSaved: "Progress saved.",
+        signInBeforePurchasingComboAccess: "Sign in before purchasing combo access.",
+        signInBeforePurchasingChapter: "Sign in before purchasing chapter access.",
+        chapterDetailsUnavailable: "Chapter details are unavailable.",
+        confirmComboPurchase: "Confirm combo purchase for novel #",
+        confirmChapterPurchase: "Confirm purchase for chapter #",
+        insufficientDepositedBalance: "Insufficient deposited balance.",
+        topUpWalletAndTryAgain: "Top up your wallet and try again.",
+        comboPurchaseSuccessful: "Combo purchase successful. Locked chapters unlocked.",
+        allLockedChaptersAlreadyUnlocked: "All locked chapters are already unlocked for your account.",
+        chapterAlreadyUnlockedForYourAccount: "Chapter is already unlocked for your account.",
+        chapterUnlockedImmediately: "Purchase successful. Chapter unlocked immediately.",
+        unableToVerifyLatestProgressAcrossDevices: "Unable to verify latest progress across devices.",
+        serverKeptNewerCheckpointFromAnotherSession: "Server kept a newer checkpoint from another session.",
+        progressSynchronizedAcrossDevices: "Progress synchronized across devices.",
+        historyChapterLabel: "Chapter",
+        noRepliesTitle: "Chapter discussion",
+        noRepliesHint: "No replies yet. Be the first to discuss this chapter.",
+      };
 }
 
 export function NovelDetailView({ novelId }: { novelId: number }) {
+  const { locale } = useContext(AppContext);
+  const copy = getNovelCopy(locale);
   const [novel, setNovel] = useState<ReaderNovel | null>(null);
   const [history, setHistory] = useState<ReadingHistoryEntry[]>([]);
   const [loading, setLoading] = useState(true);
@@ -60,7 +234,7 @@ export function NovelDetailView({ novelId }: { novelId: number }) {
     void (async () => {
       const novelResult = await fetchNovelById(novelId);
       if (!novelResult.ok || !novelResult.data) {
-        setError(novelResult.ok ? "Novel not found" : novelResult.error.message);
+        setError(novelResult.ok ? copy.novelNotFound : String(novelResult.error.message));
         setLoading(false);
         return;
       }
@@ -90,67 +264,67 @@ export function NovelDetailView({ novelId }: { novelId: number }) {
 
       setLoading(false);
     })();
-  }, [novelId]);
+  }, [copy.novelNotFound, novelId]);
 
   const parsedChapterId = useMemo(() => normalizeChapterId(chapterInput), [chapterInput]);
   const startHref = parsedChapterId ? buildChapterHref(parsedChapterId, novelId) : null;
 
   return (
     <main className="reader-shell">
-      {loading ? <p className="discovery-state">Loading novel details...</p> : null}
+      {loading ? <p className="discovery-state">{copy.loadingNovelDetails}</p> : null}
       {error ? <p className="discovery-state discovery-state--error">{error}</p> : null}
 
       {novel ? (
         <>
           <section className="reader-card">
             <div className="reader-card__header">
-              <span className="home-kicker">Reader Experience</span>
+              <span className="home-kicker">{copy.readerExperience}</span>
               <h1>{novel.title}</h1>
               <p>
-                Novel #{novel.id} · {String(novel.viewCount)} views
+                {copy.novelLabel} #{formatAppNumber(Number(novel.id), locale)} · {formatAppNumber(Number(novel.viewCount), locale)} {copy.viewsLabel}
               </p>
             </div>
-            <p className="reader-card__summary">{toDisplayText(novel.postContent).slice(0, 220) || "No summary available yet."}</p>
+            <p className="reader-card__summary">{toDisplayText(novel.postContent).slice(0, 220) || copy.noSummaryAvailableYet}</p>
             <div className="reader-actions">
               <label className="reader-input-group">
-                <span>Chapter ID</span>
+                <span>{copy.chapterIdLabel}</span>
                 <input
                   value={chapterInput}
                   onChange={(event) => setChapterInput(event.target.value)}
-                  placeholder="Enter chapter id"
+                  placeholder={copy.chapterIdPlaceholder}
                   inputMode="numeric"
                 />
               </label>
               {startHref ? (
                 <Link className="action-primary" href={startHref}>
-                  Start reading
+                  {copy.startReading}
                 </Link>
               ) : (
                 <button className="action-primary" type="button" disabled>
-                  Enter valid chapter
+                  {copy.enterValidChapter}
                 </button>
               )}
               <Link className="action-secondary" href="/dashboard?section=purchases">
-                View purchase activity
+                {copy.viewPurchaseActivity}
               </Link>
               <Link className="action-secondary" href="/">
-                Back to discovery
+                {copy.backToDiscovery}
               </Link>
             </div>
           </section>
 
           <section className="reader-card">
-            <h2>Recent reading history</h2>
+            <h2>{copy.recentReadingHistory}</h2>
             {history.length === 0 ? (
-              <p className="reader-muted">Sign in and open chapters to build resume history.</p>
+              <p className="reader-muted">{copy.signInAndOpenChapters}</p>
             ) : (
               <ul className="reader-history-list">
                 {history.map((entry) => (
                   <li key={entry.id}>
                     <Link className="reader-history-link" href={buildChapterHref(entry.chapterId ?? 1, entry.novelId)}>
-                      Resume chapter {entry.chapterId ?? "N/A"}
+                      {copy.resumeChapter} {formatAppNumber(Number(entry.chapterId ?? 0), locale)}
                     </Link>
-                    <span>{entry.progressPercent}%</span>
+                    <span>{formatAppNumber(Number(entry.progressPercent), locale)}%</span>
                   </li>
                 ))}
               </ul>
@@ -158,9 +332,9 @@ export function NovelDetailView({ novelId }: { novelId: number }) {
           </section>
 
           <SocialThread
-            title="Novel discussion"
+            title={copy.discussionTitle}
             scope={{ novelId }}
-            emptyHint="No comments yet. Start the novel discussion."
+            emptyHint={copy.discussionEmpty}
           />
         </>
       ) : null}
@@ -169,6 +343,8 @@ export function NovelDetailView({ novelId }: { novelId: number }) {
 }
 
 export function ChapterReaderView({ chapterId }: { chapterId: number }) {
+  const { locale } = useContext(AppContext);
+  const copy = getChapterCopy(locale);
   const [chapter, setChapter] = useState<ReaderChapter | null>(null);
   const [chapterContext, setChapterContext] = useState<ReaderChapterContext | null>(null);
   const [history, setHistory] = useState<ReadingHistoryEntry[]>([]);
@@ -292,13 +468,13 @@ export function ChapterReaderView({ chapterId }: { chapterId: number }) {
 
           if (!syncResult.ok) {
             syncedChapterKeysRef.current.delete(syncKey);
-            setSyncStatus("Unable to verify latest progress across devices.");
+            setSyncStatus(copy.unableToVerifyLatestProgressAcrossDevices);
           } else {
             setProgress(syncResult.data.effectiveProgressPercent);
             if (syncResult.data.conflictDetected && !syncResult.data.serverAcceptedProgress) {
-              setSyncStatus("Server kept a newer checkpoint from another session.");
+              setSyncStatus(copy.serverKeptNewerCheckpointFromAnotherSession);
             } else if (!syncResult.data.firstOpen) {
-              setSyncStatus("Progress synchronized across devices.");
+              setSyncStatus(copy.progressSynchronizedAcrossDevices);
             }
           }
         }
@@ -306,17 +482,17 @@ export function ChapterReaderView({ chapterId }: { chapterId: number }) {
 
       setLoading(false);
     })();
-  }, [chapterId]);
+  }, [chapterId, copy.progressSynchronizedAcrossDevices, copy.serverKeptNewerCheckpointFromAnotherSession, copy.unableToVerifyLatestProgressAcrossDevices]);
 
   async function saveProgress() {
     const token = getSessionToken() ?? undefined;
     if (!chapter || !token) {
-      setSaveMessage("Sign in to persist reading history.");
+      setSaveMessage(copy.signInToPersistReadingHistory);
       return;
     }
 
     if (requiresPurchase && !isUnlocked) {
-      setSaveMessage("Purchase this chapter before saving progress.");
+      setSaveMessage(copy.purchaseThisChapterBeforeSavingProgress);
       return;
     }
 
@@ -334,23 +510,23 @@ export function ChapterReaderView({ chapterId }: { chapterId: number }) {
       return;
     }
 
-    setSaveMessage("Progress saved.");
+    setSaveMessage(copy.progressSaved);
   }
 
   async function purchaseComboAccess() {
     const token = getSessionToken() ?? undefined;
     if (!token) {
-      setPurchaseMessage("Sign in before purchasing combo access.");
+      setPurchaseMessage(copy.signInBeforePurchasingComboAccess);
       return;
     }
 
     if (!chapter) {
-      setPurchaseMessage("Chapter details are unavailable.");
+      setPurchaseMessage(copy.chapterDetailsUnavailable);
       return;
     }
 
     const confirmed = window.confirm(
-      `Confirm combo purchase for novel #${chapter.novelId} at ${formatVnd(comboPrice)} VND?`,
+      copy.confirmComboPurchase + chapter.novelId + " at " + formatMoney(comboPrice, locale) + "?",
     );
     if (!confirmed) {
       return;
@@ -370,32 +546,32 @@ export function ChapterReaderView({ chapterId }: { chapterId: number }) {
 
     if (comboResult.data.status === "insufficient_balance") {
       setIsUnlocked(false);
-      setPurchaseMessage("Insufficient deposited balance. Top up your wallet and try again.");
+      setPurchaseMessage(copy.insufficientDepositedBalance + " " + copy.topUpWalletAndTryAgain);
       return;
     }
 
     setIsUnlocked(true);
     setPurchaseMessage(
       comboResult.data.status === "already_owned"
-        ? "All locked chapters are already unlocked for your account."
-        : "Combo purchase successful. Locked chapters unlocked.",
+        ? copy.allLockedChaptersAlreadyUnlocked
+        : copy.comboPurchaseSuccessful,
     );
   }
 
   async function purchaseChapterAccess() {
     const token = getSessionToken() ?? undefined;
     if (!token) {
-      setPurchaseMessage("Sign in before purchasing chapter access.");
+      setPurchaseMessage(copy.signInBeforePurchasingChapter);
       return;
     }
 
     if (!chapter) {
-      setPurchaseMessage("Chapter details are unavailable.");
+      setPurchaseMessage(copy.chapterDetailsUnavailable);
       return;
     }
 
     const confirmed = window.confirm(
-      `Confirm purchase for chapter #${chapter.id} at ${formatVnd(chapterPrice)} VND?`,
+      copy.confirmChapterPurchase + chapter.id + " at " + formatMoney(chapterPrice, locale) + "?",
     );
     if (!confirmed) {
       return;
@@ -421,15 +597,15 @@ export function ChapterReaderView({ chapterId }: { chapterId: number }) {
 
     if (purchaseResult.data.status === "insufficient_balance") {
       setIsUnlocked(false);
-      setPurchaseMessage("Insufficient deposited balance. Top up your wallet and try again.");
+      setPurchaseMessage(copy.insufficientDepositedBalance + " " + copy.topUpWalletAndTryAgain);
       return;
     }
 
     setIsUnlocked(true);
     setPurchaseMessage(
       purchaseResult.data.status === "already_owned"
-        ? "Chapter is already unlocked for your account."
-        : "Purchase successful. Chapter unlocked immediately.",
+        ? copy.chapterAlreadyUnlockedForYourAccount
+        : copy.chapterUnlockedImmediately,
     );
 
     const refreshedChapter = await fetchChapterById(chapter.id);
@@ -452,23 +628,23 @@ export function ChapterReaderView({ chapterId }: { chapterId: number }) {
 
   return (
     <main className="reader-shell" style={{ width: "min(1200px, calc(100% - 32px))" }}>
-      {loading ? <p className="discovery-state">Loading chapter...</p> : null}
+      {loading ? <p className="discovery-state">{copy.loadingChapter}</p> : null}
       {error ? <p className="discovery-state discovery-state--error">{error}</p> : null}
 
       {chapter ? (
         <>
           <section className="reader-card" style={{ gap: 16 }}>
             <div className="reader-card__header">
-              <span className="home-kicker">Chapter Reader</span>
+              <span className="home-kicker">{copy.chapterReader}</span>
               <h1>{chapter.title}</h1>
               <p>
-                Chapter #{chapter.id} · Novel #{chapter.novelId} · {String(chapter.viewCount)} views
+                {copy.chapterLabel} #{formatAppNumber(Number(chapter.id), locale)} · {copy.novelLabel} #{formatAppNumber(Number(chapter.novelId), locale)} · {formatAppNumber(Number(chapter.viewCount), locale)} {copy.viewsLabel}
               </p>
             </div>
 
-            <div className="reader-preference-bar" role="group" aria-label="Reading preferences">
+            <div className="reader-preference-bar" role="group" aria-label={copy.readingPreferences}>
               <label className="reader-input-group">
-                <span>Font size</span>
+                <span>{copy.fontSize}</span>
                 <select
                   value={fontSize}
                   onChange={(event) => {
@@ -477,14 +653,14 @@ export function ChapterReaderView({ chapterId }: { chapterId: number }) {
                     saveTypography({ fontSize: next });
                   }}
                 >
-                  <option value="sm">Compact</option>
-                  <option value="md">Comfort</option>
-                  <option value="lg">Large</option>
+                  <option value="sm">{copy.compact}</option>
+                  <option value="md">{copy.comfort}</option>
+                  <option value="lg">{copy.large}</option>
                 </select>
               </label>
 
               <label className="reader-input-group">
-                <span>Theme</span>
+                <span>{copy.theme}</span>
                 <select
                   value={themeMode}
                   onChange={(event) => {
@@ -493,13 +669,13 @@ export function ChapterReaderView({ chapterId }: { chapterId: number }) {
                     saveTypography({ themeMode: next });
                   }}
                 >
-                  <option value="light">Light</option>
-                  <option value="dark">Dark</option>
+                  <option value="light">{copy.light}</option>
+                  <option value="dark">{copy.dark}</option>
                 </select>
               </label>
 
               <label className="reader-input-group">
-                <span>Font family</span>
+                <span>{copy.fontFamily}</span>
                 <select
                   value={fontFamily}
                   onChange={(event) => {
@@ -508,14 +684,14 @@ export function ChapterReaderView({ chapterId }: { chapterId: number }) {
                     saveTypography({ fontFamily: next });
                   }}
                 >
-                  <option value="serif">Serif</option>
-                  <option value="sans">Sans</option>
-                  <option value="mono">Monospace</option>
+                  <option value="serif">{copy.serif}</option>
+                  <option value="sans">{copy.sans}</option>
+                  <option value="mono">{copy.monospace}</option>
                 </select>
               </label>
 
               <label className="reader-input-group">
-                <span>Line height</span>
+                <span>{copy.lineHeight}</span>
                 <select
                   value={lineHeight}
                   onChange={(event) => {
@@ -524,14 +700,14 @@ export function ChapterReaderView({ chapterId }: { chapterId: number }) {
                     saveTypography({ lineHeight: next });
                   }}
                 >
-                  <option value="compact">Compact</option>
-                  <option value="comfortable">Comfortable</option>
-                  <option value="airy">Airy</option>
+                  <option value="compact">{copy.compact}</option>
+                  <option value="comfortable">{copy.comfort}</option>
+                  <option value="airy">{copy.large}</option>
                 </select>
               </label>
 
               <label className="reader-input-group">
-                <span>Content width</span>
+                <span>{copy.contentWidth}</span>
                 <select
                   value={contentWidth}
                   onChange={(event) => {
@@ -540,9 +716,9 @@ export function ChapterReaderView({ chapterId }: { chapterId: number }) {
                     saveTypography({ contentWidth: next });
                   }}
                 >
-                  <option value="narrow">Narrow</option>
-                  <option value="standard">Standard</option>
-                  <option value="wide">Wide</option>
+                  <option value="narrow">{copy.compact}</option>
+                  <option value="standard">{copy.comfort}</option>
+                  <option value="wide">{copy.large}</option>
                 </select>
               </label>
             </div>
@@ -551,17 +727,14 @@ export function ChapterReaderView({ chapterId }: { chapterId: number }) {
               <article style={{ minWidth: 0 }}>
                 {requiresPurchase && !isUnlocked ? (
                   <article className="reader-locked-box">
-                    <h2>Chapter locked</h2>
-                    <p>
-                      Purchase this chapter to unlock full reading access. If your deposited balance is low,
-                      top up from wallet and retry.
-                    </p>
+                    <h2>{copy.chapterLockedTitle}</h2>
+                    <p>{copy.chapterLockedBody}</p>
 
-                    <p className="reader-muted">Price: {formatVnd(chapterPrice)} VND</p>
+                    <p className="reader-muted">{copy.priceLabel}: {formatMoney(chapterPrice, locale)}</p>
                     {comboPrice !== null && comboPrice > 0 ? (
                       <p className="reader-muted">
-                        Combo: {formatVnd(comboPrice)} VND
-                        {comboDiscountPct !== null ? " (" + comboDiscountPct + "% off)" : ""}
+                        {copy.comboLabel}: {formatMoney(comboPrice, locale)}
+                        {comboDiscountPct !== null ? " (" + formatAppNumber(comboDiscountPct, locale) + "% " + copy.discountSuffix + ")" : ""}
                       </p>
                     ) : null}
 
@@ -572,7 +745,7 @@ export function ChapterReaderView({ chapterId }: { chapterId: number }) {
                         disabled={purchaseBusy}
                         onClick={purchaseChapterAccess}
                       >
-                        {purchaseBusy ? "Processing..." : "Purchase chapter"}
+                        {purchaseBusy ? copy.processing : copy.purchaseChapter}
                       </button>
                       {comboPrice !== null && comboPrice > 0 ? (
                         <button
@@ -581,11 +754,11 @@ export function ChapterReaderView({ chapterId }: { chapterId: number }) {
                           disabled={purchaseBusy}
                           onClick={purchaseComboAccess}
                         >
-                          Purchase combo
+                          {copy.purchaseCombo}
                         </button>
                       ) : null}
                       <Link className="action-secondary" href="/dashboard?section=wallet">
-                        Top up wallet
+                        {copy.topUpWallet}
                       </Link>
                     </div>
 
@@ -594,21 +767,21 @@ export function ChapterReaderView({ chapterId }: { chapterId: number }) {
                 ) : (
                   <article
                     className={
-                      `reader-content ` +
-                      `reader-content--font-${fontSize} ` +
-                      `reader-content--theme-${themeMode} ` +
-                      `reader-content--font-family-${fontFamily} ` +
-                      `reader-content--line-height-${lineHeight} ` +
-                      `reader-content--width-${contentWidth}`
+                      "reader-content " +
+                      "reader-content--font-" + fontSize + " " +
+                      "reader-content--theme-" + themeMode + " " +
+                      "reader-content--font-family-" + fontFamily + " " +
+                      "reader-content--line-height-" + lineHeight + " " +
+                      "reader-content--width-" + contentWidth
                     }
                   >
-                    {toDisplayText(chapter.postContent) || "No chapter content."}
+                    {toDisplayText(chapter.postContent) || copy.noChapterContent}
                   </article>
                 )}
               </article>
 
-              <aside aria-label="Chapter table of contents" style={{ border: "1px solid var(--line)", borderRadius: 12, background: "#fff", padding: 12, display: "grid", gap: 10 }}>
-                <h2>Table of contents</h2>
+              <aside aria-label={copy.tableOfContents} style={{ border: "1px solid var(--line)", borderRadius: 12, background: "#fff", padding: 12, display: "grid", gap: 10 }}>
+                <h2>{copy.tableOfContents}</h2>
                 {chapterContext?.chapters.length ? (
                   <ul style={{ listStyle: "none", display: "grid", gap: 8 }}>
                     {chapterContext.chapters.map((item) => (
@@ -624,7 +797,7 @@ export function ChapterReaderView({ chapterId }: { chapterId: number }) {
                     ))}
                   </ul>
                 ) : (
-                  <p className="reader-muted">Loading chapter list...</p>
+                  <p className="reader-muted">{copy.loadingChapterList}</p>
                 )}
               </aside>
             </div>
@@ -632,37 +805,37 @@ export function ChapterReaderView({ chapterId }: { chapterId: number }) {
             <div className="reader-actions">
               {previousChapterHref ? (
                 <Link className="action-secondary" href={previousChapterHref}>
-                  Previous chapter
+                  {copy.previousChapter}
                 </Link>
               ) : (
                 <button className="action-secondary" type="button" disabled>
-                  First chapter
+                  {copy.firstChapter}
                 </button>
               )}
 
               <Link className="action-secondary" href={buildNovelHref(chapter.novelId)}>
-                Back to novel
+                {copy.backToNovel}
               </Link>
 
               {requiresPurchase && !isUnlocked ? (
                 <button className="action-secondary" type="button" disabled>
-                  Next chapter locked
+                  {copy.nextChapterLocked}
                 </button>
               ) : nextChapterHref ? (
                 <Link className="action-secondary" href={nextChapterHref}>
-                  Next chapter
+                  {copy.nextChapter}
                 </Link>
               ) : (
                 <button className="action-secondary" type="button" disabled>
-                  Last chapter
+                  {copy.lastChapter}
                 </button>
               )}
             </div>
           </section>
 
           <section className="reader-card">
-            <h2>Reading progress</h2>
-            <p className="reader-muted">Progress is saved for authenticated readers via `/reader/me/reading-history`.</p>
+            <h2>{copy.readingProgress}</h2>
+            <p className="reader-muted">{copy.progressSavedForAuthenticatedReaders}</p>
             <div className="reader-progress-row">
               <input
                 type="range"
@@ -671,9 +844,9 @@ export function ChapterReaderView({ chapterId }: { chapterId: number }) {
                 value={progress}
                 onChange={(event) => setProgress(Number(event.target.value))}
               />
-              <span>{progress}%</span>
+              <span>{formatAppNumber(progress, locale)}%</span>
               <button className="action-primary" type="button" onClick={saveProgress}>
-                Save progress
+                {copy.progressSaved}
               </button>
             </div>
             {saveMessage ? <p className="reader-muted">{saveMessage}</p> : null}
@@ -681,7 +854,7 @@ export function ChapterReaderView({ chapterId }: { chapterId: number }) {
               <p
                 className={
                   "reader-sync-status " +
-                  (syncStatus.includes("kept") ? "reader-sync-status--warning" : "reader-sync-status--ok")
+                  (syncStatus.includes(copy.serverKeptNewerCheckpointFromAnotherSession) ? "reader-sync-status--warning" : "reader-sync-status--ok")
                 }
               >
                 {syncStatus}
@@ -693,9 +866,9 @@ export function ChapterReaderView({ chapterId }: { chapterId: number }) {
                 {history.slice(0, 5).map((entry) => (
                   <li key={entry.id}>
                     <Link className="reader-history-link" href={buildChapterHref(entry.chapterId ?? 1, entry.novelId)}>
-                      Chapter {entry.chapterId ?? "N/A"}
+                      {copy.historyChapterLabel} {formatAppNumber(Number(entry.chapterId ?? 0), locale)}
                     </Link>
-                    <span>{entry.progressPercent}%</span>
+                    <span>{formatAppNumber(Number(entry.progressPercent), locale)}%</span>
                   </li>
                 ))}
               </ul>
@@ -703,9 +876,9 @@ export function ChapterReaderView({ chapterId }: { chapterId: number }) {
           </section>
 
           <SocialThread
-            title="Chapter discussion"
+            title={copy.noRepliesTitle}
             scope={{ chapterId }}
-            emptyHint="No replies yet. Be the first to discuss this chapter."
+            emptyHint={copy.noRepliesHint}
           />
         </>
       ) : null}

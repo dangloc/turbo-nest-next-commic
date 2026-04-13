@@ -4,7 +4,8 @@
 node_modules
 .pnp
 .pnp.js
-
+.planning
+UI_TEMPLATE
 # Local env files
 .env
 .env.local

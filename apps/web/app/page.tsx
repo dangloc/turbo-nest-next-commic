@@ -12,8 +12,38 @@ import {
 import { AppContext } from "../src/providers/app-provider";
 
 export default function Home() {
-  const { user, loaded, setUser } = useContext(AppContext);
-  const [status, setStatus] = useState("Checking session...");
+  const { user, loaded, locale, setUser } = useContext(AppContext);
+  const copy =
+    locale === "vi"
+      ? {
+          kicker: "Nền tảng Commic",
+          title: "Khám phá cửa hàng",
+          session: "Trạng thái phiên",
+          signedIn: "Đã đăng nhập",
+          signedOut: "Đã đăng xuất",
+          signIn: "Đăng nhập hoặc đăng ký",
+          dashboard: "Mở bảng điều khiển",
+          signOut: "Đăng xuất",
+          backend: "Mở tuyến auth backend",
+          discoveryTitle: "Khám phá truyện",
+          discoveryEyebrow: "Khám phá truyện",
+          discoveryIntro: "Xem danh mục mới nhất trước khi mở chi tiết theo liên kết chia sẻ.",
+        }
+      : {
+          kicker: "Commic Storefront Foundation",
+          title: "Browse the storefront",
+          session: "Session status",
+          signedIn: "Signed in",
+          signedOut: "Signed out",
+          signIn: "Sign in or register",
+          dashboard: "Open dashboard",
+          signOut: "Sign out",
+          backend: "Open backend auth route",
+          discoveryTitle: "Discover novels",
+          discoveryEyebrow: "Novel Discovery",
+          discoveryIntro: "Explore the latest storefront catalog, then drill into categories through a shareable URL.",
+        };
+  const [status, setStatus] = useState(copy.signedOut);
 
   useEffect(() => {
     if (!loaded) {
@@ -22,7 +52,7 @@ export default function Home() {
 
     const token = getSessionToken();
     if (!token) {
-      setStatus("Signed out");
+      setStatus(copy.signedOut);
       return;
     }
 
@@ -31,58 +61,58 @@ export default function Home() {
       if (!session.ok || !session.data.user) {
         clearSessionStorage();
         setUser(null);
-        setStatus("Signed out");
+        setStatus(copy.signedOut);
         return;
       }
 
       persistSessionToStorage(session.data.user);
       setUser(session.data.user);
-      setStatus("Signed in");
+      setStatus(copy.signedIn);
     })();
-  }, [loaded, setUser]);
+  }, [copy.signedIn, copy.signedOut, loaded, setUser]);
 
   async function onLogout() {
     await logoutSession();
     clearSessionStorage();
     setUser(null);
-    setStatus("Signed out");
+    setStatus(copy.signedOut);
   }
 
   return (
     <main className="discovery-page">
       <section className="home-shell home-shell--compact">
         <div className="home-card home-card--wide">
-          <span className="home-kicker">Commic Storefront Foundation</span>
-          <h1>Browse the storefront</h1>
+          <span className="home-kicker">{copy.kicker}</span>
+          <h1>{copy.title}</h1>
           <p>
-            Session status: <strong>{user ? "Signed in as " + user.email : status}</strong>
+            {copy.session}: <strong>{user ? copy.signedIn + " as " + user.email : status}</strong>
           </p>
           <div className="home-actions">
             {!user ? (
               <Link className="action-primary" href="/auth/login">
-                Sign in or register
+                {copy.signIn}
               </Link>
             ) : (
               <>
                 <Link className="action-primary" href="/dashboard">
-                  Open dashboard
+                  {copy.dashboard}
                 </Link>
                 <button className="action-secondary" onClick={onLogout} type="button">
-                  Sign out
+                  {copy.signOut}
                 </button>
               </>
             )}
             <a className="action-secondary" href="http://localhost:8000/auth/google">
-              Open backend auth route
+              {copy.backend}
             </a>
           </div>
         </div>
       </section>
 
       <DiscoveryFeed
-        title="Discover novels"
-        eyebrow="Novel Discovery"
-        intro="Explore the latest storefront catalog, then drill into categories through a shareable URL."
+        title={copy.discoveryTitle}
+        eyebrow={copy.discoveryEyebrow}
+        intro={copy.discoveryIntro}
       />
     </main>
   );
