@@ -2,7 +2,7 @@
 
 Milestone: v1.14 - Identity & Account Experience
 Created: 2026-04-12
-Status: In Progress
+Status: In Progress (Gap Closure)
 
 ## Overview
 
@@ -84,6 +84,52 @@ Success Criteria:
 Plans:
 - [ ] 37-01-PLAN.md - add VIP tier projection and paginated purchase-history dashboard integration
 
+### Phase 38: Auth Experience Gap Closure
+
+Status: Planned
+
+Goal: Close orphaned auth requirements by completing and verifying frontend local authentication flows.
+
+Requirements: AUTH-01, AUTH-02
+Gap Closure: Closes requirement and flow gaps from v1.14 milestone audit.
+
+Scope:
+- Execute phase-35 auth UI work and produce completion summary.
+- Validate login and registration behaviors against acceptance criteria.
+- Verify session handoff supports downstream dashboard flows.
+- Capture phase verification artifact with requirement-level evidence.
+
+Success Criteria:
+- AUTH-01 and AUTH-02 are implemented, tested, and linked to verification evidence.
+- Register/login to dashboard path works end-to-end.
+- Phase completion artifacts include SUMMARY and VERIFICATION files.
+
+Plans:
+- [ ] 38-01-PLAN.md - execute auth gap closure and verification evidence capture
+
+### Phase 39: Milestone Verification and Traceability Closure
+
+Status: Planned
+
+Goal: Close remaining verification and integration gaps so v1.14 can pass milestone audit.
+
+Requirements: ACCOUNT-01, ACCOUNT-02
+Gap Closure: Closes audit integration and verification gaps for phases 36-37.
+
+Scope:
+- Add missing phase verification artifacts for profile and wallet phases.
+- Reconcile requirements traceability with verified outcomes.
+- Validate authenticated profile and wallet history end-to-end flows.
+- Re-run milestone audit and confirm readiness for completion.
+
+Success Criteria:
+- Phase 36 and 37 verification artifacts exist and pass checks.
+- ACCOUNT-01 and ACCOUNT-02 move to verified status in audit.
+- Milestone audit returns passed or tech_debt (no critical gaps).
+
+Plans:
+- [ ] 39-01-PLAN.md - complete verification artifacts, traceability sync, and audit rerun
+
 ## Progress
 
 | Phase | Requirements | Status | Plans | Completion |
@@ -91,7 +137,9 @@ Plans:
 | 35 | AUTH-01, AUTH-02 | Planned | 0/1 | 0% |
 | 36 | ACCOUNT-01 | Planned | 0/1 | 0% |
 | 37 | ACCOUNT-02 | Planned | 1/1 | 0% |
+| 38 | AUTH-01, AUTH-02 | Planned | 0/1 | 0% |
+| 39 | ACCOUNT-01, ACCOUNT-02 | Planned | 0/1 | 0% |
 
 ---
 
-Next Action: Run `/gsd:execute-phase 37` to execute the approved phase-37 plan.
+Next Action: Run `/gsd:plan-phase 38` to plan the first gap-closure phase.

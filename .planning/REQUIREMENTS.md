@@ -41,18 +41,19 @@ Core Value: Enable users to authenticate locally and manage their accounts and f
 
 | Requirement | Planned Phase | Status | Assigned |
 |-------------|---------------|--------|----------|
-| AUTH-01 | Phase 35 | Active | Pending |
-| AUTH-02 | Phase 35 | Active | Pending |
-| ACCOUNT-01 | Phase 36 | Active | Pending |
-| ACCOUNT-02 | Phase 37 | Active | Pending |
+| AUTH-01 | Phase 38 | Active | Pending |
+| AUTH-02 | Phase 38 | Active | Pending |
+| ACCOUNT-01 | Phase 39 | Active | Pending |
+| ACCOUNT-02 | Phase 39 | Active | Pending |
 
 Coverage:
 - v1.14 requirements: 4 total
 - Assigned to phases: 4 (100%)
+- Pending in gap closure: 4
 - Deferred: 4
 - Out of scope: 4
 
 ---
 
 Requirements defined: 2026-04-12
-Last updated: 2026-04-12 after v1.14 initialization
+Last updated: 2026-04-13 after milestone gap planning from v1.14 audit
