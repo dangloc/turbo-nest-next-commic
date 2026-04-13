@@ -7,18 +7,18 @@ Core Value: Enable users to authenticate locally and manage their accounts and f
 
 ### Frontend Authentication
 
-- [ ] AUTH-01: Frontend Login Form. User can enter username or email with password; receives bearer token on success or explicit error on failure; integrates with existing session management.
+- [x] AUTH-01: Frontend Login Form. User can enter username or email with password; receives bearer token on success or explicit error on failure; integrates with existing session management.
   - Acceptance: Responsive form with client-side validation (password required), error messages for invalid credentials or network failures, token stored and session active immediately after login.
 
-- [ ] AUTH-02: Frontend Registration Form. User can create a new account with username, email, and password; receives success confirmation and is logged in automatically; duplicate email/username returns clear error.
+- [x] AUTH-02: Frontend Registration Form. User can create a new account with username, email, and password; receives success confirmation and is logged in automatically; duplicate email/username returns clear error.
   - Acceptance: Responsive form with password strength indicators, client-side validation (8+ chars, letter + number), duplicate detection feedback, automatic login on success, commic_session cookie set.
 
 ### Account Management
 
-- [ ] ACCOUNT-01: Profile Management & Password Change. User can view and edit their profile (name, email) and change their password securely.
+- [x] ACCOUNT-01: Profile Management & Password Change. User can view and edit their profile (name, email) and change their password securely.
   - Acceptance: Profile form shows current user data prefilled, edit success confirms changes, password change requires current password verification, new password subject to same strength rules as registration.
 
-- [ ] ACCOUNT-02: Wallet and Purchase History. User can view their wallet balance, VIP level (from legacy ETL data), and list of purchased chapters with unlock status.
+- [x] ACCOUNT-02: Wallet and Purchase History. User can view their wallet balance, VIP level (from legacy ETL data), and list of purchased chapters with unlock status.
   - Acceptance: Dashboard section displays wallet balance and VIP tier, purchased chapters list shows title/author, purchase date, unlock status; integrates with chapter reader access control.
 
 ## Future Requirements (Deferred)
@@ -41,19 +41,19 @@ Core Value: Enable users to authenticate locally and manage their accounts and f
 
 | Requirement | Planned Phase | Status | Assigned |
 |-------------|---------------|--------|----------|
-| AUTH-01 | Phase 38 | Active | Pending |
-| AUTH-02 | Phase 38 | Active | Pending |
-| ACCOUNT-01 | Phase 39 | Active | Pending |
-| ACCOUNT-02 | Phase 39 | Active | Pending |
+| AUTH-01 | Phase 38 | Complete | Verified |
+| AUTH-02 | Phase 38 | Complete | Verified |
+| ACCOUNT-01 | Phase 39 | Complete | Verified |
+| ACCOUNT-02 | Phase 39 | Complete | Verified |
 
 Coverage:
 - v1.14 requirements: 4 total
 - Assigned to phases: 4 (100%)
-- Pending in gap closure: 4
+- Pending in gap closure: 0
 - Deferred: 4
 - Out of scope: 4
 
 ---
 
 Requirements defined: 2026-04-12
-Last updated: 2026-04-13 after milestone gap planning from v1.14 audit
+Last updated: 2026-04-13 after phase 39 verification and traceability closure
