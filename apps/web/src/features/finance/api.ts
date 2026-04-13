@@ -2,6 +2,7 @@ import { apiRequest } from "../../lib/api/http";
 import type { ApiResult } from "../../lib/api/types";
 import { getSessionToken } from "../../lib/auth/session-store";
 import type {
+  ComboPurchaseHistoryResponse,
   ComboPurchaseResult,
   InitiateTopUpInput,
   InitiateTopUpResponse,
@@ -59,6 +60,31 @@ export async function fetchPurchaseHistory(
     includeCredentials: true,
     signal,
   });
+}
+
+export async function fetchComboPurchaseHistory(
+  page: number,
+  pageSize: number,
+  token?: string,
+  signal?: AbortSignal,
+): Promise<ApiResult<ComboPurchaseHistoryResponse>> {
+  const safePage = Number.isInteger(page) && page > 0 ? page : 1;
+  const safePageSize = Number.isInteger(pageSize) && pageSize > 0 ? pageSize : 20;
+
+  const params = new URLSearchParams({
+    page: String(safePage),
+    pageSize: String(safePageSize),
+  });
+
+  return apiRequest<ComboPurchaseHistoryResponse>(
+    `/finance/purchases/history/combo?${params.toString()}`,
+    {
+      method: "GET",
+      headers: authHeaders(token),
+      includeCredentials: true,
+      signal,
+    },
+  );
 }
 
 export async function initiateTopUp(
@@ -221,6 +247,7 @@ export async function purchaseNovelCombo(
 }
 
 export type {
+  ComboPurchaseHistoryResponse,
   ComboPurchaseResult,
   InitiateTopUpInput,
   InitiateTopUpResponse,

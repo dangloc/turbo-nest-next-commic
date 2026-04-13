@@ -135,7 +135,7 @@ export interface NovelPricingResponse {
     chapterNumber: number;
     isLocked: boolean;
     effectivePrice: number;
-    priceSource: "chapter_override" | "novel_default";
+    priceSource: "chapter_override" | "novel_default" | "vip_subscription";
   }>;
 }
 
@@ -147,4 +147,21 @@ export interface ComboPurchaseResult {
   discountPct?: number;
   transactionId?: number;
   depositedBalance?: number;
+}
+
+export interface ComboPurchaseHistoryItem {
+  transactionId: number;
+  novelId: number;
+  novelTitle: string;
+  chapterCount: number;
+  chargedAmount: number;
+  purchasedAt: string;
+}
+
+export interface ComboPurchaseHistoryResponse {
+  items: ComboPurchaseHistoryItem[];
+  page: number;
+  pageSize: number;
+  total: number;
+  totalPages: number;
 }
