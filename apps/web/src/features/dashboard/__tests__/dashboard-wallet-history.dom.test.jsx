@@ -278,8 +278,8 @@ describe("Dashboard wallet purchase history DOM", () => {
     const ui = within(view.container);
 
     await ui.findByText("Current VIP tier");
-    expect(ui.getByText("Silver")).toBeTruthy();
-    expect(ui.getByText(/Unlock threshold/)).toBeTruthy();
+    await ui.findByText("Silver");
+    await ui.findByText(/Unlock threshold/);
   });
 
   it("renders combo purchase history in a separate section", async () => {
