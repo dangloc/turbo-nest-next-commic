@@ -153,7 +153,7 @@ export interface ComboPurchaseHistoryItem {
   transactionId: number;
   novelId: number;
   novelTitle: string;
-  chapterCount: number;
+  purchasedChapterCount: number;
   chargedAmount: number;
   purchasedAt: string;
 }

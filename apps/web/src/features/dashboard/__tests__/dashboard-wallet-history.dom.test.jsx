@@ -178,7 +178,7 @@ describe("Dashboard wallet purchase history DOM", () => {
             transactionId: 5001,
             novelId: 50,
             novelTitle: "Legacy Saga",
-            chapterCount: 8,
+            purchasedChapterCount: 8,
             chargedAmount: 120000,
             purchasedAt: "2026-04-12T09:00:00.000Z",
           },

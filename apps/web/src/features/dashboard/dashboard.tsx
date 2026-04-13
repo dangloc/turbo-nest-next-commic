@@ -1149,7 +1149,7 @@ export function DashboardView() {
                   {comboPurchaseHistoryState.data.items.map((item) => (
                     <tr key={item.transactionId}>
                       <td>{item.novelTitle}</td>
-                      <td>{item.chapterCount} chapters</td>
+                      <td>{item.purchasedChapterCount} chapters</td>
                       <td>{formatCurrency(item.chargedAmount)}</td>
                       <td>{formatDate(item.purchasedAt)}</td>
                     </tr>
