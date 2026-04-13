@@ -23,6 +23,8 @@ vi.mock("../api", () => ({
 const fetchWalletSummaryMock = vi.fn();
 const fetchNovelPricingMock = vi.fn();
 const purchaseNovelComboMock = vi.fn();
+const fetchPurchaseHistoryMock = vi.fn();
+const fetchComboPurchaseHistoryMock = vi.fn();
 vi.mock("../../finance/api", async () => {
   const actual = await vi.importActual("../../finance/api");
   return {
@@ -30,6 +32,8 @@ vi.mock("../../finance/api", async () => {
     fetchWalletSummary: (...args) => fetchWalletSummaryMock(...args),
     fetchNovelPricing: (...args) => fetchNovelPricingMock(...args),
     purchaseNovelCombo: (...args) => purchaseNovelComboMock(...args),
+    fetchPurchaseHistory: (...args) => fetchPurchaseHistoryMock(...args),
+    fetchComboPurchaseHistory: (...args) => fetchComboPurchaseHistoryMock(...args),
     initiateTopUp: vi.fn(),
     verifyTopUp: vi.fn(),
   };
@@ -38,6 +42,7 @@ vi.mock("../../finance/api", async () => {
 vi.mock("../../profile/api", () => ({
   fetchProfile: vi.fn(),
   updateProfile: vi.fn(),
+  changePassword: vi.fn(),
 }));
 
 vi.mock("../../lib/auth/session-store", () => ({
@@ -145,6 +150,28 @@ describe("DashboardView purchases DOM", () => {
           totalDeposited: 120000,
         },
         transactions: [],
+      },
+    });
+
+    fetchPurchaseHistoryMock.mockResolvedValue({
+      ok: true,
+      data: {
+        items: [],
+        page: 1,
+        pageSize: 20,
+        total: 0,
+        totalPages: 1,
+      },
+    });
+
+    fetchComboPurchaseHistoryMock.mockResolvedValue({
+      ok: true,
+      data: {
+        items: [],
+        page: 1,
+        pageSize: 20,
+        total: 0,
+        totalPages: 1,
       },
     });
   });

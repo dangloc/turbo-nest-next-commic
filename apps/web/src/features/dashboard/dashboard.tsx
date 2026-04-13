@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { Input } from "@repo/ui/input";
+import { Select } from "@repo/ui/select";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useContext, useEffect, useMemo, useState } from "react";
 import { type SessionUser } from "../../lib/api/types";
@@ -10,12 +12,14 @@ import {
 } from "../../lib/auth/session-store";
 import { AppContext } from "../../providers/app-provider";
 import {
+  fetchComboPurchaseHistory,
   fetchNovelPricing,
   fetchPurchaseHistory,
   fetchWalletSummary,
   initiateTopUp,
   purchaseNovelCombo,
   verifyTopUp,
+  type ComboPurchaseHistoryResponse,
   type NovelPricingResponse,
   type PaymentProvider,
   type PurchaseHistoryResponse,
@@ -151,6 +155,12 @@ export function DashboardView() {
   >({ status: "idle" });
   const [purchaseHistoryPagination, setPurchaseHistoryPagination] =
     useState<PurchaseHistoryPaginationState>({ page: 1, pageSize: 20 });
+
+  const [comboPurchaseHistoryState, setComboPurchaseHistoryState] = useState<
+    | { status: "idle" | "loading" }
+    | { status: "ready"; data: ComboPurchaseHistoryResponse }
+    | { status: "error"; message: string }
+  >({ status: "idle" });
 
   const [profileState, setProfileState] = useState<
     | { status: "idle" | "loading" }
@@ -294,6 +304,30 @@ export function DashboardView() {
     [purchaseHistoryPagination.page, purchaseHistoryPagination.pageSize],
   );
 
+  const loadComboPurchaseHistory = useMemo(
+    () => async (signal?: AbortSignal) => {
+      const token = getSessionToken() ?? undefined;
+      setComboPurchaseHistoryState((previous) =>
+        previous.status === "ready"
+          ? { status: "ready", data: previous.data }
+          : { status: "loading" },
+      );
+
+      const result = await fetchComboPurchaseHistory(1, 20, token, signal);
+      if (!result.ok) {
+        setComboPurchaseHistoryState({
+          status: "error",
+          message: result.error.message,
+        });
+        return false;
+      }
+
+      setComboPurchaseHistoryState({ status: "ready", data: result.data });
+      return true;
+    },
+    [],
+  );
+
   const loadProfile = useMemo(
     () => async (signal?: AbortSignal) => {
       const token = getSessionToken() ?? undefined;
@@ -347,6 +381,7 @@ export function DashboardView() {
         purchaseHistoryPagination.pageSize,
         abortController.signal,
       );
+      void loadComboPurchaseHistory(abortController.signal);
       return () => {
         abortController.abort();
       };
@@ -361,6 +396,7 @@ export function DashboardView() {
     }
   }, [
     activeSection,
+    loadComboPurchaseHistory,
     loadProfile,
     loadPurchaseHistory,
     loadWalletSummary,
@@ -686,7 +722,7 @@ export function DashboardView() {
             <form onSubmit={onInitiateTopUp}>
               <label>
                 Amount (VND)
-                <input
+                <Input
                   min={1000}
                   name="amount"
                   onChange={(event) =>
@@ -703,7 +739,7 @@ export function DashboardView() {
 
               <label>
                 Provider
-                <select
+                <Select
                   name="provider"
                   onChange={(event) =>
                     setTopUpForm((current) => ({
@@ -715,12 +751,12 @@ export function DashboardView() {
                 >
                   <option value="VNPAY">VNPAY</option>
                   <option value="MOMO">MOMO</option>
-                </select>
+                </Select>
               </label>
 
               <label>
                 Reference (optional)
-                <input
+                <Input
                   name="reference"
                   onChange={(event) =>
                     setTopUpForm((current) => ({
@@ -759,7 +795,7 @@ export function DashboardView() {
             <form onSubmit={onVerifyTopUp}>
               <label>
                 Provider transaction ID
-                <input
+                <Input
                   name="providerTransactionId"
                   onChange={(event) =>
                     setVerifyForm((current) => ({
@@ -774,7 +810,7 @@ export function DashboardView() {
               </label>
 
               <label className="dashboard-wallet-checkbox">
-                <input
+                <Input
                   checked={verifyForm.success}
                   onChange={(event) =>
                     setVerifyForm((current) => ({
@@ -883,7 +919,7 @@ export function DashboardView() {
           <form className="dashboard-purchases-pricing-form" onSubmit={onLoadPricingSummary}>
             <label>
               Novel ID
-              <input
+              <Input
                 type="number"
                 min={1}
                 value={purchasePricingForm.novelId}
@@ -927,6 +963,31 @@ export function DashboardView() {
                 {pricingDisplay.originalTotalLabel}.
                 {pricingDisplay.hasZeroPayable ? " Zero payable amount detected." : ""}
               </p>
+
+              {pricingDisplay.chapterRows.length > 0 ? (
+                <div className="dashboard-purchase-history-table-wrap">
+                  <table className="dashboard-purchase-history-table">
+                    <thead>
+                      <tr>
+                        <th>Chapter</th>
+                        <th>Access</th>
+                        <th>Price</th>
+                        <th>Source</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {pricingDisplay.chapterRows.map((row) => (
+                        <tr key={row.id}>
+                          <td>{row.title}</td>
+                          <td>{row.accessLabel}</td>
+                          <td>{row.effectivePriceLabel}</td>
+                          <td>{row.sourceLabel}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : null}
 
               <div className="dashboard-purchases-actions">
                 <button className="action-primary" type="button" disabled={comboBusy} onClick={onExecuteComboPurchase}>
@@ -1050,6 +1111,54 @@ export function DashboardView() {
             </>
           )}
         </article>
+
+        <article className="dashboard-purchases-list dashboard-purchases-list--combo">
+          <header>
+            <h3>Combo purchase history</h3>
+            <button
+              className="action-secondary"
+              type="button"
+              onClick={() => {
+                void loadComboPurchaseHistory();
+              }}
+              disabled={comboPurchaseHistoryState.status === "loading"}
+            >
+              Refresh
+            </button>
+          </header>
+
+          {comboPurchaseHistoryState.status === "loading" ||
+          comboPurchaseHistoryState.status === "idle" ? (
+            <p>Loading combo purchase history...</p>
+          ) : comboPurchaseHistoryState.status === "error" ? (
+            <p className="dashboard-wallet-error">{comboPurchaseHistoryState.message}</p>
+          ) : comboPurchaseHistoryState.data.items.length === 0 ? (
+            <p>No combo purchases yet. Use the combo unlock above and check back here.</p>
+          ) : (
+            <div className="dashboard-purchase-history-table-wrap">
+              <table className="dashboard-purchase-history-table">
+                <thead>
+                  <tr>
+                    <th>Novel</th>
+                    <th>Chapters</th>
+                    <th>Charged</th>
+                    <th>Purchased at</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {comboPurchaseHistoryState.data.items.map((item) => (
+                    <tr key={item.transactionId}>
+                      <td>{item.novelTitle}</td>
+                      <td>{item.chapterCount} chapters</td>
+                      <td>{formatCurrency(item.chargedAmount)}</td>
+                      <td>{formatDate(item.purchasedAt)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </article>
       </section>
     );
   }
@@ -1065,7 +1174,7 @@ export function DashboardView() {
             <form onSubmit={onSubmitProfile}>
               <label>
                 Display name
-                <input
+                <Input
                   maxLength={40}
                   minLength={2}
                   name="displayName"
@@ -1082,7 +1191,7 @@ export function DashboardView() {
 
               <label>
                 Email
-                <input
+                <Input
                   name="email"
                   onChange={(event) =>
                     setProfileForm((current) => ({
@@ -1098,7 +1207,7 @@ export function DashboardView() {
 
               <label>
                 Avatar metadata
-                <input
+                <Input
                   maxLength={255}
                   name="avatar"
                   onChange={(event) =>
@@ -1129,7 +1238,7 @@ export function DashboardView() {
             <form onSubmit={onSubmitPassword}>
               <label>
                 Current password
-                <input
+                <Input
                   autoComplete="current-password"
                   name="currentPassword"
                   onChange={(event) =>
@@ -1146,7 +1255,7 @@ export function DashboardView() {
 
               <label>
                 New password
-                <input
+                <Input
                   autoComplete="new-password"
                   name="newPassword"
                   onChange={(event) =>
@@ -1163,7 +1272,7 @@ export function DashboardView() {
 
               <label>
                 Confirm new password
-                <input
+                <Input
                   autoComplete="new-password"
                   name="confirmPassword"
                   onChange={(event) =>

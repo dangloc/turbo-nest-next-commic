@@ -23,6 +23,7 @@ const fetchWalletSummaryMock = vi.fn();
 const fetchNovelPricingMock = vi.fn();
 const purchaseNovelComboMock = vi.fn();
 const fetchPurchaseHistoryMock = vi.fn();
+const fetchComboPurchaseHistoryMock = vi.fn();
 vi.mock("../../finance/api", async () => {
   const actual = await vi.importActual("../../finance/api");
   return {
@@ -31,6 +32,7 @@ vi.mock("../../finance/api", async () => {
     fetchNovelPricing: (...args) => fetchNovelPricingMock(...args),
     purchaseNovelCombo: (...args) => purchaseNovelComboMock(...args),
     fetchPurchaseHistory: (...args) => fetchPurchaseHistoryMock(...args),
+    fetchComboPurchaseHistory: (...args) => fetchComboPurchaseHistoryMock(...args),
     initiateTopUp: vi.fn(),
     verifyTopUp: vi.fn(),
   };
@@ -167,6 +169,26 @@ describe("Dashboard wallet purchase history DOM", () => {
         chapters: [],
       },
     });
+
+    fetchComboPurchaseHistoryMock.mockResolvedValue({
+      ok: true,
+      data: {
+        items: [
+          {
+            transactionId: 5001,
+            novelId: 50,
+            novelTitle: "Legacy Saga",
+            chapterCount: 8,
+            chargedAmount: 120000,
+            purchasedAt: "2026-04-12T09:00:00.000Z",
+          },
+        ],
+        page: 1,
+        pageSize: 20,
+        total: 1,
+        totalPages: 1,
+      },
+    });
   });
 
   afterEach(() => {
@@ -179,7 +201,7 @@ describe("Dashboard wallet purchase history DOM", () => {
 
     await ui.findByText("Purchased chapter history");
     await ui.findByText("Episode 99");
-    expect(ui.getByText("Legacy Saga")).toBeTruthy();
+    expect(ui.getAllByText("Legacy Saga").length).toBeGreaterThanOrEqual(1);
     expect(ui.getByText("Author Seven")).toBeTruthy();
     expect(ui.getByText("UNLOCKED")).toBeTruthy();
     expect(ui.getByRole("link", { name: "Open chapter" }).getAttribute("href")).toContain(
@@ -258,5 +280,41 @@ describe("Dashboard wallet purchase history DOM", () => {
     await ui.findByText("Current VIP tier");
     expect(ui.getByText("Silver")).toBeTruthy();
     expect(ui.getByText(/Unlock threshold/)).toBeTruthy();
+  });
+
+  it("renders combo purchase history in a separate section", async () => {
+    const view = renderDashboard();
+    const ui = within(view.container);
+
+    await ui.findByText("Combo purchase history");
+    expect(ui.getAllByText("Legacy Saga").length).toBeGreaterThanOrEqual(1);
+    expect(ui.getByText("8 chapters")).toBeTruthy();
+  });
+
+  it("renders both chapter history and combo history independently", async () => {
+    const view = renderDashboard();
+    const ui = within(view.container);
+
+    await ui.findByText("Purchased chapter history");
+    await ui.findByText("Combo purchase history");
+
+    expect(ui.getByText("Episode 99")).toBeTruthy();
+    expect(ui.getAllByText("Legacy Saga").length).toBeGreaterThanOrEqual(1);
+  });
+
+  it("combo history refresh button triggers independent reload", async () => {
+    const view = renderDashboard();
+    const ui = within(view.container);
+
+    await ui.findByText("Combo purchase history");
+
+    const callsBefore = fetchComboPurchaseHistoryMock.mock.calls.length;
+    const refreshButtons = ui.getAllByRole("button", { name: "Refresh" });
+    const comboRefreshButton = refreshButtons[refreshButtons.length - 1];
+    fireEvent.click(comboRefreshButton);
+
+    await waitFor(() => {
+      expect(fetchComboPurchaseHistoryMock.mock.calls.length).toBeGreaterThan(callsBefore);
+    });
   });
 });
