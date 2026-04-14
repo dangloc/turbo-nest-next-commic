@@ -10,7 +10,7 @@
     "lint": "eslint --max-warnings 0",
     "check-types": "next typegen && tsc --noEmit",
     "test:dashboard-purchase": "node --test src/features/dashboard/__tests__/purchase-ui.test.js",
-    "test:dashboard-dom": "vitest run src/features/dashboard/__tests__/dashboard-view.dom.test.jsx src/features/dashboard/__tests__/dashboard-wallet-history.dom.test.jsx src/features/author-dashboard/__tests__/novel-manager.dom.test.jsx src/features/author-dashboard/__tests__/chapter-manager.dom.test.jsx src/features/author-dashboard/__tests__/author-dashboard-flow.dom.test.jsx",
+    "test:dashboard-dom": "vitest run src/features/dashboard/__tests__/dashboard-view.dom.test.jsx src/features/dashboard/__tests__/dashboard-wallet-history.dom.test.jsx src/features/author-dashboard/__tests__/novel-manager.dom.test.jsx src/features/author-dashboard/__tests__/novel-manager.table.dom.test.jsx src/features/author-dashboard/__tests__/chapter-manager.dom.test.jsx src/features/author-dashboard/__tests__/author-dashboard-flow.dom.test.jsx",
     "test:dashboard": "npm run test:dashboard-purchase && npm run test:dashboard-dom"
   },
   "dependencies": {

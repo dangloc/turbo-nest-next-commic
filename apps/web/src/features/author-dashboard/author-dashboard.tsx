@@ -1,6 +1,6 @@
 "use client";
 
-import { useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AppContext } from "../../providers/app-provider";
 import { bootstrapAuthorDashboardSession } from "./api";
@@ -18,6 +18,9 @@ export function AuthorDashboardView() {
   const { user, loaded, setUser } = useContext(AppContext);
   const [guardState, setGuardState] = useState<GuardState>({ status: "loading" });
   const [selectedNovel, setSelectedNovel] = useState<NovelRecord | null>(null);
+  const handleSelectNovel = useCallback((novel: NovelRecord | null) => {
+    setSelectedNovel(novel);
+  }, []);
 
   useEffect(() => {
     if (!loaded) {
@@ -88,7 +91,8 @@ export function AuthorDashboardView() {
       <div className="grid gap-4 lg:grid-cols-2">
         <NovelManager
           selectedNovelId={selectedNovel?.id ?? null}
-          onSelectNovel={(novel) => setSelectedNovel(novel)}
+          currentUserId={user?.id ?? null}
+          onSelectNovel={handleSelectNovel}
         />
         <ChapterManager selectedNovel={selectedNovel} />
       </div>

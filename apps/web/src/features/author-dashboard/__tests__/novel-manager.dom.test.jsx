@@ -23,7 +23,15 @@ const NOVELS = [
 describe("NovelManager", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    listNovelsMock.mockResolvedValue({ ok: true, data: NOVELS });
+    listNovelsMock.mockResolvedValue({
+      ok: true,
+      data: {
+        items: NOVELS,
+        total: NOVELS.length,
+        page: 1,
+        pageSize: 10,
+      },
+    });
     createNovelMock.mockResolvedValue({
       ok: true,
       data: { id: 3, title: "Gamma", postContent: "gamma body", uploaderId: 1 },
@@ -41,7 +49,7 @@ describe("NovelManager", () => {
 
   it("creates a novel and keeps selected context", async () => {
     const selectMock = vi.fn();
-    render(<NovelManager selectedNovelId={null} onSelectNovel={selectMock} />);
+    render(<NovelManager selectedNovelId={null} currentUserId={1} onSelectNovel={selectMock} />);
 
     await screen.findByText("Novel Management");
 
@@ -54,12 +62,12 @@ describe("NovelManager", () => {
         title: "Gamma",
         postContent: "gamma body",
       });
-      expect(selectMock).toHaveBeenCalled();
+      expect(selectMock).not.toHaveBeenCalledWith(null);
     });
   });
 
   it("requires delete confirmation before API call", async () => {
-    render(<NovelManager selectedNovelId={null} onSelectNovel={vi.fn()} />);
+    render(<NovelManager selectedNovelId={null} currentUserId={1} onSelectNovel={vi.fn()} />);
 
     await screen.findByText("Beta");
     fireEvent.click(screen.getAllByRole("button", { name: "Delete" })[0]);

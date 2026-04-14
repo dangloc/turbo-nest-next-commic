@@ -28,6 +28,24 @@ export interface ChapterFormInput {
   priceOverride?: number;
 }
 
+export type NovelListScope = "all" | "mine" | "others";
+export type NovelListSort = "newest" | "oldest" | "title" | "views";
+
+export interface NovelListQuery {
+  q?: string;
+  scope?: NovelListScope;
+  sort?: NovelListSort;
+  page?: number;
+  pageSize?: number;
+}
+
+export interface NovelListPage {
+  items: NovelRecord[];
+  total: number;
+  page: number;
+  pageSize: number;
+}
+
 export type AuthorDashboardBootstrapResult =
   | {
       kind: "ready";

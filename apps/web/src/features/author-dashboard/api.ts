@@ -12,6 +12,8 @@ import type {
   ChapterFormInput,
   ChapterRecord,
   NovelFormInput,
+  NovelListPage,
+  NovelListQuery,
   NovelRecord,
 } from "./types";
 
@@ -24,6 +26,33 @@ function authHeaders(token?: string) {
   return {
     authorization: `Bearer ${value}`,
   };
+}
+
+function buildNovelListPath(query: NovelListQuery) {
+  const params = new URLSearchParams();
+
+  if (query.q?.trim()) {
+    params.set("q", query.q.trim());
+  }
+
+  if (query.scope) {
+    params.set("scope", query.scope);
+  }
+
+  if (query.sort) {
+    params.set("sort", query.sort);
+  }
+
+  if (query.page !== undefined) {
+    params.set("page", String(query.page));
+  }
+
+  if (query.pageSize !== undefined) {
+    params.set("pageSize", String(query.pageSize));
+  }
+
+  const serialized = params.toString();
+  return serialized ? `/novels?${serialized}` : "/novels";
 }
 
 export function canAccessAuthorDashboard(user: SessionUser | null): boolean {
@@ -91,8 +120,12 @@ export async function bootstrapAuthorDashboardSession(
   };
 }
 
-export async function listNovels(token?: string, signal?: AbortSignal): Promise<AuthorApiResult<NovelRecord[]>> {
-  return apiRequest<NovelRecord[]>("/novels", {
+export async function listNovels(
+  query: NovelListQuery = {},
+  token?: string,
+  signal?: AbortSignal,
+): Promise<AuthorApiResult<NovelListPage>> {
+  return apiRequest<NovelListPage>(buildNovelListPath(query), {
     method: "GET",
     headers: authHeaders(token),
     includeCredentials: true,

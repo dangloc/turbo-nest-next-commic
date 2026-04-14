@@ -1,14 +1,22 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
+import { Select } from "../../../components/ui/select";
 import { createNovel, deleteNovel, listNovels, updateNovel } from "../api";
-import type { NovelFormInput, NovelRecord } from "../types";
+import type {
+  NovelFormInput,
+  NovelListQuery,
+  NovelListScope,
+  NovelListSort,
+  NovelRecord,
+} from "../types";
 import { ConfirmDialog } from "./confirm-dialog";
 
 interface NovelManagerProps {
   selectedNovelId: number | null;
+  currentUserId: number | null;
   onSelectNovel: (novel: NovelRecord | null) => void;
 }
 
@@ -17,12 +25,44 @@ const EMPTY_FORM: NovelFormInput = {
   postContent: "",
 };
 
-function sortByIdDesc(items: NovelRecord[]) {
-  return [...items].sort((a, b) => b.id - a.id);
+const INITIAL_QUERY: NovelListQuery = {
+  q: "",
+  scope: "all",
+  sort: "newest",
+  page: 1,
+  pageSize: 10,
+};
+
+const PAGE_SIZE_OPTIONS = [10, 20, 50] as const;
+const SCOPE_OPTIONS: { value: NovelListScope; label: string }[] = [
+  { value: "all", label: "All novels" },
+  { value: "mine", label: "My uploads" },
+  { value: "others", label: "Other authors" },
+];
+const SORT_OPTIONS: { value: NovelListSort; label: string }[] = [
+  { value: "newest", label: "Newest" },
+  { value: "oldest", label: "Oldest" },
+  { value: "title", label: "Title A-Z" },
+  { value: "views", label: "Most viewed" },
+];
+
+function toRequestQuery(query: NovelListQuery): NovelListQuery {
+  return {
+    q: query.q?.trim() || undefined,
+    scope: query.scope,
+    sort: query.sort,
+    page: query.page,
+    pageSize: query.pageSize,
+  };
 }
 
-export function NovelManager({ selectedNovelId, onSelectNovel }: NovelManagerProps) {
+function formatOwnerLabel(uploaderId: number, currentUserId: number | null) {
+  return uploaderId === currentUserId ? "You" : `Author #${uploaderId}`;
+}
+
+export function NovelManager({ selectedNovelId, currentUserId, onSelectNovel }: NovelManagerProps) {
   const [novels, setNovels] = useState<NovelRecord[]>([]);
+  const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
@@ -30,42 +70,62 @@ export function NovelManager({ selectedNovelId, onSelectNovel }: NovelManagerPro
   const [form, setForm] = useState<NovelFormInput>(EMPTY_FORM);
   const [editingNovelId, setEditingNovelId] = useState<number | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<NovelRecord | null>(null);
-
-  const selectedNovel = useMemo(
-    () => novels.find((item) => item.id === selectedNovelId) ?? null,
-    [novels, selectedNovelId],
-  );
+  const [query, setQuery] = useState<NovelListQuery>(INITIAL_QUERY);
+  const [searchDraft, setSearchDraft] = useState(INITIAL_QUERY.q ?? "");
+  const selectedNovelIdRef = useRef<number | null>(selectedNovelId);
 
   useEffect(() => {
-    let cancelled = false;
+    selectedNovelIdRef.current = selectedNovelId;
+  }, [selectedNovelId]);
 
-    void (async () => {
-      setLoading(true);
-      setError(null);
-      const response = await listNovels();
-      if (cancelled) {
-        return;
-      }
+  const totalPages = Math.max(1, Math.ceil(total / (query.pageSize ?? 10)));
+  const currentPage = query.page ?? 1;
+  const pageSize = query.pageSize ?? 10;
+  const showingStart = total === 0 ? 0 : (currentPage - 1) * pageSize + 1;
+  const showingEnd = total === 0 ? 0 : Math.min(total, currentPage * pageSize);
 
-      if (!response.ok) {
-        setLoading(false);
-        setError(response.error.message);
-        return;
-      }
+  async function syncNovels(nextQuery: NovelListQuery, signal?: AbortSignal) {
+    setLoading(true);
+    setError(null);
 
-      const sorted = sortByIdDesc(response.data);
-      setNovels(sorted);
+    const response = await listNovels(toRequestQuery(nextQuery), undefined, signal);
+    if (signal?.aborted) {
+      return null;
+    }
+
+    if (!response.ok) {
       setLoading(false);
-      if (selectedNovelId) {
-        const active = sorted.find((item) => item.id === selectedNovelId) ?? null;
-        onSelectNovel(active);
-      }
-    })();
+      setError(response.error.message);
+      return null;
+    }
+
+    const pageResponse = response.data;
+    setNovels(pageResponse.items);
+    setTotal(pageResponse.total);
+    setQuery((prev) =>
+      prev.page === pageResponse.page && prev.pageSize === pageResponse.pageSize
+        ? prev
+        : { ...prev, page: pageResponse.page, pageSize: pageResponse.pageSize },
+    );
+    setLoading(false);
+
+    const activeNovelId = selectedNovelIdRef.current;
+    if (activeNovelId !== null) {
+      const active = pageResponse.items.find((item) => item.id === activeNovelId) ?? null;
+      onSelectNovel(active);
+    }
+
+    return pageResponse;
+  }
+
+  useEffect(() => {
+    const controller = new AbortController();
+    void syncNovels(query, controller.signal);
 
     return () => {
-      cancelled = true;
+      controller.abort();
     };
-  }, [onSelectNovel, selectedNovelId]);
+  }, [onSelectNovel, query]);
 
   function resetForm() {
     setForm(EMPTY_FORM);
@@ -115,18 +175,13 @@ export function NovelManager({ selectedNovelId, onSelectNovel }: NovelManagerPro
       return;
     }
 
-    const refreshed = await listNovels();
+    const refreshed = await syncNovels(query);
     setSubmitting(false);
-    if (!refreshed.ok) {
-      setError(refreshed.error.message);
+    if (!refreshed) {
       return;
     }
 
-    const sorted = sortByIdDesc(refreshed.data);
-    setNovels(sorted);
     setMessage(editingNovelId ? "Novel updated." : "Novel created.");
-    const selected = sorted.find((item) => item.id === result.data.id) ?? null;
-    onSelectNovel(selected);
     resetForm();
   }
 
@@ -156,29 +211,81 @@ export function NovelManager({ selectedNovelId, onSelectNovel }: NovelManagerPro
       return;
     }
 
-    const refreshed = await listNovels();
+    const refreshed = await syncNovels(query);
     setSubmitting(false);
-    if (!refreshed.ok) {
-      setError(refreshed.error.message);
+    if (!refreshed) {
       return;
     }
 
-    const sorted = sortByIdDesc(refreshed.data);
-    setNovels(sorted);
     setDeleteTarget(null);
     setMessage("Novel deleted.");
 
-    if (selectedNovelId === removedId) {
-      onSelectNovel(sorted[0] ?? null);
+    if (selectedNovelIdRef.current === removedId) {
+      onSelectNovel(refreshed.items[0] ?? null);
     }
   }
+
+  function handleSearchSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setQuery((prev) => ({
+      ...prev,
+      q: searchDraft.trim(),
+      page: 1,
+    }));
+  }
+
+  function resetFilters() {
+    setSearchDraft("");
+    setQuery({
+      ...INITIAL_QUERY,
+      q: "",
+      page: 1,
+    });
+  }
+
+  function handlePageChange(nextPage: number) {
+    setQuery((prev) => ({
+      ...prev,
+      page: Math.min(Math.max(nextPage, 1), totalPages),
+    }));
+  }
+
+  function handleScopeChange(value: string) {
+    setQuery((prev) => ({
+      ...prev,
+      scope: value as NovelListScope,
+      page: 1,
+    }));
+  }
+
+  function handleSortChange(value: string) {
+    setQuery((prev) => ({
+      ...prev,
+      sort: value as NovelListSort,
+      page: 1,
+    }));
+  }
+
+  function handlePageSizeChange(value: string) {
+    const parsed = Number.parseInt(value, 10);
+    setQuery((prev) => ({
+      ...prev,
+      pageSize: Number.isInteger(parsed) && parsed > 0 ? parsed : prev.pageSize ?? 10,
+      page: 1,
+    }));
+  }
+
+  const selectedNovel = useMemo(
+    () => novels.find((item) => item.id === selectedNovelId) ?? null,
+    [novels, selectedNovelId],
+  );
 
   return (
     <section className="rounded-2xl border border-[var(--line)] bg-[var(--panel)] p-5 shadow-sm">
       <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
         <div>
           <h2 className="text-xl font-semibold">Novel Management</h2>
-          <p className="text-sm text-[var(--muted)]">Create, update, and remove novels from your catalog.</p>
+          <p className="text-sm text-[var(--muted)]">Search, sort, and page through your catalog.</p>
         </div>
         {selectedNovel ? (
           <span className="rounded-full bg-[var(--accent-soft)] px-3 py-1 text-xs font-semibold text-[var(--accent-strong)]">
@@ -207,50 +314,143 @@ export function NovelManager({ selectedNovelId, onSelectNovel }: NovelManagerPro
             {submitting ? "Saving..." : editingNovelId ? "Update novel" : "Create novel"}
           </Button>
           {editingNovelId ? (
-            <Button
-              type="button"
-              variant="outline"
-              onClick={resetForm}
-              disabled={submitting}
-            >
+            <Button type="button" variant="outline" onClick={resetForm} disabled={submitting}>
               Cancel edit
             </Button>
           ) : null}
         </div>
       </form>
 
+      <div className="mt-4 grid gap-3 rounded-xl border border-[var(--line)] bg-[var(--panel-strong)] p-4">
+        <form className="grid gap-3 md:grid-cols-[minmax(0,1fr),auto]" onSubmit={handleSearchSubmit}>
+          <Input
+            aria-label="Search novels"
+            placeholder="Search title or description"
+            value={searchDraft}
+            onChange={(event) => setSearchDraft(event.target.value)}
+          />
+          <div className="flex flex-wrap gap-2">
+            <Button type="submit">Search</Button>
+            <Button type="button" variant="outline" onClick={resetFilters}>
+              Clear
+            </Button>
+          </div>
+        </form>
+
+        <div className="grid gap-3 md:grid-cols-3">
+          <Select
+            aria-label="Owner filter"
+            value={query.scope ?? "all"}
+            onValueChange={handleScopeChange}
+            options={SCOPE_OPTIONS}
+          />
+          <Select
+            aria-label="Sort novels"
+            value={query.sort ?? "newest"}
+            onValueChange={handleSortChange}
+            options={SORT_OPTIONS}
+          />
+          <Select
+            aria-label="Rows per page"
+            value={String(query.pageSize ?? 10)}
+            onValueChange={handlePageSizeChange}
+            options={PAGE_SIZE_OPTIONS.map((option) => ({
+              value: String(option),
+              label: `${option} rows`,
+            }))}
+          />
+        </div>
+
+        <div className="flex flex-wrap items-center justify-between gap-2 text-sm text-[var(--muted)]">
+          <p>
+            Showing {showingStart}-{showingEnd} of {total} novel{total === 1 ? "" : "s"}
+          </p>
+          <div className="flex flex-wrap gap-2">
+            <Button type="button" variant="outline" onClick={() => handlePageChange((query.page ?? 1) - 1)} disabled={loading || (query.page ?? 1) <= 1}>
+              Previous
+            </Button>
+            <Button type="button" variant="outline" onClick={() => handlePageChange((query.page ?? 1) + 1)} disabled={loading || (query.page ?? 1) >= totalPages}>
+              Next
+            </Button>
+          </div>
+        </div>
+      </div>
+
       {error ? <p className="mt-3 text-sm font-medium text-red-600">{error}</p> : null}
       {message ? <p className="mt-3 text-sm font-medium text-emerald-700">{message}</p> : null}
 
-      <div className="mt-4 grid gap-3">
-        {loading ? <p className="text-sm text-[var(--muted)]">Loading novels...</p> : null}
+      <div className="mt-4 overflow-x-auto rounded-xl border border-[var(--line)] bg-[var(--panel-strong)]">
+        {loading ? <p className="p-4 text-sm text-[var(--muted)]">Loading novels...</p> : null}
         {!loading && novels.length === 0 ? (
-          <p className="text-sm text-[var(--muted)]">No novels yet. Create your first novel above.</p>
+          <p className="p-4 text-sm text-[var(--muted)]">No novels match the current filters.</p>
         ) : null}
-        {novels.map((novel) => (
-          <article
-            key={novel.id}
-            className="rounded-xl border border-[var(--line)] bg-[var(--panel-strong)] p-4"
-          >
-            <div className="flex flex-wrap items-start justify-between gap-2">
-              <div>
-                <h3 className="text-base font-semibold">{novel.title}</h3>
-                <p className="mt-1 line-clamp-2 text-sm text-[var(--muted)]">{novel.postContent}</p>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                <Button type="button" variant="ghost" onClick={() => onSelectNovel(novel)}>
-                  Open chapters
-                </Button>
-                <Button type="button" variant="outline" onClick={() => beginEdit(novel)}>
-                  Edit
-                </Button>
-                <Button type="button" onClick={() => setDeleteTarget(novel)}>
-                  Delete
-                </Button>
-              </div>
-            </div>
-          </article>
-        ))}
+        {!loading && novels.length > 0 ? (
+          <table className="w-full border-collapse text-left">
+            <thead className="bg-[var(--panel)] text-sm uppercase tracking-wide text-[var(--muted)]">
+              <tr>
+                <th className="border-b border-[var(--line)] px-4 py-3">ID</th>
+                <th className="border-b border-[var(--line)] px-4 py-3">Title</th>
+                <th className="border-b border-[var(--line)] px-4 py-3">Description</th>
+                <th className="border-b border-[var(--line)] px-4 py-3">Owner</th>
+                <th className="border-b border-[var(--line)] px-4 py-3">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {novels.map((novel) => {
+                const isSelected = novel.id === selectedNovelId;
+
+                return (
+                  <tr
+                    key={novel.id}
+                    className={isSelected ? "bg-[rgba(125,211,252,0.14)]" : undefined}
+                  >
+                    <td className="border-b border-[var(--line)] px-4 py-4 text-sm text-[var(--muted)]">#{novel.id}</td>
+                    <td className="border-b border-[var(--line)] px-4 py-4">
+                      <div className="font-semibold text-[var(--ink)]">{novel.title}</div>
+                      <button
+                        type="button"
+                        className="mt-1 text-xs font-medium text-[var(--accent-strong)] underline-offset-4 hover:underline"
+                        onClick={() => onSelectNovel(novel)}
+                      >
+                        Open chapters
+                      </button>
+                    </td>
+                    <td className="border-b border-[var(--line)] px-4 py-4 text-sm text-[var(--muted)]">
+                      <p className="line-clamp-2 max-w-2xl">{novel.postContent}</p>
+                    </td>
+                    <td className="border-b border-[var(--line)] px-4 py-4 text-sm text-[var(--muted)]">
+                      {formatOwnerLabel(novel.uploaderId, currentUserId)}
+                    </td>
+                    <td className="border-b border-[var(--line)] px-4 py-4">
+                      <div className="flex flex-wrap gap-2">
+                        <Button type="button" variant="outline" onClick={() => beginEdit(novel)}>
+                          Edit
+                        </Button>
+                        <Button type="button" onClick={() => setDeleteTarget(novel)}>
+                          Delete
+                        </Button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        ) : null}
+      </div>
+
+      <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-sm text-[var(--muted)]">
+        <p>
+          Page {currentPage} of {totalPages}
+        </p>
+        <div className="flex flex-wrap gap-2">
+          <Button type="button" variant="outline" onClick={() => handlePageChange((query.page ?? 1) - 1)} disabled={loading || (query.page ?? 1) <= 1}>
+            Previous page
+          </Button>
+          <Button type="button" variant="outline" onClick={() => handlePageChange((query.page ?? 1) + 1)} disabled={loading || (query.page ?? 1) >= totalPages}>
+            Next page
+          </Button>
+        </div>
       </div>
 
       <ConfirmDialog
