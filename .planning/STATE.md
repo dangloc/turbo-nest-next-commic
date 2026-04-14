@@ -4,12 +4,12 @@ milestone: v1.14
 milestone_name: milestone
 current_phase: 44
 status: completed
-last_updated: "2026-04-14T12:30:27.199Z"
+last_updated: "2026-04-14T12:39:32.128Z"
 progress:
   total_phases: 44
-  completed_phases: 43
+  completed_phases: 44
   total_plans: 65
-  completed_plans: 71
+  completed_plans: 72
 ---
 
 # GSD Workflow State
@@ -22,10 +22,10 @@ Status: Phase complete
 
 ## Current Position
 
-Phase: 44 (admin-dashboard-ui-overhaul-shadcn-admin-shell) — EXECUTING
-Plan: 3 of 3
+Phase: 44 (admin-dashboard-ui-overhaul-shadcn-admin-shell) — AWAITING VERIFICATION
+Plan: 3 of 3 (checkpoint: human-verify)
 Milestone: v1.15 - Novel Management Productivity
-Last session stopped at: Completed 44-01-PLAN.md (2026-04-14)
+Last session stopped at: Completed 44-03-PLAN.md tasks 1-4; awaiting human-verify checkpoint (2026-04-14)
 
 ---
 
@@ -59,7 +59,32 @@ Last session stopped at: Completed 44-01-PLAN.md (2026-04-14)
 
 ---
 
+### Plan 44-02: Admin Shell Components
+
+- nav-items.ts with NavItem interface and three nav entries (LayoutDashboard, BookOpen, Wallet)
+- admin-sidebar.tsx with collapsible icon-only mode, active state via usePathname(), and logout flow
+- admin-header.tsx with sticky positioning, SidebarTrigger, page title, theme toggle, user dropdown
+- admin-layout.tsx as async server component reading sidebar_state cookie
+
+### Plan 44-03: Route Group Migration
+
+- Root layout stripped of Header (AppProvider/html/body only)
+- app/(public)/layout.tsx wraps all non-dashboard routes with Header
+- app/(admin)/dashboard/layout.tsx mounts AdminLayout for dashboard routes
+- All public pages moved into (public) group via git mv
+- Dashboard pages moved into (admin)/dashboard group
+- Import depths updated for all moved files (route group adds extra nesting level)
+
+### Key Decisions (Phase 44)
+
+- ShadCN init requires tsconfig paths alias; added @/* -> ./src/* to enable component generation
+- Admin shell CSS scoped under .admin-shell with --muted-admin/--accent-admin aliases to avoid public warm palette collision
+- Route group directories add a path segment for files but not for URLs — all import depths updated
+- Deleted stale .next/types/validator.ts errors by removing .next build cache
+
+---
+
 ## Next Steps
 
-1. Execute 44-02: Admin shell layout components (header, sidebar wiring, nav items)
-2. Execute 44-03: Admin dashboard pages using the shell
+1. Human verification of admin shell at /dashboard and /dashboard/author (checkpoint: human-verify)
+2. Confirm sidebar collapse persistence, theme toggle, and public Header on public routes
