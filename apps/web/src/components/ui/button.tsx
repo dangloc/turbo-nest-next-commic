@@ -4,10 +4,10 @@ import type { ButtonHTMLAttributes, ReactNode } from "react";
 import { cn } from "../../lib/cn";
 
 type ButtonVariant = "default" | "outline" | "ghost" | "pill";
-type ButtonSize = "sm" | "md" | "icon";
+type ButtonSize = "sm" | "md" | "icon" | "icon-sm";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  children: ReactNode;
+  children?: ReactNode;
   variant?: ButtonVariant;
   size?: ButtonSize;
 }
