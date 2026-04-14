@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { AppProvider } from "../src/providers/app-provider";
-import { Header } from "../src/components/header";
 import "./globals.css";
 
 const geistSans = localFont({
@@ -25,11 +24,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="vi" suppressHydrationWarning>
-      <body className={`${geistSans.variable} ${geistMono.variable}`} style={{ backgroundColor: "var(--bg, #f4f1ea)", color: "var(--ink, #1f1c1a)" }}>
-        <AppProvider>
-          <Header />
-          {children}
-        </AppProvider>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable}`}
+        style={{
+          backgroundColor: "var(--bg, #f4f1ea)",
+          color: "var(--ink, #1f1c1a)",
+        }}
+      >
+        <AppProvider>{children}</AppProvider>
       </body>
     </html>
   );
