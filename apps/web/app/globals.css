@@ -1,3 +1,5 @@
+@import "tailwindcss";
+
 :root {
   --bg: #f6f1e8;
   --bg-accent: rgba(184, 92, 47, 0.12);
@@ -223,7 +225,8 @@ textarea {
 
 .action-primary,
 .action-secondary {
-  min-height: 46px;
+  max-height: 40px;
+  min-height: 40px;
   padding: 0 18px;
   border: 1px solid transparent;
   font-weight: 700;
@@ -599,6 +602,7 @@ input[type="number"] {
 .social-card {
   display: grid;
   gap: 14px;
+  margin: 24px 0;
 }
 
 .reader-card__header {
@@ -1295,6 +1299,14 @@ textarea:focus-visible {
 .ui-button--ghost {
   min-height: 42px;
   padding: 0 12px;
+}
+
+.shd-textarea {
+  min-height: 96px;
+  border-radius: 16px;
+  padding: 10px 12px;
+  resize: vertical;
+
   background: transparent;
   color: var(--ink);
 }
@@ -2018,14 +2030,14 @@ textarea:focus-visible {
 }
 
 .tsh-top-rankings__grid {
-  border: 1px solid #e5e5e5;
+  border: 2px solid #e5e5e5;
   border-radius: 22px;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .tsh-top-card {
-  padding: 16px;
+  padding: 24px;
 }
 
 .tsh-top-card + .tsh-top-card {
@@ -2035,7 +2047,7 @@ textarea:focus-visible {
 .tsh-top-card h3 {
   margin: 0 0 10px;
   text-transform: uppercase;
-  font-size: 0.98rem;
+  font-size: 1.25rem;
 }
 
 .tsh-top-card ol {
@@ -2055,11 +2067,11 @@ textarea:focus-visible {
 
 .tsh-top-card li span {
   color: #6a6a6a;
-  font-size: 0.85rem;
+  font-size: 1rem;
 }
 
 .tsh-top-card li a {
-  font-size: 0.84rem;
+  font-size: 0.9rem;
   display: -webkit-box;
   -webkit-line-clamp: 1;
   line-clamp: 1;
@@ -2068,7 +2080,7 @@ textarea:focus-visible {
 }
 
 .tsh-top-card li strong {
-  font-size: 0.78rem;
+  font-size: 1rem;
   color: #d63384;
 }
 
@@ -2435,7 +2447,8 @@ textarea:focus-visible {
 }
 
 .shd-input,
-.shd-select {
+.shd-select,
+.shd-textarea {
   width: 100%;
   min-height: 34px;
   border: 1px solid #ebdde5;
@@ -2447,7 +2460,8 @@ textarea:focus-visible {
 }
 
 .shd-input:focus,
-.shd-select:focus {
+.shd-select:focus,
+.shd-textarea:focus {
   outline: none;
   border-color: #de5d8b;
   box-shadow: 0 0 0 3px rgba(222, 93, 139, 0.18);
@@ -2554,6 +2568,8 @@ textarea:focus-visible {
 
 .tsh2-circleBtn {
   font-size: 13px;
+  padding: 8px 10px;
+  min-width: 34px;
 }
 
 .tsh2-account {
@@ -2670,7 +2686,9 @@ textarea:focus-visible {
   min-height: 32px;
   padding: 0 12px;
   border-radius: 999px;
-  font-size: 12px;
+  font-size: 13px;
+  width: fit-content;
+  white-space: nowrap;
   font-weight: 600;
   display: inline-flex;
   align-items: center;
