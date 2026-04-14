@@ -2,15 +2,15 @@
 
 import Link from "next/link";
 import { useContext, useEffect, useMemo, useState } from "react";
-import { fetchSession } from "../src/lib/auth/api";
+import { fetchSession } from "../../src/lib/auth/api";
 import {
   clearSessionStorage,
   getSessionToken,
   persistSessionToStorage,
-} from "../src/lib/auth/session-store";
-import { fetchDiscoveryNovels } from "../src/features/discovery/api";
-import type { DiscoveryNovel } from "../src/features/discovery/types";
-import { AppContext } from "../src/providers/app-provider";
+} from "../../src/lib/auth/session-store";
+import { fetchDiscoveryNovels } from "../../src/features/discovery/api";
+import type { DiscoveryNovel } from "../../src/features/discovery/types";
+import { AppContext } from "../../src/providers/app-provider";
 
 function getCategoryName(novel: DiscoveryNovel) {
   return novel.terms.find((term) => term.taxonomy === "category")?.name ?? novel.terms[0]?.name ?? "Khac";
