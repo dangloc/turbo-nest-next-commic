@@ -2,71 +2,42 @@
 gsd_state_version: 1.0
 milestone: v1.14
 milestone_name: milestone
-current_phase: 40
-status: Milestone archived
-last_updated: "2026-04-13T14:52:30.649Z"
+current_phase: 42
+status: completed
+last_updated: "2026-04-14T08:10:40.796Z"
 progress:
-  total_phases: 40
-  completed_phases: 40
-  total_plans: 57
-  completed_plans: 64
+  total_phases: 43
+  completed_phases: 43
+  total_plans: 62
+  completed_plans: 69
 ---
 
 # GSD Workflow State
 
-Current Milestone: v1.14 (Identity & Account Experience)
-Current Phase: 40
-Status: Milestone archived
+Current Milestone: v1.15 (Novel Management Productivity)
+Current Phase: 42
+Status: Phase complete
 
 ---
 
 ## Current Position
 
-Phase: 40 (purchase-segmentation) — COMPLETE
-Plan: 2 of 2 (40-02 complete)
-Milestone: v1.14 - Identity & Account Experience
-Start Date: 2026-04-12
-Phase Count: 5 phases completed (35-39)
-Roadmap Status: Archived
-Last Session: 2026-04-13 — Completed 40-02-PLAN.md (frontend purchase-history segmentation)
+Phase: 42 (novel-management-table-search-pagination) - COMPLETE
+Plan: 1 of 1 complete
+Milestone: v1.15 - Novel Management Productivity
 
 ---
 
-## Milestone Scope Snapshot (v1.14)
+## Completed in Phase 42
 
-**Goal:** Implement frontend UIs for authentication and account management, consuming local auth endpoints and imported legacy financial data.
-
-Requirements (4 total):
-
-- AUTH-01: Frontend Login Form
-- AUTH-02: Frontend Registration Form
-- ACCOUNT-01: Profile Management & Password Change
-- ACCOUNT-02: Wallet and Purchase History Dashboard
-
-**Phase Breakdown:**
-
-- Phase 35: Frontend Local Authentication (AUTH-01, AUTH-02)
-- Phase 36: User Profile & Security Management (ACCOUNT-01)
-- Phase 37: Wallet and Purchase History Dashboard (ACCOUNT-02)
-- Phase 38: Auth Experience Gap Closure (AUTH-01, AUTH-02)
-- Phase 39: Milestone Verification and Traceability Closure (ACCOUNT-01, ACCOUNT-02)
+- Table-based novel manager replaced card list.
+- Search + scope + sort + pagination query contract added.
+- API paginated novels endpoint implemented with validation and defaults.
+- DOM and API tests updated and passing.
 
 ---
 
 ## Next Steps
 
-1. Start next milestone planning if work continues via /gsd-new-milestone
-2. Review archived milestone artifacts in .planning/milestones/v1.14-*
-
----
-
-## Decisions (Phase 40)
-
-- Combo purchase history sourced from Transaction table (COMBO_PURCHASE type) not purchasedChapter — ensures traceability to original financial event
-- Novel titles batch-loaded via single novel.findMany after extracting novelIds from transaction content strings
-- Frontend combo history pagination fixed at page 1 / pageSize 20 — low-volume events, no pagination needed currently
-- Chapter pricing rows table rendered conditionally (non-empty chapters array) — keeps pricing card clean for standard novels
-
----
-
-Last updated: 2026-04-13 — 40-02 complete: frontend purchase-history segmentation (split tables, combo history stream)
+1. Optional: run `/gsd:verify-work 42` for manual UAT confirmation.
+2. Start next phase or milestone planning.
