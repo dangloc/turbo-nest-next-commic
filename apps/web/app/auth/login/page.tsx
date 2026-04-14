@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useContext, useEffect, useMemo, useState } from "react";
+import { Input } from "@repo/ui/input";
 import { extractAuthErrorMessage, loginLocal } from "../../../src/features/auth/api";
 import { validateLoginInput } from "../../../src/features/auth/validation";
 import type { FieldErrors } from "../../../src/features/auth/types";
@@ -14,7 +15,8 @@ export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { setUser } = useContext(AppContext);
-  const [message, setMessage] = useState("Sign in to continue to your reader dashboard.");
+  const [message, setMessage] = useState("Dang nhap de tiep tuc.");
+  const [showPassword, setShowPassword] = useState(false);
   const [form, setForm] = useState({
     username: "",
     password: "",
@@ -30,7 +32,7 @@ export default function LoginPage() {
     const error = searchParams.get("error");
 
     if (error) {
-      setMessage("Sign in failed. Please try again.");
+      setMessage("Dang nhap that bai. Vui long thu lai.");
       return;
     }
 
@@ -43,13 +45,13 @@ export default function LoginPage() {
     void (async () => {
       const session = await fetchSession(token);
       if (!session.ok || !session.data.user) {
-        setMessage("Session setup failed. Please sign in again.");
+        setMessage("Khong the tao phien dang nhap. Vui long thu lai.");
         return;
       }
 
       persistSessionToStorage(session.data.user);
       setUser(session.data.user);
-      setMessage("Sign in complete. Redirecting to dashboard...");
+      setMessage("Dang nhap thanh cong. Dang chuyen huong...");
       router.push("/dashboard");
     })();
   }, [searchParams, setUser, router]);
@@ -85,51 +87,50 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="auth-shell">
-      <section className="auth-card auth-card--form">
-        <h1>Welcome back</h1>
-        <p>{message}</p>
+    <main className="auth-modal-shell">
+      <section className="auth-modal-card">
+        <Link className="auth-close" href="/" aria-label="Close">
+          x
+        </Link>
 
-        <form className="auth-form" onSubmit={onSubmit}>
+        <h1 className="auth-title">Dang nhap</h1>
+
+        <form className="auth-modal-form" onSubmit={onSubmit}>
           <label>
-            Username or email
-            <input
+            <Input
               autoComplete="username"
               name="username"
               onChange={(event) => onFieldChange("username", event.target.value)}
-              placeholder="username or email"
+              placeholder="So dien thoai, ten dang nhap, email"
               value={form.username}
             />
             {errors.username ? <span className="auth-error">{errors.username}</span> : null}
           </label>
 
-          <label>
-            Password
-            <input
+          <label className="auth-password-row">
+            <Input
               autoComplete="current-password"
               name="password"
               onChange={(event) => onFieldChange("password", event.target.value)}
-              placeholder="password"
-              type="password"
+              placeholder="Mat khau"
+              type={showPassword ? "text" : "password"}
               value={form.password}
             />
+            <button
+              className="auth-password-toggle"
+              type="button"
+              onClick={() => setShowPassword((current) => !current)}
+              aria-label="Toggle password visibility"
+            >
+              {showPassword ? "Hide" : "Show"}
+            </button>
             {errors.password ? <span className="auth-error">{errors.password}</span> : null}
-          </label>
-
-          <label className="auth-remember">
-            <input
-              checked={form.rememberMe}
-              name="rememberMe"
-              onChange={(event) => setForm((current) => ({ ...current, rememberMe: event.target.checked }))}
-              type="checkbox"
-            />
-            Keep me signed in for 30 days
           </label>
 
           {errors.form ? <p className="auth-error auth-error--block">{errors.form}</p> : null}
 
-          <button className="auth-local-submit" disabled={submitting} type="submit">
-            {submitting ? "Signing in..." : "Sign in"}
+          <button className="auth-gradient-submit" disabled={submitting} type="submit">
+            {submitting ? "Dang dang nhap..." : "Dang nhap"}
           </button>
         </form>
 
@@ -137,18 +138,29 @@ export default function LoginPage() {
           <span>or</span>
         </div>
 
-        <a className="auth-google" href={loginUrl}>
-          Continue with Google
-        </a>
-
-        <div className="auth-links">
-          <Link className="auth-home-link" href="/auth/register">
-            Create a local account
-          </Link>
-          <Link className="auth-home-link" href="/">
-            Back to home
-          </Link>
+        <div className="auth-social-row">
+          <a className="auth-social auth-social--google" href={loginUrl}>
+            Google
+          </a>
+          <button className="auth-social auth-social--facebook" type="button">
+            Facebook
+          </button>
         </div>
+
+        <div className="auth-divider">
+          <span>or</span>
+        </div>
+
+        <div className="auth-footer-links">
+          <p>
+            Ban da co tai khoan? <Link href="/auth/register">Dang ky</Link>
+          </p>
+          <p>
+            Ban da quen mat khau? <a href="#">Lay lai ngay</a>
+          </p>
+        </div>
+
+        <p className="auth-inline-status">{message}</p>
       </section>
     </main>
   );

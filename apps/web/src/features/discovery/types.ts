@@ -14,6 +14,8 @@ export interface DiscoveryNovel {
   viewCount: number;
   createdAt: string;
   updatedAt: string;
+  thumbnailUrl?: string | null;
+  coverUrl?: string | null;
   terms: DiscoveryTerm[];
 }
 

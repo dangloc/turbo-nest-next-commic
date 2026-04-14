@@ -2,16 +2,18 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useContext, useMemo, useState } from "react";
-import { registerLocal, extractAuthErrorMessage } from "../../../src/features/auth/api";
-import { validateRegisterInput } from "../../../src/features/auth/validation";
+import { useContext, useState } from "react";
+import { Input } from "@repo/ui/input";
+import { extractAuthErrorMessage, registerLocal } from "../../../src/features/auth/api";
 import type { FieldErrors } from "../../../src/features/auth/types";
+import { validateRegisterInput } from "../../../src/features/auth/validation";
 import { persistSessionToStorage, persistSessionToken } from "../../../src/lib/auth/session-store";
 import { AppContext } from "../../../src/providers/app-provider";
 
 export default function RegisterPage() {
   const router = useRouter();
   const { setUser } = useContext(AppContext);
+  const [showPassword, setShowPassword] = useState(false);
   const [form, setForm] = useState({
     username: "",
     email: "",
@@ -19,11 +21,6 @@ export default function RegisterPage() {
   });
   const [errors, setErrors] = useState<FieldErrors>({});
   const [submitting, setSubmitting] = useState(false);
-
-  const passwordHint = useMemo(
-    () => "Password must be 8+ characters and include at least one letter and one number.",
-    [],
-  );
 
   function onChange(name: "username" | "email" | "password", value: string) {
     setForm((current) => ({ ...current, [name]: value }));
@@ -56,31 +53,31 @@ export default function RegisterPage() {
   }
 
   return (
-    <main className="auth-shell">
-      <section className="auth-card auth-card--form">
-        <h1>Create account</h1>
-        <p>Register with username, email, and password to unlock your reading dashboard.</p>
+    <main className="auth-modal-shell">
+      <section className="auth-modal-card">
+        <Link className="auth-close" href="/" aria-label="Close">
+          x
+        </Link>
 
-        <form className="auth-form" onSubmit={onSubmit}>
+        <h1 className="auth-title">Dang ky</h1>
+
+        <form className="auth-modal-form" onSubmit={onSubmit}>
           <label>
-            Username
-            <input
-              autoComplete="username"
-              name="username"
+            <Input
+              name="fullName"
               onChange={(event) => onChange("username", event.target.value)}
-              placeholder="reader_name"
+              placeholder="Ten day du"
               value={form.username}
             />
             {errors.username ? <span className="auth-error">{errors.username}</span> : null}
           </label>
 
           <label>
-            Email
-            <input
+            <Input
               autoComplete="email"
               name="email"
               onChange={(event) => onChange("email", event.target.value)}
-              placeholder="reader@example.com"
+              placeholder="Email"
               type="email"
               value={form.email}
             />
@@ -88,33 +85,46 @@ export default function RegisterPage() {
           </label>
 
           <label>
-            Password
-            <input
+            <Input
+              autoComplete="username"
+              name="username"
+              onChange={(event) => onChange("username", event.target.value)}
+              placeholder="So dien thoai, ten dang nhap"
+              value={form.username}
+            />
+          </label>
+
+          <label className="auth-password-row">
+            <Input
               autoComplete="new-password"
               name="password"
               onChange={(event) => onChange("password", event.target.value)}
-              placeholder="Create a strong password"
-              type="password"
+              placeholder="Mat khau"
+              type={showPassword ? "text" : "password"}
               value={form.password}
             />
-            <span className="auth-note">{passwordHint}</span>
+            <button
+              className="auth-password-toggle"
+              type="button"
+              onClick={() => setShowPassword((current) => !current)}
+              aria-label="Toggle password visibility"
+            >
+              {showPassword ? "Hide" : "Show"}
+            </button>
             {errors.password ? <span className="auth-error">{errors.password}</span> : null}
           </label>
 
           {errors.form ? <p className="auth-error auth-error--block">{errors.form}</p> : null}
 
-          <button className="auth-local-submit" disabled={submitting} type="submit">
-            {submitting ? "Creating account..." : "Create account"}
+          <button className="auth-gradient-submit" disabled={submitting} type="submit">
+            {submitting ? "Dang tao tai khoan..." : "Dang ky"}
           </button>
         </form>
 
-        <div className="auth-links">
-          <Link className="auth-home-link" href="/auth/login">
-            Already have an account? Sign in
-          </Link>
-          <Link className="auth-home-link" href="/">
-            Back to home
-          </Link>
+        <div className="auth-footer-links auth-footer-links--single">
+          <p>
+            Tro ve <Link href="/auth/login">Dang nhap</Link>
+          </p>
         </div>
       </section>
     </main>

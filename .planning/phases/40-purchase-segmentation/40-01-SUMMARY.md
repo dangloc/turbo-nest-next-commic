@@ -104,3 +104,11 @@ None — all response fields are wired to real data sources.
 ---
 *Phase: 40-purchase-segmentation*
 *Completed: 2026-04-13*
+
+## Self-Check: PASSED
+
+- SUMMARY.md exists at `.planning/phases/40-purchase-segmentation/40-01-SUMMARY.md`
+- Commit `74d66e3` (test RED) confirmed in apps/api git log
+- Commit `2b3c1bc` (feat GREEN) confirmed in apps/api git log
+- Commit `5797417` (docs metadata) confirmed in monorepo git log
+- All 218 tests pass

@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useContext, useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { Input } from "@repo/ui/input";
+import { Select } from "@repo/ui/select";
 import { AppContext } from "../../providers/app-provider";
 import { formatAppDate, formatAppNumber } from "../../lib/i18n";
 import { fetchDiscoveryNovels, getDiscoveryHref } from "./api";
@@ -21,6 +23,7 @@ interface DiscoveryFeedProps {
   category?: string;
   categoryLabel?: string;
   backHref?: string;
+  variant?: "default" | "home";
 }
 
 function getPrimaryCategory(novel: DiscoveryNovel) {
@@ -31,9 +34,21 @@ function NovelCard({ novel }: { novel: DiscoveryNovel }) {
   const { locale } = useContext(AppContext);
   const copy = locale === "vi" ? { views: "lượt xem", uncategorized: "Chưa phân loại" } : { views: "views", uncategorized: "Uncategorized" };
   const category = getPrimaryCategory(novel);
+  const fallbackCover = "/default-novel-cover.svg";
+  const coverSrc = novel.thumbnailUrl || novel.coverUrl || fallbackCover;
 
   return (
     <article className="discovery-card">
+      <Link className="discovery-card__thumb" href={"/novels/" + novel.id}>
+        <img
+          src={coverSrc}
+          alt={novel.title}
+          loading="lazy"
+          onError={(event) => {
+            event.currentTarget.src = fallbackCover;
+          }}
+        />
+      </Link>
       <div className="discovery-card__meta">
         <span>{formatAppNumber(novel.viewCount, locale)} {copy.views}</span>
         <span>{formatAppDate(novel.updatedAt, locale)}</span>
@@ -102,18 +117,18 @@ function QueryControls({
     <div className="discovery-controls">
       <label>
         <span>{copy.sortBy}</span>
-        <select
+        <Select
           value={query.sortBy}
           onChange={(event) => onQueryChange({ ...query, sortBy: event.target.value as DiscoveryQuery["sortBy"] })}
         >
           <option value="updatedAt">{copy.latest}</option>
           <option value="viewCount">{copy.mostViewed}</option>
           <option value="createdAt">{copy.oldest}</option>
-        </select>
+        </Select>
       </label>
       <label>
         <span>{copy.perPage}</span>
-        <select
+        <Select
           value={query.limit}
           onChange={(event) => onQueryChange({ ...query, limit: Number(event.target.value) })}
         >
@@ -122,21 +137,21 @@ function QueryControls({
               {value}
             </option>
           ))}
-        </select>
+        </Select>
       </label>
       <label>
         <span>{copy.direction}</span>
-        <select
+        <Select
           value={query.sortDir}
           onChange={(event) => onQueryChange({ ...query, sortDir: event.target.value as DiscoveryQuery["sortDir"] })}
         >
           <option value="desc">{copy.descending}</option>
           <option value="asc">{copy.ascending}</option>
-        </select>
+        </Select>
       </label>
       <label>
         <span>{copy.category}</span>
-        <input readOnly value={category ?? query.category ?? copy.allCategories} />
+        <Input readOnly value={category ?? query.category ?? copy.allCategories} />
       </label>
     </div>
   );
@@ -167,7 +182,7 @@ function Pagination({
   );
 }
 
-export function DiscoveryFeed({ title, eyebrow, intro, category, categoryLabel, backHref = "/" }: DiscoveryFeedProps) {
+export function DiscoveryFeed({ title, eyebrow, intro, category, categoryLabel, backHref = "/", variant = "default" }: DiscoveryFeedProps) {
   const { locale } = useContext(AppContext);
   const copy =
     locale === "vi"
@@ -240,9 +255,11 @@ export function DiscoveryFeed({ title, eyebrow, intro, category, categoryLabel, 
 
   const emptyState = !loading && !error && result?.items.length === 0;
   const totalPages = result?.totalPages ?? 1;
+  const ShellTag = variant === "home" ? "section" : "main";
+  const shellClassName = variant === "home" ? "discovery-shell discovery-shell--home" : "discovery-shell";
 
   return (
-    <main className="discovery-shell">
+    <ShellTag className={shellClassName}>
       <section className="discovery-hero">
         <div>
           <span className="home-kicker">{eyebrow}</span>
@@ -268,6 +285,6 @@ export function DiscoveryFeed({ title, eyebrow, intro, category, categoryLabel, 
       </section>
 
       {result ? <Pagination page={result.page} totalPages={totalPages} onPageChange={changePage} /> : null}
-    </main>
+    </ShellTag>
   );
 }

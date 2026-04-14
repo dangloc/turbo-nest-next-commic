@@ -1,6 +1,7 @@
 "use client";
 
-import { ReactNode, SelectHTMLAttributes } from "react";
+import type { ReactNode, SelectHTMLAttributes } from "react";
+import { cn } from "../../lib/cn";
 
 interface SelectOption {
   value: string;
@@ -12,20 +13,20 @@ interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
   onValueChange?: (value: string) => void;
 }
 
-export const Select = ({
+export function Select({
+  className,
   options,
+  children,
   onValueChange,
   onChange,
-  className = "",
-  children,
   ...props
-}: SelectProps) => {
+}: SelectProps) {
   return (
     <select
-      className={`ui-select ${className}`.trim()}
-      onChange={(e) => {
-        onValueChange?.(e.target.value);
-        onChange?.(e);
+      className={cn("shd-select", className)}
+      onChange={(event) => {
+        onValueChange?.(event.target.value);
+        onChange?.(event);
       }}
       {...props}
     >
@@ -38,4 +39,4 @@ export const Select = ({
         : children}
     </select>
   );
-};
+}

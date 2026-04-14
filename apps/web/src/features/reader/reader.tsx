@@ -360,6 +360,8 @@ export function ChapterReaderView({ chapterId }: { chapterId: number }) {
   const [chapterPrice, setChapterPrice] = useState<number | null>(null);
   const [comboPrice, setComboPrice] = useState<number | null>(null);
   const [comboDiscountPct, setComboDiscountPct] = useState<number | null>(null);
+  const [chapterPricingMeta, setChapterPricingMeta] = useState<Record<number, { isLocked: boolean; effectivePrice: number; priceSource: string }>>({});
+  const [vipAccessMode, setVipAccessMode] = useState(false);
   const [fontSize, setFontSize] = useState<ReaderFontSizeOption>(READER_TYPOGRAPHY_DEFAULTS.fontSize);
   const [themeMode, setThemeMode] = useState<ReaderThemeMode>(READER_TYPOGRAPHY_DEFAULTS.themeMode);
   const [fontFamily, setFontFamily] = useState<ReaderFontFamilyOption>(READER_TYPOGRAPHY_DEFAULTS.fontFamily);
@@ -406,6 +408,8 @@ export function ChapterReaderView({ chapterId }: { chapterId: number }) {
     setChapterPrice(null);
     setComboPrice(null);
     setComboDiscountPct(null);
+    setChapterPricingMeta({});
+    setVipAccessMode(false);
 
     void (async () => {
       const chapterResult = await fetchChapterById(chapterId);
@@ -428,14 +432,34 @@ export function ChapterReaderView({ chapterId }: { chapterId: number }) {
       if (token) {
         const pricingResult = await fetchReaderNovelPricing(chapterResult.data.novelId, token);
         if (pricingResult.ok) {
-          const chapterPricing = pricingResult.data.chapters.find((item) => item.id === chapterId);
+          const nextPricingMeta: Record<number, { isLocked: boolean; effectivePrice: number; priceSource: string }> = {};
+          pricingResult.data.chapters.forEach((item) => {
+            nextPricingMeta[item.id] = {
+              isLocked: item.isLocked,
+              effectivePrice: item.effectivePrice,
+              priceSource: item.priceSource,
+            };
+          });
+
+          setChapterPricingMeta(nextPricingMeta);
+          setVipAccessMode(
+            pricingResult.data.chapters.length > 0
+              && pricingResult.data.chapters.every((item) => item.priceSource === "vip_subscription"),
+          );
+
+          const chapterPricing = nextPricingMeta[chapterId];
           if (chapterPricing) {
             setRequiresPurchase(chapterPricing.isLocked);
             setChapterPrice(chapterPricing.effectivePrice);
-            if (!chapterPricing.isLocked) {
+            if (chapterPricing.isLocked === false) {
               setIsUnlocked(true);
             }
+          } else {
+            setRequiresPurchase(false);
+            setIsUnlocked(true);
+            setChapterPrice(0);
           }
+
           setComboPrice(pricingResult.data.combo.discountedTotalPrice);
           setComboDiscountPct(pricingResult.data.settings.comboDiscountPct);
         }
@@ -551,6 +575,23 @@ export function ChapterReaderView({ chapterId }: { chapterId: number }) {
     }
 
     setIsUnlocked(true);
+    setRequiresPurchase(false);
+    setChapterPricingMeta((prev) => {
+      const next: Record<number, { isLocked: boolean; effectivePrice: number; priceSource: string }> = {};
+      Object.keys(prev).forEach((key) => {
+        const chapterKey = Number(key);
+        const previous = prev[chapterKey] ?? {
+          isLocked: false,
+          effectivePrice: 0,
+          priceSource: "novel_default",
+        };
+        next[chapterKey] = {
+          ...previous,
+          isLocked: false,
+        };
+      });
+      return next;
+    });
     setPurchaseMessage(
       comboResult.data.status === "already_owned"
         ? copy.allLockedChaptersAlreadyUnlocked
@@ -602,6 +643,21 @@ export function ChapterReaderView({ chapterId }: { chapterId: number }) {
     }
 
     setIsUnlocked(true);
+    setRequiresPurchase(false);
+    setChapterPricingMeta((prev) => {
+      const chapterMeta = prev[chapterId];
+      if (!chapterMeta) {
+        return prev;
+      }
+
+      return {
+        ...prev,
+        [chapterId]: {
+          ...chapterMeta,
+          isLocked: false,
+        },
+      };
+    });
     setPurchaseMessage(
       purchaseResult.data.status === "already_owned"
         ? copy.chapterAlreadyUnlockedForYourAccount
@@ -780,18 +836,29 @@ export function ChapterReaderView({ chapterId }: { chapterId: number }) {
                 )}
               </article>
 
-              <aside aria-label={copy.tableOfContents} style={{ border: "1px solid var(--line)", borderRadius: 12, background: "#fff", padding: 12, display: "grid", gap: 10 }}>
+              <aside className="reader-chapter-menu" aria-label={copy.tableOfContents}>
                 <h2>{copy.tableOfContents}</h2>
                 {chapterContext?.chapters.length ? (
-                  <ul style={{ listStyle: "none", display: "grid", gap: 8 }}>
+                  <ul className="reader-chapter-menu__list">
                     {chapterContext.chapters.map((item) => (
                       <li key={item.id}>
                         <Link
                           className="reader-history-link"
-                          style={item.id === chapter.id ? { textDecoration: "underline" } : undefined}
+                          data-active={item.id === chapter.id ? "true" : "false"}
                           href={buildChapterHref(item.id, chapterContext.novelId)}
                         >
-                          {item.title}
+                          <span>{item.title}</span>
+                          {vipAccessMode ? (
+                            <span className="reader-chapter-badge reader-chapter-badge--vip" aria-label={copy.comboLabel + " VIP"}>
+                              <span className="reader-chapter-badge__icon" aria-hidden="true" />
+                              VIP
+                            </span>
+                          ) : chapterPricingMeta[item.id]?.isLocked ? (
+                            <span className="reader-chapter-badge reader-chapter-badge--locked" aria-label={copy.chapterLockedTitle}>
+                              <span className="reader-chapter-badge__icon" aria-hidden="true" />
+                              {formatMoney(chapterPricingMeta[item.id]?.effectivePrice ?? 0, locale)}
+                            </span>
+                          ) : null}
                         </Link>
                       </li>
                     ))}
