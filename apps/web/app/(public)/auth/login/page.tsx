@@ -4,12 +4,12 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useContext, useEffect, useMemo, useState } from "react";
 import { Input } from "@repo/ui/input";
-import { extractAuthErrorMessage, loginLocal } from "../../../src/features/auth/api";
-import { validateLoginInput } from "../../../src/features/auth/validation";
-import type { FieldErrors } from "../../../src/features/auth/types";
-import { fetchSession, getGoogleLoginUrl } from "../../../src/lib/auth/api";
-import { persistSessionToStorage, persistSessionToken } from "../../../src/lib/auth/session-store";
-import { AppContext } from "../../../src/providers/app-provider";
+import { extractAuthErrorMessage, loginLocal } from "../../../../src/features/auth/api";
+import { validateLoginInput } from "../../../../src/features/auth/validation";
+import type { FieldErrors } from "../../../../src/features/auth/types";
+import { fetchSession, getGoogleLoginUrl } from "../../../../src/lib/auth/api";
+import { persistSessionToStorage, persistSessionToken } from "../../../../src/lib/auth/session-store";
+import { AppContext } from "../../../../src/providers/app-provider";
 
 export default function LoginPage() {
   const router = useRouter();

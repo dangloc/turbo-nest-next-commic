@@ -1,5 +1,5 @@
-import { ChapterReaderView } from "../../../../src/features/reader/reader";
-import { normalizeChapterId } from "../../../../src/features/reader/types";
+import { ChapterReaderView } from "../../../../../src/features/reader/reader";
+import { normalizeChapterId } from "../../../../../src/features/reader/types";
 
 interface ChapterReaderPageProps {
   params: Promise<{

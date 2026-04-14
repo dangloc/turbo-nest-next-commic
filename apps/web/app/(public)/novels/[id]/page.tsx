@@ -1,5 +1,5 @@
-import { NovelDetailView } from "../../../src/features/reader/reader";
-import { normalizeNovelId } from "../../../src/features/reader/types";
+import { NovelDetailView } from "../../../../src/features/reader/reader";
+import { normalizeNovelId } from "../../../../src/features/reader/types";
 
 interface NovelPageProps {
   params: Promise<{

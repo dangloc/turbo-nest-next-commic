@@ -1,6 +1,6 @@
 "use client";
 
-import { DiscoveryFeed } from "../../../src/features/discovery/discovery";
+import { DiscoveryFeed } from "../../../../src/features/discovery/discovery";
 
 export default function CategoryPage({ params }: { params: { slug: string } }) {
   return (

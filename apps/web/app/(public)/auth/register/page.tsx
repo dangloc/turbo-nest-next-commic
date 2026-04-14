@@ -4,11 +4,11 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useContext, useState } from "react";
 import { Input } from "@repo/ui/input";
-import { extractAuthErrorMessage, registerLocal } from "../../../src/features/auth/api";
-import type { FieldErrors } from "../../../src/features/auth/types";
-import { validateRegisterInput } from "../../../src/features/auth/validation";
-import { persistSessionToStorage, persistSessionToken } from "../../../src/lib/auth/session-store";
-import { AppContext } from "../../../src/providers/app-provider";
+import { extractAuthErrorMessage, registerLocal } from "../../../../src/features/auth/api";
+import type { FieldErrors } from "../../../../src/features/auth/types";
+import { validateRegisterInput } from "../../../../src/features/auth/validation";
+import { persistSessionToStorage, persistSessionToken } from "../../../../src/lib/auth/session-store";
+import { AppContext } from "../../../../src/providers/app-provider";
 
 export default function RegisterPage() {
   const router = useRouter();

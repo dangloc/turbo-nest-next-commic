@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
-import { fetchAuthorProfile } from "../../../src/features/author-profile/api";
-import { AuthorProfileView } from "../../../src/features/author-profile/author-profile";
+import { fetchAuthorProfile } from "../../../../src/features/author-profile/api";
+import { AuthorProfileView } from "../../../../src/features/author-profile/author-profile";
 
 interface AuthorPageProps {
   params: Promise<{
