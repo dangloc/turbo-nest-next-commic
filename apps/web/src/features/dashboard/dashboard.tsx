@@ -432,6 +432,7 @@ export function DashboardView() {
 
   const { snapshot } = viewState;
   const highlighted = snapshot.sections.find((section) => section.id === activeSection);
+  const canManageContent = snapshot.user.role === "AUTHOR" || snapshot.user.role === "ADMIN";
 
   async function onInitiateTopUp(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -715,7 +716,7 @@ export function DashboardView() {
           </article>
         </div>
 
-        <div className="dashboard-wallet-actions">
+        <div className="dashboard-wallet-actions mt-4">
           <article className="dashboard-wallet-form-card">
             <h3>Initiate top-up</h3>
             <p>Create a deterministic payment intent for VNPAY or MOMO.</p>
@@ -835,7 +836,7 @@ export function DashboardView() {
           <p className="dashboard-wallet-error">{walletState.message}</p>
         ) : null}
 
-        <article className="dashboard-wallet-transactions">
+        <article className="dashboard-wallet-transactions mt-4">
           <header>
             <h3>Recent wallet transactions</h3>
             <button
@@ -1362,9 +1363,16 @@ export function DashboardView() {
             <h1>Welcome, {snapshot.user.nickname || snapshot.user.email}</h1>
             <p>Your account hub centralizes wallet, purchases, profile, and notifications.</p>
           </div>
-          <Link className="action-secondary" href="/">
-            Back to storefront
-          </Link>
+          <div className="dashboard-heading-actions">
+            {canManageContent ? (
+              <Link className="action-primary" href="/dashboard/author">
+                Open Author Studio
+              </Link>
+            ) : null}
+            <Link className="action-secondary" href="/">
+              Back to storefront
+            </Link>
+          </div>
         </div>
 
         <nav aria-label="Dashboard sections" className="dashboard-nav">

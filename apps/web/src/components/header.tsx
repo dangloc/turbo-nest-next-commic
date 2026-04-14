@@ -23,15 +23,16 @@ export function Header() {
       ? {
           search: "Nhập từ khóa để tìm truyện...",
           home: "Home",
-          novels: "Novels",
+          novels: "Truyện",
           bookmark: "Bookmark",
-          vip: "Join VIP",
-          topup: "Top up",
+          vip: "Đăng ký VIP",
+          topup: "Nạp tiền",
           language: "Ngôn ngữ",
           category: "Thể loại truyện",
           profile: "Trang cá nhân",
           dashboard: "Bảng điều khiển",
           wallet: "Ví",
+          authorStudio: "Kênh tác giả",
           logout: "Đăng xuất",
         }
       : {
@@ -46,11 +47,12 @@ export function Header() {
           profile: "Profile",
           dashboard: "Dashboard",
           wallet: "Wallet",
+          authorStudio: "Author Studio",
           logout: "Logout",
         };
 
   const initials = useMemo(() => {
-    const seed = user?.displayName || user?.email || "U";
+    const seed = user?.displayName || user?.email || "";
     return seed.trim().slice(0, 1).toUpperCase();
   }, [user?.displayName, user?.email]);
 
@@ -162,6 +164,11 @@ export function Header() {
                 <Link href="/dashboard/wallet" onClick={() => setMenuOpen(false)}>
                   {copy.wallet}
                 </Link>
+                {user?.role === "AUTHOR" || user?.role === "ADMIN" ? (
+                  <Link href="/dashboard/author" onClick={() => setMenuOpen(false)}>
+                    {copy.authorStudio}
+                  </Link>
+                ) : null}
                 <button type="button" className="tsh2-account__logout" onClick={() => void onLogout()}>
                   {copy.logout}
                 </button>
