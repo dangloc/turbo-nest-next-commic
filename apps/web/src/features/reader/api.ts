@@ -1,11 +1,13 @@
 import type { ApiResult } from "../../lib/api/types";
 import {
   fetchNovelPricing,
+  fetchWalletSummary,
   purchaseChapter,
   purchaseNovelCombo,
   type ComboPurchaseResult,
   type NovelPricingResponse,
   type PurchaseChapterResult,
+  type WalletSummaryResponse,
 } from "../finance/api";
 import {
   buildChapterHref,
@@ -25,8 +27,11 @@ import { apiRequest } from "../../lib/api/http";
 export {
   buildChapterHref,
   buildNovelHref,
+  fetchWalletSummary,
   normalizeChapterId,
 };
+
+export type { WalletSummaryResponse };
 
 export interface FirstChapterLookup {
   chapterId: number | null;

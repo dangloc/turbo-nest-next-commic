@@ -15,6 +15,7 @@ import {
   fetchNovelById,
   fetchReaderNovelPricing,
   fetchReadingHistory,
+  fetchWalletSummary,
   syncReaderChapterOpen,
   normalizeChapterId,
   purchaseReaderChapter,
@@ -120,6 +121,7 @@ function getChapterCopy(locale: "vi" | "en") {
         purchaseChapter: "Mua chương",
         purchaseCombo: "Mua combo",
         topUpWallet: "Nạp ví",
+        walletBalanceLabel: "Số dư ví",
         noChapterContent: "Chưa có nội dung chương.",
         tableOfContents: "Mục lục",
         loadingChapterList: "Đang tải danh sách chương...",
@@ -182,6 +184,7 @@ function getChapterCopy(locale: "vi" | "en") {
         purchaseChapter: "Purchase chapter",
         purchaseCombo: "Purchase combo",
         topUpWallet: "Top up wallet",
+        walletBalanceLabel: "Wallet balance",
         noChapterContent: "No chapter content.",
         tableOfContents: "Table of contents",
         loadingChapterList: "Loading chapter list...",
@@ -286,7 +289,7 @@ export function NovelDetailView({ novelId }: { novelId: number }) {
             </div>
             <p className="reader-card__summary">{toDisplayText(novel.postContent).slice(0, 220) || copy.noSummaryAvailableYet}</p>
             <div className="reader-actions">
-              <label className="reader-input-group">
+              {/* <label className="reader-input-group">
                 <span>{copy.chapterIdLabel}</span>
                 <input
                   value={chapterInput}
@@ -294,7 +297,7 @@ export function NovelDetailView({ novelId }: { novelId: number }) {
                   placeholder={copy.chapterIdPlaceholder}
                   inputMode="numeric"
                 />
-              </label>
+              </label> */}
               {startHref ? (
                 <Link className="action-primary" href={startHref}>
                   {copy.startReading}
@@ -360,6 +363,8 @@ export function ChapterReaderView({ chapterId }: { chapterId: number }) {
   const [chapterPrice, setChapterPrice] = useState<number | null>(null);
   const [comboPrice, setComboPrice] = useState<number | null>(null);
   const [comboDiscountPct, setComboDiscountPct] = useState<number | null>(null);
+  const [comboOriginalPrice, setComboOriginalPrice] = useState<number | null>(null);
+  const [walletBalance, setWalletBalance] = useState<number | null>(null);
   const [chapterPricingMeta, setChapterPricingMeta] = useState<Record<number, { isLocked: boolean; effectivePrice: number; priceSource: string }>>({});
   const [vipAccessMode, setVipAccessMode] = useState(false);
   const [fontSize, setFontSize] = useState<ReaderFontSizeOption>(READER_TYPOGRAPHY_DEFAULTS.fontSize);
@@ -410,6 +415,8 @@ export function ChapterReaderView({ chapterId }: { chapterId: number }) {
     setComboDiscountPct(null);
     setChapterPricingMeta({});
     setVipAccessMode(false);
+    setComboOriginalPrice(null);
+    setWalletBalance(null);
 
     void (async () => {
       const chapterResult = await fetchChapterById(chapterId);
@@ -442,10 +449,15 @@ export function ChapterReaderView({ chapterId }: { chapterId: number }) {
           });
 
           setChapterPricingMeta(nextPricingMeta);
-          setVipAccessMode(
+
+          const isVip =
             pricingResult.data.chapters.length > 0
-              && pricingResult.data.chapters.every((item) => item.priceSource === "vip_subscription"),
-          );
+            && pricingResult.data.chapters.every((item) => item.priceSource === "vip_subscription");
+          setVipAccessMode(isVip);
+          if (isVip) {
+            setIsUnlocked(true);
+            setRequiresPurchase(false);
+          }
 
           const chapterPricing = nextPricingMeta[chapterId];
           if (chapterPricing) {
@@ -462,6 +474,16 @@ export function ChapterReaderView({ chapterId }: { chapterId: number }) {
 
           setComboPrice(pricingResult.data.combo.discountedTotalPrice);
           setComboDiscountPct(pricingResult.data.settings.comboDiscountPct);
+          setComboOriginalPrice(pricingResult.data.combo.originalTotalPrice ?? null);
+
+          const currentChapterPricing = nextPricingMeta[chapterId];
+          const chapterIsLocked = currentChapterPricing ? currentChapterPricing.isLocked : false;
+          if (chapterIsLocked && !isVip) {
+            const walletResult = await fetchWalletSummary(token);
+            if (walletResult.ok) {
+              setWalletBalance(walletResult.data.balances.depositedBalance);
+            }
+          }
         }
 
         const historyResult = await fetchReadingHistory(token, chapterResult.data.novelId);
@@ -682,6 +704,9 @@ export function ChapterReaderView({ chapterId }: { chapterId: number }) {
     ? buildChapterHref(chapterContext.nextChapterId, chapterContext.novelId)
     : null;
 
+  const balanceInsufficientForChapter = walletBalance !== null && walletBalance < (chapterPrice ?? 0);
+  const balanceInsufficientForCombo = walletBalance !== null && walletBalance < (comboPrice ?? 0);
+
   return (
     <main className="reader-shell" style={{ width: "min(1200px, calc(100% - 32px))" }}>
       {loading ? <p className="discovery-state">{copy.loadingChapter}</p> : null}
@@ -786,10 +811,18 @@ export function ChapterReaderView({ chapterId }: { chapterId: number }) {
                     <h2>{copy.chapterLockedTitle}</h2>
                     <p>{copy.chapterLockedBody}</p>
 
+                    {walletBalance !== null ? (
+                      <p className="reader-muted">{copy.walletBalanceLabel}: {formatMoney(walletBalance, locale)}</p>
+                    ) : null}
+
                     <p className="reader-muted">{copy.priceLabel}: {formatMoney(chapterPrice, locale)}</p>
                     {comboPrice !== null && comboPrice > 0 ? (
                       <p className="reader-muted">
-                        {copy.comboLabel}: {formatMoney(comboPrice, locale)}
+                        {copy.comboLabel}:{" "}
+                        {comboOriginalPrice !== null && comboOriginalPrice > comboPrice ? (
+                          <><s>{formatMoney(comboOriginalPrice, locale)}</s>{" "}</>
+                        ) : null}
+                        {formatMoney(comboPrice, locale)}
                         {comboDiscountPct !== null ? " (" + formatAppNumber(comboDiscountPct, locale) + "% " + copy.discountSuffix + ")" : ""}
                       </p>
                     ) : null}
@@ -798,7 +831,7 @@ export function ChapterReaderView({ chapterId }: { chapterId: number }) {
                       <button
                         className="action-primary"
                         type="button"
-                        disabled={purchaseBusy}
+                        disabled={purchaseBusy || balanceInsufficientForChapter}
                         onClick={purchaseChapterAccess}
                       >
                         {purchaseBusy ? copy.processing : copy.purchaseChapter}
@@ -807,13 +840,16 @@ export function ChapterReaderView({ chapterId }: { chapterId: number }) {
                         <button
                           className="action-secondary"
                           type="button"
-                          disabled={purchaseBusy}
+                          disabled={purchaseBusy || balanceInsufficientForCombo}
                           onClick={purchaseComboAccess}
                         >
                           {copy.purchaseCombo}
                         </button>
                       ) : null}
-                      <Link className="action-secondary" href="/dashboard?section=wallet">
+                      <Link
+                        className={balanceInsufficientForChapter || balanceInsufficientForCombo ? "action-primary" : "action-secondary"}
+                        href="/dashboard?section=wallet"
+                      >
                         {copy.topUpWallet}
                       </Link>
                     </div>
