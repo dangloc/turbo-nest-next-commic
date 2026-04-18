@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
 import { Select } from "../../../components/ui/select";
+import { resolveImageUrl } from "@/lib/image";
 import { createNovel, deleteNovel, listNovels, updateNovel } from "../api";
 import type {
   NovelFormInput,
@@ -389,6 +390,7 @@ export function NovelManager({ selectedNovelId, currentUserId, onSelectNovel }: 
             <thead className="bg-[var(--panel)] text-sm uppercase tracking-wide text-[var(--muted)]">
               <tr>
                 <th className="border-b border-[var(--line)] px-4 py-3">ID</th>
+                <th className="border-b border-[var(--line)] px-4 py-3 hidden md:table-cell w-16">Ảnh</th>
                 <th className="border-b border-[var(--line)] px-4 py-3">Title</th>
                 <th className="border-b border-[var(--line)] px-4 py-3">Description</th>
                 <th className="border-b border-[var(--line)] px-4 py-3">Owner</th>
@@ -405,6 +407,18 @@ export function NovelManager({ selectedNovelId, currentUserId, onSelectNovel }: 
                     className={isSelected ? "bg-[rgba(125,211,252,0.14)]" : undefined}
                   >
                     <td className="border-b border-[var(--line)] px-4 py-4 text-sm text-[var(--muted)]">#{novel.id}</td>
+                    <td className="border-b border-[var(--line)] px-4 py-4 hidden md:table-cell">
+                      {novel.featuredImage ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={resolveImageUrl(novel.featuredImage) ?? ""}
+                          alt={novel.title}
+                          className="h-12 w-9 rounded object-cover border border-border"
+                        />
+                      ) : (
+                        <span className="text-muted-foreground text-xs">—</span>
+                      )}
+                    </td>
                     <td className="border-b border-[var(--line)] px-4 py-4">
                       <div className="font-semibold text-[var(--ink)]">{novel.title}</div>
                       <button

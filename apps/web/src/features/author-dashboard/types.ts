@@ -5,6 +5,7 @@ export interface NovelRecord {
   title: string;
   postContent: string;
   uploaderId: number;
+  featuredImage: string | null;
 }
 
 export interface ChapterRecord {
