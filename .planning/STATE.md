@@ -2,30 +2,30 @@
 gsd_state_version: 1.0
 milestone: v1.14
 milestone_name: milestone
-current_phase: 44
-status: completed
-last_updated: "2026-04-14T12:39:32.128Z"
+current_phase: 45
+status: in_progress
+last_updated: "2026-04-18T21:51:00.000Z"
 progress:
-  total_phases: 44
+  total_phases: 45
   completed_phases: 44
-  total_plans: 65
-  completed_plans: 72
+  total_plans: 68
+  completed_plans: 73
 ---
 
 # GSD Workflow State
 
 Current Milestone: v1.15 (Novel Management Productivity)
-Current Phase: 44
-Status: Phase complete
+Current Phase: 45
+Status: Executing
 
 ---
 
 ## Current Position
 
-Phase: 44 (admin-dashboard-ui-overhaul-shadcn-admin-shell) — AWAITING VERIFICATION
-Plan: 3 of 3 (checkpoint: human-verify)
+Phase: 45 (novel-form-enhancements-image-asset-resolution) — EXECUTING
+Plan: 1 of 3 complete
 Milestone: v1.15 - Novel Management Productivity
-Last session stopped at: Completed 44-03-PLAN.md tasks 1-4; awaiting human-verify checkpoint (2026-04-14)
+Last session stopped at: Completed 45-01-PLAN.md (2026-04-18)
 
 ---
 
@@ -84,7 +84,26 @@ Last session stopped at: Completed 44-03-PLAN.md tasks 1-4; awaiting human-verif
 
 ---
 
+## Completed in Phase 45
+
+### Plan 45-01: resolveImageUrl Utility and Novel Thumbnail Columns
+
+- resolveImageUrl utility created in apps/web/src/lib/image.ts
+- 8-case Vitest suite covers null/undefined/empty/http/https/relative/bare/double-slash inputs
+- ImageUploadField in novel-detail.tsx uses resolveImageUrl instead of inline process.env lookup
+- AdminNovelsTable (/dashboard/novels) shows Anh thumbnail column using resolveImageUrl
+- NovelManager (/dashboard/author) shows Anh thumbnail column using resolveImageUrl
+- featuredImage: string | null added to NovelRecord type
+
+### Key Decisions (Phase 45)
+
+- resolveImageUrl is the single source of truth for image URL resolution across all novel surfaces
+- featuredImage added to NovelRecord type — was missing from actual worktree types.ts
+- novel-manager.tsx actual structure differed from plan description; thumbnail column adapted to actual file
+
+---
+
 ## Next Steps
 
-1. Human verification of admin shell at /dashboard and /dashboard/author (checkpoint: human-verify)
-2. Confirm sidebar collapse persistence, theme toggle, and public Header on public routes
+1. Execute 45-02-PLAN.md (next plan in phase 45)
+2. Execute 45-03-PLAN.md (final plan in phase 45)
