@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { MoreHorizontal, Pencil, Trash2, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, SlidersHorizontal } from "lucide-react";
+import { MoreHorizontal, Pencil, Trash2, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, SlidersHorizontal, Plus } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,7 +16,14 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/cn";
 import { resolveImageUrl } from "@/lib/image";
-import { deleteNovel, listNovels } from "../author-dashboard/api";
+import { createNovel, deleteNovel, listNovels } from "../author-dashboard/api";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import type {
   NovelListQuery,
   NovelListScope,
@@ -71,6 +78,12 @@ export function AdminNovelsTable() {
   const [deleteTarget, setDeleteTarget] = useState<NovelRecord | null>(null);
   const [deleting, setDeleting] = useState(false);
   const abortRef = useRef<AbortController | null>(null);
+
+  const [createOpen, setCreateOpen] = useState(false);
+  const [createTitle, setCreateTitle] = useState("");
+  const [createContent, setCreateContent] = useState("");
+  const [createError, setCreateError] = useState<string | null>(null);
+  const [creating, setCreating] = useState(false);
 
   const pageSize = query.pageSize ?? 10;
   const currentPage = query.page ?? 1;
@@ -155,6 +168,36 @@ export function AdminNovelsTable() {
     void fetchNovels(query);
   }
 
+  async function handleCreateSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    const trimmedTitle = createTitle.trim();
+    const trimmedContent = createContent.trim();
+    if (!trimmedTitle) {
+      setCreateError("Tiêu đề không được để trống.");
+      return;
+    }
+    if (trimmedTitle.length > 255) {
+      setCreateError("Tiêu đề không được vượt quá 255 ký tự.");
+      return;
+    }
+    if (!trimmedContent) {
+      setCreateError("Mô tả không được để trống.");
+      return;
+    }
+    setCreating(true);
+    setCreateError(null);
+    const res = await createNovel({ title: trimmedTitle, postContent: trimmedContent });
+    setCreating(false);
+    if (!res.ok) {
+      setCreateError(res.error.message);
+      return;
+    }
+    setCreateOpen(false);
+    setCreateTitle("");
+    setCreateContent("");
+    router.push(`/dashboard/novels/${res.data.id}`);
+  }
+
   const allSelected = novels.length > 0 && selectedIds.size === novels.length;
   const someSelected = selectedIds.size > 0 && !allSelected;
   const showingStart = total === 0 ? 0 : (currentPage - 1) * pageSize + 1;
@@ -236,6 +279,15 @@ export function AdminNovelsTable() {
             ))}
           </DropdownMenuContent>
         </DropdownMenu>
+
+        <Button
+          size="sm"
+          onClick={() => { setCreateOpen(true); setCreateError(null); }}
+          className="h-8 gap-1.5"
+        >
+          <Plus className="size-3.5" />
+          Thêm truyện
+        </Button>
 
         <div className="ml-auto">
           <DropdownMenu>
@@ -513,6 +565,64 @@ export function AdminNovelsTable() {
         onConfirm={handleDeleteConfirm}
         onCancel={() => setDeleteTarget(null)}
       />
+
+      <Dialog open={createOpen} onOpenChange={(open) => {
+        if (!open) { setCreateTitle(""); setCreateContent(""); setCreateError(null); }
+        setCreateOpen(open);
+      }}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Thêm truyện mới</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleCreateSubmit} className="flex flex-col gap-4">
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor="create-title" className="text-sm font-medium">
+                Tiêu đề <span className="text-destructive">*</span>
+              </label>
+              <Input
+                id="create-title"
+                value={createTitle}
+                onChange={(e) => setCreateTitle(e.target.value)}
+                placeholder="Nhập tiêu đề truyện..."
+                maxLength={255}
+                required
+                disabled={creating}
+              />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor="create-content" className="text-sm font-medium">
+                Mô tả <span className="text-destructive">*</span>
+              </label>
+              <textarea
+                id="create-content"
+                value={createContent}
+                onChange={(e) => setCreateContent(e.target.value)}
+                placeholder="Nhập mô tả truyện..."
+                rows={4}
+                required
+                disabled={creating}
+                className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-none"
+              />
+            </div>
+            {createError && (
+              <p className="text-sm text-destructive">{createError}</p>
+            )}
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setCreateOpen(false)}
+                disabled={creating}
+              >
+                Hủy
+              </Button>
+              <Button type="submit" disabled={creating}>
+                {creating ? "Đang tạo..." : "Tạo truyện"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
