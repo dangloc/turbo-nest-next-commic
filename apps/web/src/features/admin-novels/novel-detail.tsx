@@ -35,6 +35,11 @@ import type {
   TermRecord,
 } from "../author-dashboard/types";
 import { ConfirmDialog } from "../author-dashboard/components/confirm-dialog";
+import {
+  TermSelector,
+  TAXONOMIES,
+  type Taxonomy,
+} from "../author-dashboard/components/term-selector";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -53,17 +58,6 @@ const EMPTY_CHAPTER_FORM: ChapterFormInput = {
   priceOverride: undefined,
 };
 
-const TAXONOMIES = ["author", "status", "genre", "posttag", "year"] as const;
-type Taxonomy = (typeof TAXONOMIES)[number];
-
-const TAXONOMY_LABELS: Record<Taxonomy, string> = {
-  author: "Tác giả",
-  status: "Trạng thái",
-  genre: "Thể loại",
-  posttag: "Tag",
-  year: "Năm phát hành",
-};
-
 function sortChapters(chapters: ChapterRecord[]) {
   return [...chapters].sort((a, b) => {
     const an = a.chapterNumber ?? Number.MAX_SAFE_INTEGER;
@@ -75,56 +69,6 @@ function sortChapters(chapters: ChapterRecord[]) {
 function toNumber(v: string): number | undefined {
   const n = Number(v);
   return v.trim() === "" || Number.isNaN(n) ? undefined : n;
-}
-
-// ---------------------------------------------------------------------------
-// Term selector
-// ---------------------------------------------------------------------------
-
-interface TermSelectorProps {
-  taxonomy: Taxonomy;
-  all: TermRecord[];
-  selected: number[];
-  onChange: (ids: number[]) => void;
-}
-
-function TermSelector({ taxonomy, all, selected, onChange }: TermSelectorProps) {
-  const options = all.filter((t) => t.taxonomy === taxonomy);
-  if (options.length === 0) return null;
-
-  function toggle(id: number) {
-    if (selected.includes(id)) {
-      onChange(selected.filter((x) => x !== id));
-    } else {
-      onChange([...selected, id]);
-    }
-  }
-
-  return (
-    <div className="flex flex-col gap-1.5">
-      <span className="text-sm font-medium">{TAXONOMY_LABELS[taxonomy]}</span>
-      <div className="flex flex-wrap gap-1.5">
-        {options.map((term) => {
-          const active = selected.includes(term.id);
-          return (
-            <button
-              key={term.id}
-              type="button"
-              onClick={() => toggle(term.id)}
-              className={cn(
-                "rounded-full border px-2.5 py-0.5 text-xs font-medium transition-colors",
-                active
-                  ? "border-primary bg-primary text-primary-foreground"
-                  : "border-border bg-background hover:bg-accent text-foreground",
-              )}
-            >
-              {term.name}
-            </button>
-          );
-        })}
-      </div>
-    </div>
-  );
 }
 
 // ---------------------------------------------------------------------------
