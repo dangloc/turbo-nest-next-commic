@@ -78,6 +78,7 @@ export function NovelManager({ selectedNovelId, currentUserId, onSelectNovel }: 
   const [allTerms, setAllTerms] = useState<TermRecord[]>([]);
   const [selectedTermIds, setSelectedTermIds] = useState<number[]>([]);
   const [termsLoading, setTermsLoading] = useState(true);
+  const [showCreateForm, setShowCreateForm] = useState(false);
   const selectedNovelIdRef = useRef<number | null>(selectedNovelId);
 
   useEffect(() => {
@@ -149,6 +150,7 @@ export function NovelManager({ selectedNovelId, currentUserId, onSelectNovel }: 
     setForm(EMPTY_FORM);
     setEditingNovelId(null);
     setSelectedTermIds([]);
+    setShowCreateForm(false);
   }
 
   function validateForm(input: NovelFormInput) {
