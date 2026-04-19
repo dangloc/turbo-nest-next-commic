@@ -15,6 +15,7 @@ import type {
   NovelListPage,
   NovelListQuery,
   NovelRecord,
+  TermRecord,
 } from "./types";
 
 function authHeaders(token?: string) {
@@ -205,6 +206,15 @@ export async function updateChapter(
 export async function deleteChapter(chapterId: number, token?: string): Promise<AuthorApiResult<ChapterRecord>> {
   return apiRequest<ChapterRecord>(`/chapters/${chapterId}`, {
     method: "DELETE",
+    headers: authHeaders(token),
+    includeCredentials: true,
+  });
+}
+
+export async function listTerms(taxonomy?: string, token?: string): Promise<AuthorApiResult<TermRecord[]>> {
+  const path = taxonomy ? `/terms?taxonomy=${encodeURIComponent(taxonomy)}` : "/terms";
+  return apiRequest<TermRecord[]>(path, {
+    method: "GET",
     headers: authHeaders(token),
     includeCredentials: true,
   });

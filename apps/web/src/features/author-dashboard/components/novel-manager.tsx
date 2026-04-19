@@ -5,15 +5,17 @@ import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
 import { Select } from "../../../components/ui/select";
 import { resolveImageUrl } from "@/lib/image";
-import { createNovel, deleteNovel, listNovels, updateNovel } from "../api";
+import { createNovel, deleteNovel, listNovels, listTerms, updateNovel } from "../api";
 import type {
   NovelFormInput,
   NovelListQuery,
   NovelListScope,
   NovelListSort,
   NovelRecord,
+  TermRecord,
 } from "../types";
 import { ConfirmDialog } from "./confirm-dialog";
+import { TermSelector, TAXONOMIES } from "./term-selector";
 
 interface NovelManagerProps {
   selectedNovelId: number | null;
@@ -73,11 +75,26 @@ export function NovelManager({ selectedNovelId, currentUserId, onSelectNovel }: 
   const [deleteTarget, setDeleteTarget] = useState<NovelRecord | null>(null);
   const [query, setQuery] = useState<NovelListQuery>(INITIAL_QUERY);
   const [searchDraft, setSearchDraft] = useState(INITIAL_QUERY.q ?? "");
+  const [allTerms, setAllTerms] = useState<TermRecord[]>([]);
+  const [selectedTermIds, setSelectedTermIds] = useState<number[]>([]);
+  const [termsLoading, setTermsLoading] = useState(true);
   const selectedNovelIdRef = useRef<number | null>(selectedNovelId);
 
   useEffect(() => {
     selectedNovelIdRef.current = selectedNovelId;
   }, [selectedNovelId]);
+
+  useEffect(() => {
+    let cancelled = false;
+    void listTerms().then((res) => {
+      if (cancelled) return;
+      setTermsLoading(false);
+      if (res.ok) setAllTerms(res.data);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const totalPages = Math.max(1, Math.ceil(total / (query.pageSize ?? 10)));
   const currentPage = query.page ?? 1;
@@ -131,6 +148,7 @@ export function NovelManager({ selectedNovelId, currentUserId, onSelectNovel }: 
   function resetForm() {
     setForm(EMPTY_FORM);
     setEditingNovelId(null);
+    setSelectedTermIds([]);
   }
 
   function validateForm(input: NovelFormInput) {
@@ -168,7 +186,7 @@ export function NovelManager({ selectedNovelId, currentUserId, onSelectNovel }: 
     setSubmitting(true);
     const result = editingNovelId
       ? await updateNovel(editingNovelId, payload)
-      : await createNovel(payload);
+      : await createNovel({ ...payload, termIds: selectedTermIds });
 
     if (!result.ok) {
       setSubmitting(false);
@@ -310,6 +328,29 @@ export function NovelManager({ selectedNovelId, currentUserId, onSelectNovel }: 
           value={form.postContent}
           onChange={(event) => setForm((prev) => ({ ...prev, postContent: event.target.value }))}
         />
+        {/* Taxonomies — only shown in create mode, not edit mode */}
+        {!editingNovelId ? (
+          termsLoading ? (
+            <p className="text-xs text-muted-foreground">Đang tải phân loại...</p>
+          ) : allTerms.length > 0 ? (
+            <div className="flex flex-col gap-3 rounded-lg border border-border p-4">
+              <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
+                Phân loại
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {TAXONOMIES.map((tax) => (
+                  <TermSelector
+                    key={tax}
+                    taxonomy={tax}
+                    all={allTerms}
+                    selected={selectedTermIds}
+                    onChange={setSelectedTermIds}
+                  />
+                ))}
+              </div>
+            </div>
+          ) : null
+        ) : null}
         <div className="flex flex-wrap gap-2">
           <Button type="submit" disabled={submitting}>
             {submitting ? "Saving..." : editingNovelId ? "Update novel" : "Create novel"}

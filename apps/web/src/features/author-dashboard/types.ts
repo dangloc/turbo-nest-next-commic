@@ -1,5 +1,12 @@
 import type { ApiResult, SessionUser } from "../../lib/api/types";
 
+export interface TermRecord {
+  id: number;
+  name: string;
+  slug: string;
+  taxonomy: string;
+}
+
 export interface NovelRecord {
   id: number;
   title: string;
@@ -20,6 +27,11 @@ export interface ChapterRecord {
 export interface NovelFormInput {
   title: string;
   postContent: string;
+  defaultChapterPrice?: number;
+  freeChapterCount?: number;
+  comboDiscountPct?: number;
+  featuredImage?: string;
+  termIds?: number[];
 }
 
 export interface ChapterFormInput {
