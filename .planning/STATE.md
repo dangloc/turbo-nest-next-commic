@@ -4,28 +4,28 @@ milestone: v1.14
 milestone_name: milestone
 current_phase: 46
 status: executing
-last_updated: "2026-04-19T12:27:33.894Z"
+last_updated: "2026-04-19T16:13:16.812Z"
 progress:
   total_phases: 46
   completed_phases: 46
-  total_plans: 69
-  completed_plans: 76
+  total_plans: 70
+  completed_plans: 77
 ---
 
 # GSD Workflow State
 
 Current Milestone: v1.15 (Novel Management Productivity)
 Current Phase: 46
-Status: Executing
+Status: Complete
 
 ---
 
 ## Current Position
 
-Phase: 46 (restore-novel-manager-ui-drill-down) — EXECUTING
-Plan: 1 of 1
+Phase: 46 (restore-novel-manager-ui-drill-down) — COMPLETE
+Plan: 2 of 2
 Milestone: v1.15 - Novel Management Productivity
-Last session stopped at: Completed 45-01-PLAN.md (2026-04-18)
+Last session stopped at: Completed 46-02-PLAN.md (2026-04-19)
 
 ---
 
@@ -103,7 +103,35 @@ Last session stopped at: Completed 45-01-PLAN.md (2026-04-18)
 
 ---
 
+## Completed in Phase 46
+
+### Plan 46-01: Dialog Create Flow + AuthorDashboardView Redirect
+
+- AuthorDashboardView simplified to migration notice (no longer renders split-pane NovelManager)
+- /dashboard/author now redirects to /dashboard/novels
+- Dialog create-novel flow added to AdminNovelsTable
+- Shadcn Dialog component installed
+
+### Plan 46-02: NovelDetail Auth Guard + Orphan Cleanup
+
+- bootstrapAuthorDashboardSession guard added to NovelDetail (closes NOVELUI-03 gap 1)
+- Guard redirects unauthenticated users to /auth/login, READER role to /dashboard
+- AUTHOR/ADMIN users see novel detail after guard resolves
+- Data-loading effects gated on guardState.status === "ready"
+- Loading and error render panels added before novel content
+- novel-manager.tsx deleted (orphaned in 46-01)
+- novel-manager.dom.test.jsx and novel-manager.table.dom.test.jsx deleted (co-orphans)
+- vi.mock("../components/novel-manager", ...) stripped from author-dashboard-flow test
+- Zero ES imports or vi.mock references to novel-manager remain
+
+### Key Decisions (Phase 46)
+
+- Client-side guard required for NovelDetail because session is in localStorage (not HTTP cookies) — server-side Next.js redirect cannot read the session token
+- Orphaned novel-manager.tsx and its co-orphan test files deleted rather than updated — they had no remaining test subject
+- Guard pattern mirrored exactly from AuthorDashboardView to ensure consistent redirect behavior
+
+---
+
 ## Next Steps
 
-1. Execute 45-02-PLAN.md (next plan in phase 45)
-2. Execute 45-03-PLAN.md (final plan in phase 45)
+Phase 46 complete. All NOVELUI-03 requirements satisfied.
