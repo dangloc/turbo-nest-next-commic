@@ -1,6 +1,7 @@
 import { apiRequest } from "../../lib/api/http";
 import type { SessionUser } from "../../lib/api/types";
 import { fetchSession } from "../../lib/auth/api";
+import { env } from "../../lib/env";
 import {
   getSessionToken,
   loadSessionFromStorage,
@@ -218,4 +219,33 @@ export async function listTerms(taxonomy?: string, token?: string): Promise<Auth
     headers: authHeaders(token),
     includeCredentials: true,
   });
+}
+
+export async function uploadNovelImage(
+  file: File,
+  type: "featured" | "banner",
+  token?: string,
+): Promise<AuthorApiResult<{ url: string }>> {
+  const endpoint = type === "banner" ? "novel-banner" : "novel-featured";
+  const url = `${env.apiBaseUrl}/upload/${endpoint}`;
+  const form = new FormData();
+  form.append("file", file);
+  const tok = token ?? getSessionToken() ?? undefined;
+  try {
+    const res = await fetch(url, {
+      method: "POST",
+      headers: tok ? { authorization: `Bearer ${tok}` } : {},
+      credentials: "include",
+      body: form,
+    });
+    const payload = res.headers.get("content-type")?.includes("application/json")
+      ? await res.json()
+      : null;
+    if (!res.ok) {
+      return { ok: false, error: { message: payload?.message ?? `Upload failed (${res.status})`, status: res.status } };
+    }
+    return { ok: true, data: payload as { url: string } };
+  } catch (e) {
+    return { ok: false, error: { message: e instanceof Error ? e.message : "Network error", status: 0 } };
+  }
 }
