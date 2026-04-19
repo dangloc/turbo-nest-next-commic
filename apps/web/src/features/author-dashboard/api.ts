@@ -221,6 +221,39 @@ export async function listTerms(taxonomy?: string, token?: string): Promise<Auth
   });
 }
 
+export async function createTerm(
+  input: { name: string; slug: string; taxonomy: string },
+  token?: string,
+): Promise<AuthorApiResult<TermRecord>> {
+  return apiRequest<TermRecord>("/terms", {
+    method: "POST",
+    headers: authHeaders(token),
+    body: input,
+    includeCredentials: true,
+  });
+}
+
+export async function updateTerm(
+  id: number,
+  input: { name: string; slug: string },
+  token?: string,
+): Promise<AuthorApiResult<TermRecord>> {
+  return apiRequest<TermRecord>(`/terms/${id}`, {
+    method: "PATCH",
+    headers: authHeaders(token),
+    body: input,
+    includeCredentials: true,
+  });
+}
+
+export async function deleteTerm(id: number, token?: string): Promise<AuthorApiResult<TermRecord>> {
+  return apiRequest<TermRecord>(`/terms/${id}`, {
+    method: "DELETE",
+    headers: authHeaders(token),
+    includeCredentials: true,
+  });
+}
+
 export async function uploadNovelImage(
   file: File,
   type: "featured" | "banner",
