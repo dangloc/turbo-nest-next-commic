@@ -55,7 +55,7 @@ describe("Author dashboard route guard", () => {
     cleanup();
   });
 
-  it("allows AUTHOR and renders shell", async () => {
+  it("allows AUTHOR and renders migration notice", async () => {
     bootstrapAuthorDashboardSessionMock.mockResolvedValue({
       kind: "ready",
       user: { id: 1, email: "a@x.com", role: "AUTHOR" },
@@ -63,8 +63,8 @@ describe("Author dashboard route guard", () => {
 
     renderWithContext({ id: 1, email: "a@x.com", role: "AUTHOR" });
 
-    await screen.findByText("Content Management Dashboard");
-    expect(screen.getByText("Novel manager")).toBeTruthy();
+    await screen.findByText("Kênh tác giả");
+    expect(screen.getByRole("link", { name: "Quản lý truyện" })).toBeTruthy();
   });
 
   it("redirects unauthorized user", async () => {
