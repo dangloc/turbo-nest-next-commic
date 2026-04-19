@@ -1,7 +1,9 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { AppContext } from "../../providers/app-provider";
+import { bootstrapAuthorDashboardSession } from "../author-dashboard/api";
 import { ArrowLeft, FileUp, MoreHorizontal, Pencil, Trash2, Upload, X } from "lucide-react";
 import {
   DropdownMenu,
@@ -50,6 +52,11 @@ interface NovelDetailProps {
   /** Where the back-arrow navigates. Defaults to /dashboard/novels */
   backPath?: string;
 }
+
+type GuardState =
+  | { status: "loading" }
+  | { status: "ready" }
+  | { status: "error"; message: string };
 
 const EMPTY_CHAPTER_FORM: ChapterFormInput = {
   title: "",
@@ -309,6 +316,8 @@ function ChapterModal({ chapter, novelId, onClose, onSaved }: ChapterModalProps)
 
 export function NovelDetail({ novelId, backPath = "/dashboard/novels" }: NovelDetailProps) {
   const router = useRouter();
+  const { user, loaded, setUser } = useContext(AppContext);
+  const [guardState, setGuardState] = useState<GuardState>({ status: "loading" });
 
   // Novel
   const [novel, setNovel] = useState<NovelRecord | null>(null);
@@ -341,8 +350,44 @@ export function NovelDetail({ novelId, backPath = "/dashboard/novels" }: NovelDe
 
   const orderedChapters = useMemo(() => sortChapters(chapters), [chapters]);
 
+  // Auth guard: AUTHOR/ADMIN only
+  useEffect(() => {
+    if (!loaded) {
+      return;
+    }
+
+    let cancelled = false;
+
+    void (async () => {
+      const session = await bootstrapAuthorDashboardSession(user);
+      if (cancelled) {
+        return;
+      }
+
+      if (session.kind === "redirect") {
+        router.replace(session.to);
+        return;
+      }
+
+      setUser(session.user);
+      setGuardState({ status: "ready" });
+    })().catch(() => {
+      if (!cancelled) {
+        setGuardState({
+          status: "error",
+          message: "Unable to load novel detail. Please retry.",
+        });
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [loaded, router, setUser, user]);
+
   // Load novel + terms
   useEffect(() => {
+    if (guardState.status !== "ready") return;
     let cancelled = false;
     setNovelLoading(true);
     void Promise.all([getNovel(novelId), listTerms()]).then(([novelRes, termsRes]) => {
@@ -366,10 +411,11 @@ export function NovelDetail({ novelId, backPath = "/dashboard/novels" }: NovelDe
       if (termsRes.ok) setAllTerms(termsRes.data);
     });
     return () => { cancelled = true; };
-  }, [novelId]);
+  }, [novelId, guardState.status]);
 
   // Load chapters
   useEffect(() => {
+    if (guardState.status !== "ready") return;
     if (!novel) return;
     let cancelled = false;
     setChaptersLoading(true);
@@ -379,7 +425,7 @@ export function NovelDetail({ novelId, backPath = "/dashboard/novels" }: NovelDe
       if (res.ok) setChapters(res.data);
     });
     return () => { cancelled = true; };
-  }, [novel?.id]);
+  }, [novel?.id, guardState.status]);
 
   // Save novel
   async function handleNovelSave(e: React.FormEvent) {
@@ -471,6 +517,22 @@ export function NovelDetail({ novelId, backPath = "/dashboard/novels" }: NovelDe
   }
 
   // ----------------------------------------------------------
+  if (!loaded || guardState.status === "loading") {
+    return (
+      <div className="rounded-lg border bg-card p-6">
+        <p className="text-sm text-muted-foreground">Đang tải...</p>
+      </div>
+    );
+  }
+
+  if (guardState.status === "error") {
+    return (
+      <div className="rounded-lg border bg-card p-6">
+        <p className="text-sm font-medium text-destructive">{guardState.message}</p>
+      </div>
+    );
+  }
+
   if (novelLoading) {
     return (
       <div className="flex items-center justify-center py-16 text-muted-foreground text-sm">
