@@ -1,4 +1,4 @@
-import { LayoutDashboard, BookOpen, Wallet } from "lucide-react";
+import { LayoutDashboard, BookOpen, Wallet, Library, Tags } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 export interface NavItem {
@@ -21,6 +21,19 @@ export const navItems: NavItem[] = [
     icon: BookOpen,
     isActive: (p) =>
       p === "/dashboard/author" || p.startsWith("/dashboard/author/"),
+  },
+  {
+    title: "Quản lý truyện",
+    href: "/dashboard/novels",
+    icon: Library,
+    isActive: (p) =>
+      p === "/dashboard/novels" || p.startsWith("/dashboard/novels/"),
+  },
+  {
+    title: "Phân loại",
+    href: "/dashboard/terms",
+    icon: Tags,
+    isActive: (p) => p === "/dashboard/terms",
   },
   {
     title: "Ví tiền",
