@@ -58,35 +58,28 @@ export function AuthorDashboardView() {
 
   if (!loaded || guardState.status === "loading") {
     return (
-      <main className="mx-auto w-[min(1200px,calc(100%-32px))] py-8">
-        <div className="rounded-2xl border border-[var(--line)] bg-[var(--panel)] p-6">
-          <p className="text-sm text-[var(--muted)]">Loading author dashboard...</p>
-        </div>
-      </main>
+      <div className="rounded-lg border bg-card p-6">
+        <p className="text-sm text-muted-foreground">Loading author dashboard...</p>
+      </div>
     );
   }
 
   if (guardState.status === "error") {
     return (
-      <main className="mx-auto w-[min(1200px,calc(100%-32px))] py-8">
-        <div className="rounded-2xl border border-[var(--line)] bg-[var(--panel)] p-6">
-          <p className="text-sm font-medium text-red-600">{guardState.message}</p>
-        </div>
-      </main>
+      <div className="rounded-lg border bg-card p-6">
+        <p className="text-sm font-medium text-destructive">{guardState.message}</p>
+      </div>
     );
   }
 
   return (
-    <main className="mx-auto grid w-[min(1200px,calc(100%-32px))] gap-4 py-8">
-      <section className="rounded-2xl border border-[var(--line)] bg-[var(--panel)] p-6 shadow-sm">
-        <p className="inline-flex rounded-full bg-[var(--accent-soft)] px-3 py-1 text-xs font-semibold uppercase tracking-wider text-[var(--accent-strong)]">
-          Author Studio
+    <div className="flex flex-col gap-4">
+      <div>
+        <h1 className="text-2xl font-semibold">Kênh tác giả</h1>
+        <p className="text-sm text-muted-foreground">
+          Quản lý truyện và chương với quyền truy cập tác giả / quản trị.
         </p>
-        <h1 className="mt-2 text-3xl font-bold tracking-tight">Content Management Dashboard</h1>
-        <p className="mt-2 text-sm text-[var(--muted)]">
-          Manage novels and chapter pipelines with secured author/admin access.
-        </p>
-      </section>
+      </div>
 
       <div className="grid gap-4 lg:grid-cols-2">
         <NovelManager
@@ -96,6 +89,6 @@ export function AuthorDashboardView() {
         />
         <ChapterManager selectedNovel={selectedNovel} />
       </div>
-    </main>
+    </div>
   );
 }
