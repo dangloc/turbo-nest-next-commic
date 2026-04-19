@@ -157,6 +157,14 @@ export async function updateNovel(
   });
 }
 
+export async function getNovel(novelId: number, token?: string): Promise<AuthorApiResult<NovelRecord>> {
+  return apiRequest<NovelRecord>(`/novels/${novelId}`, {
+    method: "GET",
+    headers: authHeaders(token),
+    includeCredentials: true,
+  });
+}
+
 export async function deleteNovel(novelId: number, token?: string): Promise<AuthorApiResult<NovelRecord>> {
   return apiRequest<NovelRecord>(`/novels/${novelId}`, {
     method: "DELETE",
@@ -210,6 +218,42 @@ export async function deleteChapter(chapterId: number, token?: string): Promise<
     headers: authHeaders(token),
     includeCredentials: true,
   });
+}
+
+export async function deleteAllChapters(novelId: number, token?: string): Promise<AuthorApiResult<{ deleted: number }>> {
+  return apiRequest<{ deleted: number }>(`/novels/${novelId}/chapters`, {
+    method: "DELETE",
+    headers: authHeaders(token),
+    includeCredentials: true,
+  });
+}
+
+export async function importChapters(
+  novelId: number,
+  file: File,
+  token?: string,
+): Promise<AuthorApiResult<{ chaptersCreated: number; warnings: string[] }>> {
+  const url = `${env.apiBaseUrl}/novels/${novelId}/chapters/import`;
+  const form = new FormData();
+  form.append("file", file);
+  const tok = token ?? getSessionToken() ?? undefined;
+  try {
+    const res = await fetch(url, {
+      method: "POST",
+      headers: tok ? { authorization: `Bearer ${tok}` } : {},
+      credentials: "include",
+      body: form,
+    });
+    const payload = res.headers.get("content-type")?.includes("application/json")
+      ? await res.json()
+      : null;
+    if (!res.ok) {
+      return { ok: false, error: { message: payload?.message ?? `Import failed (${res.status})`, status: res.status } };
+    }
+    return { ok: true, data: payload as { chaptersCreated: number; warnings: string[] } };
+  } catch (e) {
+    return { ok: false, error: { message: e instanceof Error ? e.message : "Network error", status: 0 } };
+  }
 }
 
 export async function listTerms(taxonomy?: string, token?: string): Promise<AuthorApiResult<TermRecord[]>> {
