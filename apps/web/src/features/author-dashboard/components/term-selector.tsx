@@ -3,15 +3,15 @@
 import { cn } from "@/lib/cn";
 import type { TermRecord } from "../types";
 
-export const TAXONOMIES = ["author", "status", "genre", "posttag", "year"] as const;
+export const TAXONOMIES = ["tac_gia", "trang_thai", "the_loai", "post_tag", "nam_phat_hanh"] as const;
 export type Taxonomy = (typeof TAXONOMIES)[number];
 
 export const TAXONOMY_LABELS: Record<Taxonomy, string> = {
-  author: "Tác giả",
-  status: "Trạng thái",
-  genre: "Thể loại",
-  posttag: "Tag",
-  year: "Năm phát hành",
+  tac_gia: "Tác giả",
+  trang_thai: "Trạng thái",
+  the_loai: "Thể loại",
+  post_tag: "Tag",
+  nam_phat_hanh: "Năm phát hành",
 };
 
 interface TermSelectorProps {
