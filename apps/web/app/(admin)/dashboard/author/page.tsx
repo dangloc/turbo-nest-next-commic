@@ -1,5 +1,5 @@
-import { AuthorDashboardView } from "../../../../src/features/author-dashboard/author-dashboard";
+import { redirect } from "next/navigation";
 
 export default function AuthorDashboardPage() {
-  return <AuthorDashboardView />;
+  redirect("/dashboard/novels");
 }

@@ -1,12 +1,9 @@
 "use client";
 
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AppContext } from "../../providers/app-provider";
 import { bootstrapAuthorDashboardSession } from "./api";
-import { ChapterManager } from "./components/chapter-manager";
-import { NovelManager } from "./components/novel-manager";
-import type { NovelRecord } from "./types";
 
 type GuardState =
   | { status: "loading" }
@@ -17,10 +14,6 @@ export function AuthorDashboardView() {
   const router = useRouter();
   const { user, loaded, setUser } = useContext(AppContext);
   const [guardState, setGuardState] = useState<GuardState>({ status: "loading" });
-  const [selectedNovel, setSelectedNovel] = useState<NovelRecord | null>(null);
-  const handleSelectNovel = useCallback((novel: NovelRecord | null) => {
-    setSelectedNovel(novel);
-  }, []);
 
   useEffect(() => {
     if (!loaded) {
@@ -77,17 +70,12 @@ export function AuthorDashboardView() {
       <div>
         <h1 className="text-2xl font-semibold">Kênh tác giả</h1>
         <p className="text-sm text-muted-foreground">
-          Quản lý truyện và chương với quyền truy cập tác giả / quản trị.
+          Trang này đã chuyển sang{" "}
+          <a href="/dashboard/novels" className="underline text-primary">
+            Quản lý truyện
+          </a>
+          .
         </p>
-      </div>
-
-      <div className="grid gap-4 lg:grid-cols-2">
-        <NovelManager
-          selectedNovelId={selectedNovel?.id ?? null}
-          currentUserId={user?.id ?? null}
-          onSelectNovel={handleSelectNovel}
-        />
-        <ChapterManager selectedNovel={selectedNovel} />
       </div>
     </div>
   );
