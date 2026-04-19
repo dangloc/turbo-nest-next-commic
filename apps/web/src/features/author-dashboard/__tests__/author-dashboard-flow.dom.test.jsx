@@ -16,10 +16,6 @@ vi.mock("../api", async () => {
   };
 });
 
-vi.mock("../components/novel-manager", () => ({
-  NovelManager: () => React.createElement("div", null, "Novel manager"),
-}));
-
 vi.mock("../components/chapter-manager", () => ({
   ChapterManager: () => React.createElement("div", null, "Chapter manager"),
 }));
