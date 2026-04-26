@@ -165,3 +165,20 @@ export interface ComboPurchaseHistoryResponse {
   total: number;
   totalPages: number;
 }
+
+
+export interface InitSePayCheckoutInput {
+  orderInvoiceNumber: string;
+  orderAmount: number;
+  orderDescription?: string;
+  currency?: 'VND';
+  paymentMethod?: 'BANK_TRANSFER' | 'NAPAS_BANK_TRANSFER';
+  successUrl?: string;
+  errorUrl?: string;
+  cancelUrl?: string;
+}
+
+export interface InitSePayCheckoutResponse {
+  checkoutUrl: string;
+  checkoutFormFields: Record<string, string | number>;
+}

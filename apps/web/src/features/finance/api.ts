@@ -5,6 +5,8 @@ import type {
   ComboPurchaseHistoryResponse,
   ComboPurchaseResult,
   InitiateTopUpInput,
+  InitSePayCheckoutInput,
+  InitSePayCheckoutResponse,
   InitiateTopUpResponse,
   NovelPricingResponse,
   PaymentProvider,
@@ -92,6 +94,18 @@ export async function initiateTopUp(
   token?: string,
 ): Promise<ApiResult<InitiateTopUpResponse>> {
   return apiRequest<InitiateTopUpResponse>("/finance/payments/initiate", {
+    method: "POST",
+    headers: authHeaders(token),
+    body: input,
+    includeCredentials: true,
+  });
+}
+
+export async function initSePayCheckout(
+  input: InitSePayCheckoutInput,
+  token?: string,
+): Promise<ApiResult<InitSePayCheckoutResponse>> {
+  return apiRequest<InitSePayCheckoutResponse>("/payment/checkout/init", {
     method: "POST",
     headers: authHeaders(token),
     body: input,
@@ -250,6 +264,8 @@ export type {
   ComboPurchaseHistoryResponse,
   ComboPurchaseResult,
   InitiateTopUpInput,
+  InitSePayCheckoutInput,
+  InitSePayCheckoutResponse,
   InitiateTopUpResponse,
   NovelPricingResponse,
   PaymentProvider,
