@@ -10,12 +10,16 @@ import { DEFAULT_PACKAGE_AMOUNT, TOPUP_PACKAGES, formatVnd } from "./packages";
 
 export function TopUpPageContent() {
   const [selectedAmount, setSelectedAmount] = useState<number>(DEFAULT_PACKAGE_AMOUNT);
-  const isLoggedIn = typeof window !== "undefined" && !!getSessionToken();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null);
   const [checkoutFields, setCheckoutFields] = useState<Record<string, string | number> | null>(null);
   const formRef = useRef<HTMLFormElement | null>(null);
+
+  useEffect(() => {
+    setIsLoggedIn(!!getSessionToken());
+  }, []);
 
   // Auto-submit the hidden SePay form once both pieces of state are populated.
   useEffect(() => {
