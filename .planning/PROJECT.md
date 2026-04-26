@@ -10,10 +10,14 @@ Preserve every identity-sensitive and financial record with exact IDs and relati
 
 ## Current State
 
-v1.14 shipped and archived on 2026-04-13:
-- Frontend local authentication with responsive login/register flows, client-side validation, and session integration.
-- Profile/security dashboard with secure password change and identity editing.
-- Wallet balance, VIP tier, and purchase history dashboard backed by imported legacy financial data.
+v1.15 shipped and archived on 2026-04-20:
+- Admin Dashboard foundational UI rebuilt with `shadcn-admin` layout patterns and route groups.
+- Novel & Chapter Management converted to robust Data Tables supporting server-side processing visual setups.
+- Reader Monetization features enhanced, covering VIP bypass logic and contextual combination UI pricing.
+- Added visual mockups for User and Wallet Management admin tables.
+
+v1.16 revenue pipeline work is active:
+- Phase 53 completed and verified on 2026-04-27: `/top-up` now offers eight fixed VND packages, defaults to 100.000 VND, calls `initSePayCheckout`, and redirects through the returned SePay POST form.
 
 ## Shipped Milestones
 
@@ -30,7 +34,24 @@ v1.14 shipped and archived on 2026-04-13:
 - ✅ v1.11: Reader Experience & Creator Discovery.
 - ✅ v1.12: Creator Growth & Reader Personalization.
 - ✅ v1.13: Legacy Financial ETL Import.
+<details>
+<summary>Archived Releases (v1.0 - v1.14)</summary>
+- ✅ v1.0: WordPress migration foundation.
+- ✅ v1.1: Content DB-to-DB migration and reconciliation.
+- ✅ v1.2: UGC ownership foundation.
+- ✅ v1.4: Ecosystem foundation schema expansion.
+- ✅ v1.5: Auth verification, RBAC, and CMS import.
+- ✅ v1.6: Core Reader API & Social Experience.
+- ✅ v1.7: Financial Engine & Payment Integration.
+- ✅ v1.8: Frontend Web Foundation (auth/discovery/reader/social).
+- ✅ v1.9: Full Reader Productization (dashboard/wallet/purchases/profile).
+- ✅ v1.10: Notification Center & Dynamic Content.
+- ✅ v1.11: Reader Experience & Creator Discovery.
+- ✅ v1.12: Creator Growth & Reader Personalization.
+- ✅ v1.13: Legacy Financial ETL Import.
 - ✅ v1.14: Identity & Account Experience.
+</details>
+- ✅ v1.15: Novel Management Productivity.
 
 ## Key Decisions (v1.9-v1.14)
 
@@ -56,4 +77,4 @@ v1.14 shipped and archived on 2026-04-13:
 
 ---
 
-*Last updated: 2026-04-13 after v1.14 milestone archival*
+*Last updated: 2026-04-27 after Phase 53 verification*

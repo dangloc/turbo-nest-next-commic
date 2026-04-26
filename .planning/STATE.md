@@ -1,31 +1,50 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.14
-milestone_name: milestone
-current_phase: 46
-status: executing
-last_updated: "2026-04-19T16:13:16.812Z"
+milestone: v1.16
+milestone_name: The Revenue Pipeline - SePay Integration & User Top-Ups
+current_phase: 53
+status: completed
+last_updated: "2026-04-27T01:11:24+07:00"
 progress:
-  total_phases: 46
-  completed_phases: 46
-  total_plans: 70
-  completed_plans: 77
+  total_phases: 52
+  completed_phases: 48
+  total_plans: 79
+  completed_plans: 81
+  percent: 100
 ---
 
 # GSD Workflow State
 
-Current Milestone: v1.15 (Novel Management Productivity)
-Current Phase: 46
+Current Milestone: v1.16 (The Revenue Pipeline - SePay Integration & User Top-Ups)
+Current Phase: 53
 Status: Complete
 
 ---
 
 ## Current Position
 
-Phase: 46 (restore-novel-manager-ui-drill-down) — COMPLETE
-Plan: 2 of 2
-Milestone: v1.15 - Novel Management Productivity
-Last session stopped at: Completed 46-02-PLAN.md (2026-04-19)
+Phase: 53 (user-topup-package-selection-ui) — COMPLETE
+Plan: 1 of 1 complete
+Milestone: v1.16 - The Revenue Pipeline - SePay Integration & User Top-Ups
+Last session stopped at: Phase 53 verified and completed on 2026-04-27
+
+---
+
+## Completed in Phase 53
+
+### Plan 53-01: User Top-up Package Selection UI
+
+- `/top-up` public route created with a Suspense-wrapped client top-up flow.
+- Eight fixed VND packages render in a responsive 2/4-column grid.
+- 100.000 VND is selected by default; package clicks move the selected highlight.
+- `Nạp tiền` calls `initSePayCheckout` with `TOPUP-${Date.now()}`, selected amount, VND currency, bank-transfer method, and payment result URLs.
+- Success path renders and auto-submits the returned hidden SePay POST form.
+- Error path shows an inline Vietnamese message and re-enables the button.
+
+### Quality Gates
+
+- Code review clean: `.planning/phases/53-user-topup-package-selection-ui/53-REVIEW.md`
+- Verification passed: `.planning/phases/53-user-topup-package-selection-ui/53-VERIFICATION.md`
 
 ---
 
@@ -135,3 +154,11 @@ Last session stopped at: Completed 46-02-PLAN.md (2026-04-19)
 ## Next Steps
 
 Phase 46 complete. All NOVELUI-03 requirements satisfied.
+
+---
+
+## Accumulated Context
+
+### Roadmap Evolution
+
+- Phase 50 added: SePay Webhook Integration for NestJS
