@@ -2,31 +2,42 @@
 gsd_state_version: 1.0
 milestone: v1.16
 milestone_name: The Revenue Pipeline - SePay Integration & User Top-Ups
-current_phase: 53
-status: completed
-last_updated: "2026-04-27T01:11:24+07:00"
+current_phase: 54
+status: planned
+last_updated: "2026-04-27T07:21:16+07:00"
 progress:
-  total_phases: 52
+  total_phases: 53
   completed_phases: 48
-  total_plans: 79
+  total_plans: 83
   completed_plans: 81
-  percent: 100
+  percent: 98
 ---
 
 # GSD Workflow State
 
 Current Milestone: v1.16 (The Revenue Pipeline - SePay Integration & User Top-Ups)
-Current Phase: 53
-Status: Complete
+Current Phase: 54
+Status: Ready to execute
 
 ---
 
 ## Current Position
 
-Phase: 53 (user-topup-package-selection-ui) — COMPLETE
-Plan: 1 of 1 complete
+Phase: 54 (user-wallet-history-ui-api) — PLANNED
+Plans: 2 ready
 Milestone: v1.16 - The Revenue Pipeline - SePay Integration & User Top-Ups
-Last session stopped at: Phase 53 verified and completed on 2026-04-27
+Last session stopped at: Phase 54 planned on 2026-04-27
+
+---
+
+## Planned Phase 54
+
+### Phase 54: User Wallet History UI & API
+
+- Plan 54-01: Protected backend wallet transaction history API at `GET /finance/wallet/transactions`.
+- Plan 54-02: `/profile/wallet` frontend page with Kim Tệ balance, VIP status, paginated transaction history, and loading/empty/error states.
+- Key implementation decision: create a lightweight `JwtAuthGuard` around the existing `AuthMiddleware` session-token model because no `JwtAuthGuard` exists in the current codebase.
+- Route decision: create the explicit public `/profile/wallet` route requested by the user because the current checked-in app has no dedicated public `/profile` route.
 
 ---
 

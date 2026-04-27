@@ -18,6 +18,7 @@ v1.15 shipped and archived on 2026-04-20:
 
 v1.16 revenue pipeline work is active:
 - Phase 53 completed and verified on 2026-04-27: `/top-up` now offers eight fixed VND packages, defaults to 100.000 VND, calls `initSePayCheckout`, and redirects through the returned SePay POST form.
+- Phase 54 planned on 2026-04-27: authenticated wallet history API plus `/profile/wallet` UI for Kim Tệ balance, VIP status, and paginated transactions.
 
 ## Shipped Milestones
 
@@ -77,4 +78,4 @@ v1.16 revenue pipeline work is active:
 
 ---
 
-*Last updated: 2026-04-27 after Phase 53 verification*
+*Last updated: 2026-04-27 after Phase 54 planning*
