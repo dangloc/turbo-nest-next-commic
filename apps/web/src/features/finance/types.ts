@@ -70,6 +70,38 @@ export interface WalletSummaryResponse {
   transactions: WalletSummaryItem[];
 }
 
+export interface UserWalletHistorySummary {
+  balance: number;
+  kimTe: number;
+  vipLevelId: number | null;
+  vipLevelName: string | null;
+}
+
+export interface UserWalletTransactionRow {
+  transactionId: number;
+  transactionDate: string | Date;
+  amountIn: number;
+  amountOut: number;
+  amount: number;
+  direction: "CREDIT" | "DEBIT";
+  type: string;
+  status: "COMPLETED";
+  description: string | null;
+  sepayCode: string | null;
+  referenceCode: string | null;
+  gateway: string;
+  balanceAfter: number;
+}
+
+export interface UserWalletTransactionsResponse {
+  summary: UserWalletHistorySummary;
+  items: UserWalletTransactionRow[];
+  page: number;
+  pageSize: number;
+  total: number;
+  totalPages: number;
+}
+
 export interface PurchaseHistoryItem {
   purchasedChapterId: number;
   chapterId: number;

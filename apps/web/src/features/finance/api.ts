@@ -14,6 +14,9 @@ import type {
   PurchaseChapterResponse,
   PurchaseChapterResult,
   PurchaseHistoryResponse,
+  UserWalletHistorySummary,
+  UserWalletTransactionRow,
+  UserWalletTransactionsResponse,
   VerifyTopUpInput,
   VerifyTopUpResponse,
   WalletSummaryResponse,
@@ -62,6 +65,31 @@ export async function fetchPurchaseHistory(
     includeCredentials: true,
     signal,
   });
+}
+
+export async function fetchUserWalletTransactions(
+  page: number,
+  pageSize: number,
+  token?: string,
+  signal?: AbortSignal,
+): Promise<ApiResult<UserWalletTransactionsResponse>> {
+  const safePage = Number.isInteger(page) && page > 0 ? page : 1;
+  const safePageSize = Number.isInteger(pageSize) && pageSize > 0 ? pageSize : 20;
+
+  const params = new URLSearchParams({
+    page: String(safePage),
+    pageSize: String(safePageSize),
+  });
+
+  return apiRequest<UserWalletTransactionsResponse>(
+    `/finance/wallet/transactions?${params.toString()}`,
+    {
+      method: "GET",
+      headers: authHeaders(token),
+      includeCredentials: true,
+      signal,
+    },
+  );
 }
 
 export async function fetchComboPurchaseHistory(
@@ -272,6 +300,9 @@ export type {
   PurchaseChapterInput,
   PurchaseChapterResult,
   PurchaseHistoryResponse,
+  UserWalletHistorySummary,
+  UserWalletTransactionRow,
+  UserWalletTransactionsResponse,
   VerifyTopUpInput,
   VerifyTopUpResponse,
   WalletSummaryResponse,
