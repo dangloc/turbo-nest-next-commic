@@ -1,0 +1,57 @@
+{
+  "generatedAt": "2026-04-29T10:49:14.695Z",
+  "totals": {
+    "source": 103682638.88,
+    "target": 103682638.88,
+    "delta": 0
+  },
+  "counts": {
+    "sourceUsers": 827,
+    "targetWallets": 827,
+    "comparedUsers": 827,
+    "mismatches": 0
+  },
+  "mismatches": [],
+  "currentBalance": {
+    "sourceField": "wp_usermeta._user_balance",
+    "targetFields": [
+      "users.balance",
+      "wallets.balance",
+      "wallets.depositedBalance"
+    ],
+    "mismatches": []
+  },
+  "vipParity": {
+    "sourceCount": 8,
+    "targetCount": 8,
+    "missingVipIds": [],
+    "unexpectedVipIds": []
+  },
+  "vipUserLevelParity": {
+    "sourceCount": 615,
+    "targetCount": 616,
+    "mismatches": []
+  },
+  "vipSubscriptionParity": {
+    "sourceActiveUsersWithPackage": 87,
+    "targetActiveSubscriptions": 87,
+    "sourceInvalidActivePackages": 0,
+    "missingActiveUserIds": [],
+    "unexpectedActiveUserIds": []
+  },
+  "walletBackfill": {
+    "sourceField": "wp_users.price",
+    "targetFields": [
+      "wallets.totalDeposited",
+      "users.kimTe"
+    ],
+    "sourceLegacyTotal": 134902402,
+    "targetTotalDepositedTotal": 151879010.88,
+    "targetUserKimTeTotal": 151879060,
+    "targetAdditionalTotalDeposited": 16976608.88,
+    "targetAdditionalUserKimTe": 16976658,
+    "totalDepositedDelta": 16976608.88,
+    "userKimTeDelta": 16976658,
+    "mismatches": []
+  }
+}

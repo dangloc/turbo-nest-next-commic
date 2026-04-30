@@ -1,0 +1,26 @@
+{
+  "generatedAt": "2026-04-29T10:49:24.733Z",
+  "reconciliation": {
+    "generatedAt": "2026-04-29T10:49:24.856Z",
+    "totals": {
+      "sourceNovels": 397,
+      "targetNovels": 397,
+      "sourceChapters": 56704,
+      "targetChapters": 56704
+    },
+    "deltas": {
+      "novelDelta": 0,
+      "chapterDelta": 0
+    },
+    "integrity": {
+      "orphanChapters": 0,
+      "relationMismatches": 0,
+      "contentMismatches": 0
+    },
+    "mismatches": []
+  },
+  "rerunSafety": {
+    "skipped": true,
+    "reason": "ETL_VERIFY_RERUN not enabled"
+  }
+}

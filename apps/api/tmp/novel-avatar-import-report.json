@@ -1,0 +1,18 @@
+{
+  "generatedAt": "2026-04-29T16:24:06.399Z",
+  "sourceDir": "D:\\webappcommic\\next-nest-turbo\\avata_novels",
+  "dryRun": false,
+  "filesFound": 396,
+  "matchingNovels": 396,
+  "missingNovelIds": [],
+  "invalidNames": [],
+  "unsupportedFiles": [],
+  "skippedExisting": [],
+  "updated": 396,
+  "failed": 0,
+  "originalBytes": 806370498,
+  "optimizedBytes": 43736556,
+  "originalSize": "769.01 MB",
+  "optimizedSize": "41.71 MB",
+  "failures": []
+}

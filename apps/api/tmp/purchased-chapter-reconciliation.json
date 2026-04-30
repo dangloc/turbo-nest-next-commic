@@ -1,0 +1,17 @@
+{
+  "generatedAt": "2026-04-29T10:51:19.119Z",
+  "totals": {
+    "sourceDecoded": 80481,
+    "target": 80481,
+    "delta": 0
+  },
+  "counts": {
+    "sourceRows": 707,
+    "sourceDecodedUsers": 707,
+    "sourceDecodeFailures": 0,
+    "targetUsers": 694,
+    "comparedUsers": 707,
+    "mismatches": 0
+  },
+  "mismatches": []
+}

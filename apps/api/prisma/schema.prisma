@@ -1,0 +1,605 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  AUTHOR
+  ADMIN
+}
+
+enum TransactionType {
+  DEPOSIT
+  PURCHASE_CHAPTER
+  PURCHASE_VIP
+  COMBO_PURCHASE
+}
+
+enum AuthorApprovalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum TermSubmissionStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum WithdrawalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  PAID
+  CANCELED
+}
+
+enum BannerPosition {
+  HOME_TOP
+  HOME_MIDDLE
+  HOME_BOTTOM
+  READER_INLINE
+  SIDEBAR
+}
+
+enum MissionType {
+  DAILY
+  WEEKLY
+  ONE_TIME
+  REFERRAL
+  READING
+  SOCIAL
+}
+
+enum MissionLogStatus {
+  PENDING
+  COMPLETED
+  CLAIMED
+  FAILED
+}
+
+enum PointTransactionType {
+  EARN
+  SPEND
+  ADJUSTMENT
+  EXPIRE
+  BONUS
+}
+
+enum NotificationType {
+  SYSTEM
+  NOVEL_UPDATE
+  COMMENT_REPLY
+  COMMENT_REACTION
+  MISSION
+  REWARD
+}
+
+enum CommentReactionType {
+  LIKE
+  HEART
+  HAHA
+  WOW
+  SAD
+  ANGRY
+}
+
+model User {
+  id                     Int                       @id
+  email                  String                    @unique
+  username               String?                   @unique
+  password               String
+  nickname               String?
+  avatar                 String?
+  role                   Role                      @default(USER)
+  adminDashboardModules  Json?
+  authorDashboardModules Json?
+  balance                Int                       @default(0)
+  kimTe                  Int                       @default(0)
+  vipLevelId             Int?
+  currentVipLevelId      Int?
+  referralCode           String?                   @unique
+  referredById           Int?
+  createdAt              DateTime                  @default(now())
+  updatedAt              DateTime                  @updatedAt
+  currentVipLevel        VipLevel?                 @relation("UserCurrentVipLevel", fields: [currentVipLevelId], references: [id], onDelete: SetNull)
+  vipLevel               VipLevel?                 @relation("UserVipLevel", fields: [vipLevelId], references: [id], onDelete: SetNull)
+  referredBy             User?                     @relation("UserReferralTree", fields: [referredById], references: [id], onDelete: SetNull)
+  referrals              User[]                    @relation("UserReferralTree")
+  providers              UserProvider[]
+  wallet                 Wallet?
+  vipSubscription        VipSubscription?
+  authorProfile          AuthorProfile?
+  purchasedChapters      PurchasedChapter[]
+  transactions           Transaction[]
+  uploadedNovels         Novel[]
+  missionLogs            UserMissionLog[]
+  pointTransactions      PointTransaction[]
+  rewardAdSessions       RewardAdSession[]
+  readingHistory         ReadingHistory[]
+  bookmarks              Bookmark[]
+  recommendationVotes    NovelRecommendationVote[]
+  reviews                Review[]
+  notifications          Notification[]
+  notificationPreference NotificationPreference?
+  comments               Comment[]
+  commentReactions       CommentReaction[]
+  followingAuthors       AuthorFollow[]            @relation("FollowerUser")
+  authorFollowers        AuthorFollow[]            @relation("FollowedAuthor")
+  termSubmissions        TermSubmission[]
+
+  @@index([currentVipLevelId])
+  @@index([vipLevelId])
+  @@index([referredById])
+  @@map("users")
+}
+
+model UserProvider {
+  id         Int    @id @default(autoincrement())
+  userId     Int
+  provider   String
+  providerId String
+  user       User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerId])
+  @@index([userId])
+  @@map("user_providers")
+}
+
+model Wallet {
+  id               Int     @id @default(autoincrement())
+  userId           Int     @unique
+  balance          Decimal @default(0) @db.Decimal(20, 2)
+  depositedBalance Decimal @default(0) @db.Decimal(20, 2)
+  earnedBalance    Decimal @default(0) @db.Decimal(20, 2)
+  totalDeposited   Decimal @default(0) @db.Decimal(20, 2)
+  user             User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("wallets")
+}
+
+model Transaction {
+  id              Int             @id @default(autoincrement())
+  userId          Int
+  amountIn        Decimal         @default(0) @db.Decimal(20, 2)
+  amountOut       Decimal         @default(0) @db.Decimal(20, 2)
+  accumulated     Decimal         @default(0) @db.Decimal(20, 2)
+  type            TransactionType @default(DEPOSIT)
+  transactionDate DateTime        @default(now())
+  gateway         String          @default("UNKNOWN")
+  referenceCode   String?
+  sepayCode       String?
+  rawBody         Json?
+  content         String?
+  user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, transactionDate])
+  @@index([sepayCode])
+  @@index([referenceCode])
+  @@map("transactions")
+}
+
+model VipSubscription {
+  id           Int       @id @default(autoincrement())
+  userId       Int       @unique
+  vipLevelId   Int
+  packageType  String
+  isActive     Boolean   @default(false)
+  purchaseDate DateTime
+  expiresAt    DateTime?
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([vipLevelId])
+  @@map("vip_subscriptions")
+}
+
+model VipLevel {
+  id            Int      @id
+  name          String
+  vndValue      Int
+  kimTe         Int
+  requiredKimTe Int      @default(0)
+  colorCode     String?
+  iconUrl       String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  currentUsers  User[]   @relation("UserCurrentVipLevel")
+  vipUsers      User[]   @relation("UserVipLevel")
+
+  @@index([vndValue])
+  @@map("vip_levels")
+}
+
+model AuthorProfile {
+  id                 Int                  @id @default(autoincrement())
+  userId             Int                  @unique
+  penName            String
+  bio                String?
+  facebookUrl        String?
+  telegramUrl        String?
+  otherPlatformName  String?
+  otherPlatformUrl   String?
+  bankAccountName    String?
+  bankAccountNumber  String?
+  bankName           String?
+  bankBranch         String?
+  approvalStatus     AuthorApprovalStatus @default(PENDING)
+  approvedAt         DateTime?
+  rejectedReason     String?
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+  user               User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  withdrawalRequests WithdrawalRequest[]
+
+  @@index([approvalStatus])
+  @@map("author_profiles")
+}
+
+model TermSubmission {
+  id               Int                  @id @default(autoincrement())
+  userId           Int
+  name             String
+  slug             String
+  taxonomy         String
+  status           TermSubmissionStatus @default(PENDING)
+  reviewNote       String?
+  reviewedByUserId Int?
+  reviewedAt       DateTime?
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+  user             User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([status, taxonomy, createdAt])
+  @@index([slug, taxonomy])
+  @@map("term_submissions")
+}
+
+model WithdrawalRequest {
+  id              Int              @id @default(autoincrement())
+  authorProfileId Int
+  amount          Decimal          @db.Decimal(20, 2)
+  status          WithdrawalStatus @default(PENDING)
+  note            String?
+  requestedAt     DateTime         @default(now())
+  processedAt     DateTime?
+  authorProfile   AuthorProfile    @relation(fields: [authorProfileId], references: [id], onDelete: Cascade)
+
+  @@index([authorProfileId, status])
+  @@map("withdrawal_requests")
+}
+
+model Banner {
+  id        Int            @id @default(autoincrement())
+  imageUrl  String
+  linkUrl   String?
+  position  BannerPosition
+  startsAt  DateTime?
+  endsAt    DateTime?
+  isActive  Boolean        @default(true)
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+
+  @@index([position, isActive])
+  @@map("banners")
+}
+
+model AdSettings {
+  id                         Int      @id @default(1)
+  smartlinkUrl               String?
+  chapterGateAffiliateUrl    String?
+  nativeBannerCode           String?
+  nativeBannerScriptSrc      String?
+  nativeBannerContainerId    String?
+  adsEnabled                 Boolean  @default(true)
+  rewardAdsEnabled           Boolean  @default(true)
+  nativeBannerEnabled        Boolean  @default(true)
+  chapterGateEnabled         Boolean  @default(true)
+  rewardAdPoints             Int      @default(500)
+  rewardAdDailyLimit         Int      @default(3)
+  rewardAdViewSeconds        Int      @default(30)
+  chapterGateEveryChapters   Int      @default(3)
+  chapterGateWaitSeconds     Int      @default(8)
+  adminRoleDashboardModules  Json?
+  authorRoleDashboardModules Json?
+  createdAt                  DateTime @default(now())
+  updatedAt                  DateTime @updatedAt
+
+  @@map("ad_settings")
+}
+
+model Mission {
+  id          Int              @id @default(autoincrement())
+  title       String
+  description String?
+  points      Int
+  type        MissionType
+  isActive    Boolean          @default(true)
+  startsAt    DateTime?
+  endsAt      DateTime?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  logs        UserMissionLog[]
+
+  @@index([type, isActive])
+  @@map("missions")
+}
+
+model UserMissionLog {
+  id          Int              @id @default(autoincrement())
+  userId      Int
+  missionId   Int
+  status      MissionLogStatus @default(PENDING)
+  progress    Int              @default(0)
+  completedAt DateTime?
+  claimedAt   DateTime?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  mission     Mission          @relation(fields: [missionId], references: [id], onDelete: Cascade)
+
+  @@index([userId, missionId, status])
+  @@map("user_mission_logs")
+}
+
+model PointTransaction {
+  id           Int                  @id @default(autoincrement())
+  userId       Int
+  amount       Int
+  balanceAfter Int?
+  type         PointTransactionType
+  reason       String?
+  referenceId  String?
+  createdAt    DateTime             @default(now())
+  user         User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@map("point_transactions")
+}
+
+model RewardAdSession {
+  id           String    @id @default(uuid())
+  userId       Int
+  smartlinkUrl String
+  startedAt    DateTime  @default(now())
+  claimableAt  DateTime
+  claimedAt    DateTime?
+  createdAt    DateTime  @default(now())
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, startedAt])
+  @@index([userId, claimedAt])
+  @@map("reward_ad_sessions")
+}
+
+model Novel {
+  id                  Int                       @id
+  uploaderId          Int                       @default(1)
+  uploader            User                      @relation(fields: [uploaderId], references: [id], onDelete: Restrict)
+  title               String
+  postContent         String
+  defaultChapterPrice Decimal                   @default(0) @db.Decimal(10, 2)
+  freeChapterCount    Int                       @default(0)
+  comboDiscountPct    Int                       @default(0)
+  featuredImage       String?
+  viewCount           BigInt                    @default(0)
+  createdAt           DateTime                  @default(now())
+  updatedAt           DateTime                  @updatedAt
+  chapters            Chapter[]
+  purchasedChps       PurchasedChapter[]
+  terms               Term[]
+  readingHistory      ReadingHistory[]
+  bookmarks           Bookmark[]
+  recommendationVotes NovelRecommendationVote[]
+  reviews             Review[]
+  comments            Comment[]
+
+  @@index([uploaderId])
+  @@map("novels")
+}
+
+model Term {
+  id       Int     @id
+  name     String
+  slug     String
+  taxonomy String
+  novels   Novel[]
+
+  @@unique([slug, taxonomy])
+  @@index([taxonomy])
+  @@index([slug, taxonomy])
+  @@map("terms")
+}
+
+model Chapter {
+  id             Int                @id
+  novelId        Int
+  novel          Novel              @relation(fields: [novelId], references: [id], onDelete: Cascade)
+  title          String
+  postContent    String
+  priceOverride  Decimal?           @db.Decimal(10, 2)
+  viewCount      BigInt             @default(0)
+  chapterNumber  Int                @default(0)
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+  purchasedChps  PurchasedChapter[]
+  readingHistory ReadingHistory[]
+  bookmarks      Bookmark[]
+  comments       Comment[]
+
+  @@index([novelId])
+  @@index([novelId, chapterNumber])
+  @@map("chapters")
+}
+
+model PurchasedChapter {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  novelId     Int
+  chapterId   Int
+  pricePaid   Decimal  @default(0) @db.Decimal(10, 2)
+  purchasedAt DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  novel       Novel    @relation(fields: [novelId], references: [id], onDelete: Cascade)
+  chapter     Chapter  @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, chapterId])
+  @@index([userId, novelId])
+  @@index([novelId])
+  @@index([chapterId])
+  @@map("purchased_chapters")
+}
+
+model ReadingHistory {
+  id              Int      @id @default(autoincrement())
+  userId          Int
+  novelId         Int
+  chapterId       Int?
+  progressPercent Int      @default(0)
+  lastReadAt      DateTime @default(now())
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  novel           Novel    @relation(fields: [novelId], references: [id], onDelete: Cascade)
+  chapter         Chapter? @relation(fields: [chapterId], references: [id], onDelete: SetNull)
+
+  @@unique([userId, novelId, chapterId])
+  @@index([userId, lastReadAt])
+  @@map("reading_history")
+}
+
+model Bookmark {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  novelId   Int
+  chapterId Int?
+  note      String?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  novel     Novel    @relation(fields: [novelId], references: [id], onDelete: Cascade)
+  chapter   Chapter? @relation(fields: [chapterId], references: [id], onDelete: SetNull)
+
+  @@unique([userId, novelId, chapterId])
+  @@index([userId, createdAt])
+  @@map("bookmarks")
+}
+
+model NovelRecommendationVote {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  novelId   Int
+  voteDate  DateTime
+  votes     Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  novel     Novel    @relation(fields: [novelId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, novelId, voteDate])
+  @@index([userId, voteDate])
+  @@index([novelId])
+  @@map("novel_recommendation_votes")
+}
+
+model Review {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  novelId   Int
+  rating    Int
+  content   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  novel     Novel    @relation(fields: [novelId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, novelId])
+  @@index([novelId, rating])
+  @@map("reviews")
+}
+
+model Notification {
+  id        Int              @id @default(autoincrement())
+  userId    Int
+  type      NotificationType
+  title     String
+  message   String
+  metadata  Json?
+  isRead    Boolean          @default(false)
+  createdAt DateTime         @default(now())
+  readAt    DateTime?
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, isRead, createdAt])
+  @@map("notifications")
+}
+
+model NotificationPreference {
+  id               Int      @id @default(autoincrement())
+  userId           Int      @unique
+  SYSTEM           Boolean  @default(true)
+  NOVEL_UPDATE     Boolean  @default(true)
+  COMMENT_REPLY    Boolean  @default(true)
+  COMMENT_REACTION Boolean  @default(true)
+  MISSION          Boolean  @default(true)
+  REWARD           Boolean  @default(true)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notification_preferences")
+}
+
+model Comment {
+  id        Int               @id @default(autoincrement())
+  userId    Int
+  novelId   Int?
+  chapterId Int?
+  parentId  Int?
+  content   String
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+  user      User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  novel     Novel?            @relation(fields: [novelId], references: [id], onDelete: SetNull)
+  chapter   Chapter?          @relation(fields: [chapterId], references: [id], onDelete: SetNull)
+  parent    Comment?          @relation("CommentThread", fields: [parentId], references: [id], onDelete: Cascade)
+  replies   Comment[]         @relation("CommentThread")
+  reactions CommentReaction[]
+
+  @@index([novelId, createdAt])
+  @@index([chapterId, createdAt])
+  @@index([parentId])
+  @@map("comments")
+}
+
+model CommentReaction {
+  id        Int                 @id @default(autoincrement())
+  userId    Int
+  commentId Int
+  type      CommentReactionType
+  createdAt DateTime            @default(now())
+  user      User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  comment   Comment             @relation(fields: [commentId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, commentId])
+  @@index([commentId, type])
+  @@map("comment_reactions")
+}
+
+model AuthorFollow {
+  id         Int      @id @default(autoincrement())
+  followerId Int
+  authorId   Int
+  createdAt  DateTime @default(now())
+
+  follower User @relation("FollowerUser", fields: [followerId], references: [id], onDelete: Cascade)
+  author   User @relation("FollowedAuthor", fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@unique([followerId, authorId])
+  @@index([authorId, createdAt])
+  @@index([followerId, createdAt])
+  @@map("author_follows")
+}

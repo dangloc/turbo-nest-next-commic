@@ -1,0 +1,12 @@
+{
+  "generatedAt": "2026-04-29T08:48:30.934Z",
+  "counts": {
+    "sourceGoogleMappings": 2049,
+    "targetGoogleMappings": 2049,
+    "matched": 2049,
+    "missingInTarget": 0,
+    "extraInTarget": 0
+  },
+  "missingInTarget": [],
+  "extraInTarget": []
+}

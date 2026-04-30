@@ -1,0 +1,25 @@
+{
+  "generatedAt": "2026-04-29T10:49:14.773Z",
+  "reconciliation": {
+    "generatedAt": "2026-04-29T10:49:14.776Z",
+    "totals": {
+      "sourceTerms": 347,
+      "targetTerms": 347,
+      "sourceLinks": 4884,
+      "targetLinks": 4884
+    },
+    "deltas": {
+      "termDelta": 0,
+      "linkDelta": 0
+    },
+    "integrity": {
+      "termMismatches": 0,
+      "linkMismatches": 0
+    },
+    "mismatches": []
+  },
+  "rerunSafety": {
+    "skipped": true,
+    "reason": "ETL_VERIFY_RERUN not enabled"
+  }
+}

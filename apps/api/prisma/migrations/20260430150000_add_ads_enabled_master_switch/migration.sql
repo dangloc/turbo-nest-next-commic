@@ -1,0 +1,2 @@
+ALTER TABLE "ad_settings"
+ADD COLUMN "adsEnabled" BOOLEAN NOT NULL DEFAULT true;

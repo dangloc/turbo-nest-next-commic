@@ -1,0 +1,17 @@
+--- a/apps/api/prisma/schema.prisma
++++ b/apps/api/prisma/schema.prisma
+@@ -339,6 +339,7 @@ model Chapter {
+   postContent    String
+   priceOverride  Decimal?           @db.Decimal(10, 2)
+   viewCount      BigInt             @default(0)
++  chapterNumber  Int                @default(0)
+   createdAt      DateTime           @default(now())
+   updatedAt      DateTime           @updatedAt
+   purchasedChps  PurchasedChapter[]
+@@ -347,6 +348,7 @@ model Chapter {
+   comments       Comment[]
+ 
+   @@index([novelId])
++  @@index([novelId, chapterNumber])
+   @@map("chapters")
+ }

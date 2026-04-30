@@ -1,0 +1,178 @@
+[
+  {
+    "sourceUserId": -1,
+    "field": "mapping",
+    "reason": "Unresolved transaction user mapping",
+    "raw": {
+      "sourceTransactionId": 355,
+      "content": "CAO THUY QUYNH chuyen tien",
+      "accountNumber": "1380560507",
+      "subAccount": "96247T726A",
+      "typeRaw": "deposit",
+      "amountIn": 800000,
+      "amountOut": 0,
+      "transactionDate": "2025-08-10T04:37:16.000Z"
+    },
+    "createdAt": "2026-04-29T10:40:48.096Z"
+  },
+  {
+    "sourceUserId": -1,
+    "field": "mapping",
+    "reason": "Unresolved transaction user mapping",
+    "raw": {
+      "sourceTransactionId": 769,
+      "content": "MBVCB.12273321425.602839.NGUYEN THI TRUC LY chuyen tien.CT tu 1041949140 NGUYEN THI TRUC LY toi 9624",
+      "accountNumber": "1380560507",
+      "subAccount": "96247T726A",
+      "typeRaw": "deposit",
+      "amountIn": 50000,
+      "amountOut": 0,
+      "transactionDate": "2025-12-23T12:09:55.000Z"
+    },
+    "createdAt": "2026-04-29T10:40:48.622Z"
+  },
+  {
+    "sourceUserId": -1,
+    "field": "mapping",
+    "reason": "Unresolved transaction user mapping",
+    "raw": {
+      "sourceTransactionId": 892,
+      "content": "LE HONG TRANG chuyen tien",
+      "accountNumber": "1380560507",
+      "subAccount": "96247T726A",
+      "typeRaw": "deposit",
+      "amountIn": 50000,
+      "amountOut": 0,
+      "transactionDate": "2026-01-17T16:58:25.000Z"
+    },
+    "createdAt": "2026-04-29T10:40:48.780Z"
+  },
+  {
+    "sourceUserId": -1,
+    "field": "mapping",
+    "reason": "Unresolved transaction user mapping",
+    "raw": {
+      "sourceTransactionId": 920,
+      "content": "NGUYEN MAI TRANG chuyen tien",
+      "accountNumber": "1380560507",
+      "subAccount": "96247T726A",
+      "typeRaw": "deposit",
+      "amountIn": 100000,
+      "amountOut": 0,
+      "transactionDate": "2026-01-22T16:49:35.000Z"
+    },
+    "createdAt": "2026-04-29T10:40:48.809Z"
+  },
+  {
+    "sourceUserId": -1,
+    "field": "mapping",
+    "reason": "Unresolved transaction user mapping",
+    "raw": {
+      "sourceTransactionId": 921,
+      "content": "NGUYEN MAI TRANG chuyen tien",
+      "accountNumber": "1380560507",
+      "subAccount": "96247T726A",
+      "typeRaw": "deposit",
+      "amountIn": 100000,
+      "amountOut": 0,
+      "transactionDate": "2026-01-22T16:54:22.000Z"
+    },
+    "createdAt": "2026-04-29T10:40:48.809Z"
+  },
+  {
+    "sourceUserId": -1,
+    "field": "mapping",
+    "reason": "Unresolved transaction user mapping",
+    "raw": {
+      "sourceTransactionId": 931,
+      "content": "NGUYEN THI KIM OANH chuyen tien",
+      "accountNumber": "1380560507",
+      "subAccount": "96247T726A",
+      "typeRaw": "deposit",
+      "amountIn": 50000,
+      "amountOut": 0,
+      "transactionDate": "2026-01-24T15:45:07.000Z"
+    },
+    "createdAt": "2026-04-29T10:40:48.818Z"
+  },
+  {
+    "sourceUserId": -1,
+    "field": "mapping",
+    "reason": "Unresolved transaction user mapping",
+    "raw": {
+      "sourceTransactionId": 1129,
+      "content": "QR - TRIEU THUY VUONG Chuyen tien",
+      "accountNumber": "1380560507",
+      "subAccount": "96247T726A",
+      "typeRaw": "deposit",
+      "amountIn": 100000,
+      "amountOut": 0,
+      "transactionDate": "2026-02-11T23:10:36.000Z"
+    },
+    "createdAt": "2026-04-29T10:40:49.032Z"
+  },
+  {
+    "sourceUserId": -1,
+    "field": "mapping",
+    "reason": "Unresolved transaction user mapping",
+    "raw": {
+      "sourceTransactionId": 1249,
+      "content": "TO HOAI THUONG THUONG Chuyen tien",
+      "accountNumber": "1380560507",
+      "subAccount": "96247T726A",
+      "typeRaw": "deposit",
+      "amountIn": 50000,
+      "amountOut": 0,
+      "transactionDate": "2026-02-21T05:54:26.000Z"
+    },
+    "createdAt": "2026-04-29T10:40:49.165Z"
+  },
+  {
+    "sourceUserId": -1,
+    "field": "mapping",
+    "reason": "Unresolved transaction user mapping",
+    "raw": {
+      "sourceTransactionId": 1411,
+      "content": "Thuylien Nguyen",
+      "accountNumber": "1380560507",
+      "subAccount": "96247T726A",
+      "typeRaw": "deposit",
+      "amountIn": 100000,
+      "amountOut": 0,
+      "transactionDate": "2026-03-20T15:19:57.000Z"
+    },
+    "createdAt": "2026-04-29T10:40:49.346Z"
+  },
+  {
+    "sourceUserId": -1,
+    "field": "mapping",
+    "reason": "Unresolved transaction user mapping",
+    "raw": {
+      "sourceTransactionId": 1651,
+      "content": "Hang Xuka",
+      "accountNumber": "1380560507",
+      "subAccount": "96247T726A",
+      "typeRaw": "deposit",
+      "amountIn": 50000,
+      "amountOut": 0,
+      "transactionDate": "2026-04-22T17:48:09.000Z"
+    },
+    "createdAt": "2026-04-29T10:40:49.603Z"
+  },
+  {
+    "sourceUserId": -1,
+    "field": "mapping",
+    "reason": "Unresolved transaction user mapping",
+    "raw": {
+      "sourceTransactionId": 1660,
+      "content": "Le Thi Hai Yen chuyen tien tu ViettelMoney",
+      "accountNumber": "1380560507",
+      "subAccount": "96247T726A",
+      "typeRaw": "deposit",
+      "amountIn": 55000,
+      "amountOut": 0,
+      "transactionDate": "2026-04-24T17:20:42.000Z"
+    },
+    "createdAt": "2026-04-29T10:40:49.613Z"
+  }
+]

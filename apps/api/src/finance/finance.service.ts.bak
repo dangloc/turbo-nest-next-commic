@@ -1,0 +1,1248 @@
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import {
+  AuthorApprovalStatus,
+  Prisma,
+  TransactionType,
+  WithdrawalStatus,
+  type VipLevel,
+} from '@prisma/client';
+import { PrismaService } from '../prisma.service';
+import type {
+  ChapterPurchaseInput,
+  ComboPurchaseInput,
+  InitiateTopUpInput,
+  ListWithdrawalRequestsQuery,
+  PurchaseHistoryQuery,
+  PurchaseHistoryResponse,
+  VerifyTopUpInput,
+  WalletSummaryResponse,
+  WithdrawalDecision,
+} from './types';
+
+const PLATFORM_WALLET_USER_ID = 1;
+const VIP_ACCESS_PACKAGES = new Set([
+  'vip_2_months',
+  'vip_3_months',
+  'vip_permanent',
+]);
+
+@Injectable()
+export class FinanceService {
+  constructor(private readonly prisma: PrismaService) {}
+
+  async initiateTopUp(userId: number, input: InitiateTopUpInput) {
+    this.assertUserId(userId);
+    this.assertMoney(input.amount, 'amount');
+
+    if (!input.reference?.trim()) {
+      throw new BadRequestException('reference is required');
+    }
+
+    const now = new Date();
+    return {
+      status: 'pending',
+      provider: input.provider,
+      reference: input.reference,
+      amount: input.amount,
+      redirectUrl: this.buildGatewayUrl(input.provider, input.reference),
+      returnUrl: input.returnUrl ?? null,
+      callbackUrl: input.callbackUrl ?? null,
+      expiresAt: new Date(now.getTime() + 15 * 60 * 1000),
+    };
+  }
+
+  async verifyTopUp(userId: number, input: VerifyTopUpInput) {
+    this.assertUserId(userId);
+    this.assertMoney(input.amount, 'amount');
+
+    if (!input.reference?.trim()) {
+      throw new BadRequestException('reference is required');
+    }
+
+    if (!input.providerTransactionId?.trim()) {
+      throw new BadRequestException('providerTransactionId is required');
+    }
+
+    const idempotencyKey = this.makeTopUpIdempotencyKey(
+      input.provider,
+      input.reference,
+    );
+
+    const existing = await this.prisma.transaction.findFirst({
+      where: {
+        userId,
+        type: TransactionType.DEPOSIT,
+        content: idempotencyKey,
+      },
+      select: {
+        id: true,
+        amountIn: true,
+        accumulated: true,
+      },
+    });
+
+    if (existing) {
+      return {
+        status: 'already_processed',
+        reference: input.reference,
+        transactionId: existing.id,
+        amountIn: Number(existing.amountIn),
+        accumulated: Number(existing.accumulated),
+      };
+    }
+
+    if (!input.success) {
+      return {
+        status: 'failed',
+        reference: input.reference,
+      };
+    }
+
+    return this.settleVerifiedTopUp(userId, input, idempotencyKey);
+  }
+
+  async getWalletSummary(userId: number): Promise<WalletSummaryResponse> {
+    this.assertUserId(userId);
+
+    const [wallet, transactions, recentPurchases, user] = await Promise.all([
+      this.prisma.wallet.findUnique({
+        where: { userId },
+        select: {
+          balance: true,
+          depositedBalance: true,
+          earnedBalance: true,
+          totalDeposited: true,
+        },
+      }),
+      this.prisma.transaction.findMany({
+        where: { userId },
+        orderBy: [{ transactionDate: 'desc' }, { id: 'desc' }],
+        take: 20,
+        select: {
+          id: true,
+          type: true,
+          amountIn: true,
+          amountOut: true,
+          content: true,
+          transactionDate: true,
+        },
+      }),
+      this.prisma.purchasedChapter.findMany({
+        where: { userId },
+        orderBy: [{ purchasedAt: 'desc' }, { id: 'desc' }],
+        take: 20,
+        select: {
+          pricePaid: true,
+        },
+      }),
+      this.prisma.user.findUnique({
+        where: { id: userId },
+        select: {
+          currentVipLevel: {
+            select: {
+              id: true,
+              name: true,
+              vndValue: true,
+              colorCode: true,
+              iconUrl: true,
+            },
+          },
+        },
+      }),
+    ]);
+
+    const rawDepositedBalance = Number(wallet?.depositedBalance ?? 0);
+    const rawTotalDeposited = Number(wallet?.totalDeposited ?? 0);
+    const legacyBalance = Number(wallet?.balance ?? 0);
+
+    const normalizedDepositedBalance =
+      rawDepositedBalance > 0 || legacyBalance <= 0
+        ? rawDepositedBalance
+        : legacyBalance;
+
+    const normalizedTotalDeposited =
+      rawTotalDeposited > 0 || normalizedDepositedBalance <= 0
+        ? rawTotalDeposited
+        : normalizedDepositedBalance;
+
+    return {
+      balances: {
+        depositedBalance: normalizedDepositedBalance,
+        earnedBalance: Number(wallet?.earnedBalance ?? 0),
+        totalDeposited: normalizedTotalDeposited,
+      },
+      purchaseSummary: {
+        recentActions: recentPurchases.length,
+        recentSpent: recentPurchases.reduce(
+          (sum, item) => sum + Number(item.pricePaid),
+          0,
+        ),
+      },
+      vipTier: user?.currentVipLevel
+        ? {
+            id: user.currentVipLevel.id,
+            name: user.currentVipLevel.name,
+            vndValue: user.currentVipLevel.vndValue,
+            colorCode: user.currentVipLevel.colorCode,
+            iconUrl: user.currentVipLevel.iconUrl,
+          }
+        : null,
+      transactions: transactions.map((item) => {
+        const direction = item.amountIn.greaterThan(0) ? 'CREDIT' : 'DEBIT';
+        const amount = Number(
+          item.amountIn.greaterThan(0) ? item.amountIn : item.amountOut,
+        );
+
+        return {
+          id: item.id,
+          type: item.type,
+          label: this.toTransactionLabel(item.type, item.content),
+          direction,
+          amount,
+          content: item.content,
+          transactionDate: item.transactionDate,
+        };
+      }),
+    };
+  }
+
+  async listPurchaseHistory(
+    userId: number,
+    query: PurchaseHistoryQuery,
+  ): Promise<PurchaseHistoryResponse> {
+    this.assertUserId(userId);
+
+    const page =
+      Number.isInteger(query.page) && (query.page as number) > 0
+        ? (query.page as number)
+        : 1;
+    const pageSize =
+      Number.isInteger(query.pageSize) &&
+      (query.pageSize as number) > 0 &&
+      (query.pageSize as number) <= 50
+        ? (query.pageSize as number)
+        : 20;
+
+    const [rows, total] = await this.prisma.$transaction([
+      this.prisma.purchasedChapter.findMany({
+        where: { userId },
+        orderBy: [{ purchasedAt: 'desc' }, { id: 'desc' }],
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+        select: {
+          id: true,
+          chapterId: true,
+          novelId: true,
+          purchasedAt: true,
+          pricePaid: true,
+          chapter: {
+            select: {
+              title: true,
+            },
+          },
+          novel: {
+            select: {
+              title: true,
+              uploader: {
+                select: {
+                  id: true,
+                  nickname: true,
+                  email: true,
+                },
+              },
+            },
+          },
+        },
+      }),
+      this.prisma.purchasedChapter.count({ where: { userId } }),
+    ]);
+
+    return {
+      items: rows.map((row) => ({
+        purchasedChapterId: row.id,
+        chapterId: row.chapterId,
+        chapterTitle: row.chapter?.title ?? 'Chapter #' + row.chapterId,
+        novelId: row.novelId,
+        novelTitle: row.novel?.title ?? 'Novel #' + row.novelId,
+        authorId: row.novel?.uploader.id ?? 0,
+        authorDisplayName:
+          row.novel?.uploader.nickname ??
+          row.novel?.uploader.email ??
+          'Unknown author',
+        purchasedAt: row.purchasedAt,
+        pricePaid: Number(row.pricePaid),
+        unlockStatus: row.chapter ? 'UNLOCKED' : 'UNAVAILABLE',
+      })),
+      page,
+      pageSize,
+      total,
+      totalPages: Math.max(1, Math.ceil(total / pageSize)),
+    };
+  }
+  async purchaseChapter(userId: number, input: ChapterPurchaseInput) {
+    this.assertUserId(userId);
+    this.assertMoney(input.price, 'price');
+
+    if (!Number.isInteger(input.chapterId) || input.chapterId <= 0) {
+      throw new BadRequestException('chapterId must be a positive integer');
+    }
+
+    if (!Number.isInteger(input.novelId) || input.novelId <= 0) {
+      throw new BadRequestException('novelId must be a positive integer');
+    }
+
+    return this.prisma.$transaction(async (tx) => {
+      const chapter = await tx.chapter.findUnique({
+        where: { id: input.chapterId },
+        select: {
+          id: true,
+          novelId: true,
+          novel: {
+            select: {
+              uploaderId: true,
+            },
+          },
+        },
+      });
+
+      if (!chapter || chapter.novelId !== input.novelId) {
+        throw new NotFoundException('Chapter not found for novel');
+      }
+
+      const existingPurchase = await tx.purchasedChapter.findUnique({
+        where: {
+          userId_chapterId: {
+            userId,
+            chapterId: input.chapterId,
+          },
+        },
+      });
+
+      if (existingPurchase) {
+        return {
+          status: 'already_owned',
+          chapterId: input.chapterId,
+          novelId: input.novelId,
+          purchasedChapterId: existingPurchase.id,
+        };
+      }
+
+      const wallet = await tx.wallet.upsert({
+        where: { userId },
+        create: {
+          userId,
+          balance: new Prisma.Decimal(0),
+          depositedBalance: new Prisma.Decimal(0),
+          earnedBalance: new Prisma.Decimal(0),
+          totalDeposited: new Prisma.Decimal(0),
+        },
+        update: {},
+      });
+
+      const priceDecimal = new Prisma.Decimal(input.price);
+      if (wallet.depositedBalance.lessThan(priceDecimal)) {
+        throw new BadRequestException('Insufficient deposited balance');
+      }
+
+      const split = this.calculateRevenueSplit(priceDecimal);
+      const nextDepositedBalance = wallet.depositedBalance.minus(priceDecimal);
+
+      const updatedBuyerWallet = await tx.wallet.update({
+        where: { userId },
+        data: {
+          depositedBalance: nextDepositedBalance,
+        },
+      });
+
+      const authorUserId = chapter.novel.uploaderId;
+      const authorWallet = await tx.wallet.upsert({
+        where: { userId: authorUserId },
+        create: {
+          userId: authorUserId,
+          balance: new Prisma.Decimal(0),
+          depositedBalance: new Prisma.Decimal(0),
+          earnedBalance: new Prisma.Decimal(0),
+          totalDeposited: new Prisma.Decimal(0),
+        },
+        update: {},
+      });
+
+      const updatedAuthorWallet = await tx.wallet.update({
+        where: { userId: authorUserId },
+        data: {
+          earnedBalance: authorWallet.earnedBalance.plus(split.authorShare),
+        },
+      });
+
+      const platformWallet = await tx.wallet.upsert({
+        where: { userId: PLATFORM_WALLET_USER_ID },
+        create: {
+          userId: PLATFORM_WALLET_USER_ID,
+          balance: new Prisma.Decimal(0),
+          depositedBalance: new Prisma.Decimal(0),
+          earnedBalance: new Prisma.Decimal(0),
+          totalDeposited: new Prisma.Decimal(0),
+        },
+        update: {},
+      });
+
+      const updatedPlatformWallet = await tx.wallet.update({
+        where: { userId: PLATFORM_WALLET_USER_ID },
+        data: {
+          earnedBalance: platformWallet.earnedBalance.plus(split.platformFee),
+        },
+      });
+
+      let purchasedChapter;
+      try {
+        purchasedChapter = await tx.purchasedChapter.create({
+          data: {
+            userId,
+            novelId: input.novelId,
+            chapterId: input.chapterId,
+            pricePaid: priceDecimal,
+          },
+        });
+      } catch (error) {
+        if ((error as { code?: string }).code === 'P2002') {
+          return {
+            status: 'already_owned',
+            chapterId: input.chapterId,
+            novelId: input.novelId,
+            purchasedChapterId: null,
+          };
+        }
+
+        throw error;
+      }
+
+      const buyerTransaction = await tx.transaction.create({
+        data: {
+          userId,
+          amountIn: new Prisma.Decimal(0),
+          amountOut: priceDecimal,
+          accumulated: updatedBuyerWallet.depositedBalance,
+          type: TransactionType.PURCHASE_CHAPTER,
+          content: `PURCHASE_BUYER:${input.chapterId}`,
+        },
+      });
+
+      await tx.transaction.create({
+        data: {
+          userId: authorUserId,
+          amountIn: split.authorShare,
+          amountOut: new Prisma.Decimal(0),
+          accumulated: updatedAuthorWallet.earnedBalance,
+          type: TransactionType.PURCHASE_CHAPTER,
+          content: `PURCHASE_AUTHOR_REVENUE:${input.chapterId}:buyer:${userId}`,
+        },
+      });
+
+      await tx.transaction.create({
+        data: {
+          userId: PLATFORM_WALLET_USER_ID,
+          amountIn: split.platformFee,
+          amountOut: new Prisma.Decimal(0),
+          accumulated: updatedPlatformWallet.earnedBalance,
+          type: TransactionType.PURCHASE_CHAPTER,
+          content: `PURCHASE_PLATFORM_FEE:${input.chapterId}:buyer:${userId}`,
+        },
+      });
+
+      return {
+        status: 'purchased',
+        chapterId: input.chapterId,
+        novelId: input.novelId,
+        purchasedChapterId: purchasedChapter.id,
+        transactionId: buyerTransaction.id,
+        depositedBalance: Number(updatedBuyerWallet.depositedBalance),
+        revenueSplit: {
+          authorUserId,
+          authorShare: Number(split.authorShare),
+          platformFee: Number(split.platformFee),
+        },
+      };
+    });
+  }
+
+  async getNovelPricing(novelId: number, userId?: number) {
+    if (!Number.isInteger(novelId) || novelId <= 0) {
+      throw new BadRequestException('novelId must be a positive integer');
+    }
+
+    return this.prisma.$transaction(async (tx) => {
+      const pricing = await this.buildNovelPricingInTx(tx, novelId, userId);
+      return {
+        novelId: pricing.novelId,
+        uploaderId: pricing.uploaderId,
+        settings: {
+          defaultChapterPrice: Number(pricing.defaultChapterPrice),
+          freeChapterCount: pricing.freeChapterCount,
+          comboDiscountPct: pricing.comboDiscountPct,
+        },
+        combo: {
+          lockedChapterCount: pricing.lockedChapterCount,
+          originalTotalPrice: Number(pricing.originalLockedTotal),
+          discountedTotalPrice: Number(pricing.discountedLockedTotal),
+        },
+        chapters: pricing.chapters.map((chapter) => ({
+          id: chapter.id,
+          title: chapter.title,
+          chapterNumber: chapter.chapterNumber,
+          isLocked: chapter.isLocked,
+          effectivePrice: Number(chapter.effectivePrice),
+          priceSource: chapter.priceSource,
+        })),
+      };
+    });
+  }
+
+  async resolveChapterPurchaseQuote(
+    novelId: number,
+    chapterId: number,
+    userId?: number,
+  ) {
+    if (!Number.isInteger(novelId) || novelId <= 0) {
+      throw new BadRequestException('novelId must be a positive integer');
+    }
+
+    if (!Number.isInteger(chapterId) || chapterId <= 0) {
+      throw new BadRequestException('chapterId must be a positive integer');
+    }
+
+    return this.prisma.$transaction(async (tx) => {
+      const pricing = await this.buildNovelPricingInTx(tx, novelId, userId);
+      const chapter = pricing.chapters.find((item) => item.id === chapterId);
+      if (!chapter) {
+        throw new NotFoundException('Chapter not found for novel');
+      }
+      return {
+        ...chapter,
+        effectivePrice: Number(chapter.effectivePrice),
+      };
+    });
+  }
+
+  async purchaseNovelCombo(userId: number, input: ComboPurchaseInput) {
+    this.assertUserId(userId);
+
+    if (!Number.isInteger(input.novelId) || input.novelId <= 0) {
+      throw new BadRequestException('novelId must be a positive integer');
+    }
+
+    return this.prisma.$transaction(async (tx) => {
+      const pricing = await this.buildNovelPricingInTx(
+        tx,
+        input.novelId,
+        userId,
+      );
+      const lockedChapters = pricing.chapters.filter(
+        (chapter) => chapter.isLocked,
+      );
+
+      if (lockedChapters.length === 0) {
+        return {
+          status: 'no_locked_chapters',
+          novelId: input.novelId,
+          purchasedChapterCount: 0,
+          chargedAmount: 0,
+        };
+      }
+
+      const existingPurchases = await tx.purchasedChapter.findMany({
+        where: {
+          userId,
+          novelId: input.novelId,
+          chapterId: { in: lockedChapters.map((chapter) => chapter.id) },
+        },
+        select: { chapterId: true },
+      });
+
+      const ownedChapterIds = new Set(
+        existingPurchases.map((item) => item.chapterId),
+      );
+      const remainingLockedChapters = lockedChapters.filter(
+        (chapter) => !ownedChapterIds.has(chapter.id),
+      );
+
+      if (remainingLockedChapters.length === 0) {
+        return {
+          status: 'already_owned',
+          novelId: input.novelId,
+          purchasedChapterCount: 0,
+          chargedAmount: 0,
+        };
+      }
+
+      const originalTotal = remainingLockedChapters.reduce(
+        (acc, chapter) => acc.plus(chapter.effectivePrice),
+        new Prisma.Decimal(0),
+      );
+      const discountFactor = new Prisma.Decimal(
+        100 - pricing.comboDiscountPct,
+      ).div(100);
+      const payable = originalTotal.mul(discountFactor).toDecimalPlaces(2);
+
+      const wallet = await tx.wallet.upsert({
+        where: { userId },
+        create: {
+          userId,
+          balance: new Prisma.Decimal(0),
+          depositedBalance: new Prisma.Decimal(0),
+          earnedBalance: new Prisma.Decimal(0),
+          totalDeposited: new Prisma.Decimal(0),
+        },
+        update: {},
+      });
+
+      if (wallet.depositedBalance.lessThan(payable)) {
+        throw new BadRequestException('Insufficient deposited balance');
+      }
+
+      const split = this.calculateRevenueSplit(payable);
+      const updatedBuyerWallet = await tx.wallet.update({
+        where: { userId },
+        data: {
+          depositedBalance: wallet.depositedBalance.minus(payable),
+        },
+      });
+
+      const authorUserId = pricing.uploaderId;
+      const authorWallet = await tx.wallet.upsert({
+        where: { userId: authorUserId },
+        create: {
+          userId: authorUserId,
+          balance: new Prisma.Decimal(0),
+          depositedBalance: new Prisma.Decimal(0),
+          earnedBalance: new Prisma.Decimal(0),
+          totalDeposited: new Prisma.Decimal(0),
+        },
+        update: {},
+      });
+
+      const updatedAuthorWallet = await tx.wallet.update({
+        where: { userId: authorUserId },
+        data: {
+          earnedBalance: authorWallet.earnedBalance.plus(split.authorShare),
+        },
+      });
+
+      const platformWallet = await tx.wallet.upsert({
+        where: { userId: PLATFORM_WALLET_USER_ID },
+        create: {
+          userId: PLATFORM_WALLET_USER_ID,
+          balance: new Prisma.Decimal(0),
+          depositedBalance: new Prisma.Decimal(0),
+          earnedBalance: new Prisma.Decimal(0),
+          totalDeposited: new Prisma.Decimal(0),
+        },
+        update: {},
+      });
+
+      const updatedPlatformWallet = await tx.wallet.update({
+        where: { userId: PLATFORM_WALLET_USER_ID },
+        data: {
+          earnedBalance: platformWallet.earnedBalance.plus(split.platformFee),
+        },
+      });
+
+      const ratio = originalTotal.equals(0)
+        ? new Prisma.Decimal(0)
+        : payable.div(originalTotal);
+
+      await tx.purchasedChapter.createMany({
+        data: remainingLockedChapters.map((chapter) => ({
+          userId,
+          novelId: input.novelId,
+          chapterId: chapter.id,
+          pricePaid: chapter.effectivePrice.mul(ratio).toDecimalPlaces(2),
+        })),
+        skipDuplicates: true,
+      });
+
+      const buyerTransaction = await tx.transaction.create({
+        data: {
+          userId,
+          amountIn: new Prisma.Decimal(0),
+          amountOut: payable,
+          accumulated: updatedBuyerWallet.depositedBalance,
+          type: TransactionType.COMBO_PURCHASE,
+          content:
+            'COMBO_PURCHASE:' +
+            input.novelId +
+            ':chapters:' +
+            remainingLockedChapters.length,
+        },
+      });
+
+      await tx.transaction.create({
+        data: {
+          userId: authorUserId,
+          amountIn: split.authorShare,
+          amountOut: new Prisma.Decimal(0),
+          accumulated: updatedAuthorWallet.earnedBalance,
+          type: TransactionType.COMBO_PURCHASE,
+          content: 'COMBO_AUTHOR_REVENUE:' + input.novelId + ':buyer:' + userId,
+        },
+      });
+
+      await tx.transaction.create({
+        data: {
+          userId: PLATFORM_WALLET_USER_ID,
+          amountIn: split.platformFee,
+          amountOut: new Prisma.Decimal(0),
+          accumulated: updatedPlatformWallet.earnedBalance,
+          type: TransactionType.COMBO_PURCHASE,
+          content: 'COMBO_PLATFORM_FEE:' + input.novelId + ':buyer:' + userId,
+        },
+      });
+
+      return {
+        status: 'purchased',
+        novelId: input.novelId,
+        purchasedChapterCount: remainingLockedChapters.length,
+        chargedAmount: Number(payable),
+        discountPct: pricing.comboDiscountPct,
+        transactionId: buyerTransaction.id,
+        depositedBalance: Number(updatedBuyerWallet.depositedBalance),
+      };
+    });
+  }
+
+  async createWithdrawalRequest(userId: number, amount: number, note?: string) {
+    this.assertUserId(userId);
+    this.assertMoney(amount, 'amount');
+
+    return this.prisma.$transaction(async (tx) => {
+      const authorProfile = await tx.authorProfile.findUnique({
+        where: { userId },
+        select: {
+          id: true,
+          userId: true,
+          approvalStatus: true,
+        },
+      });
+
+      if (!authorProfile) {
+        throw new NotFoundException('Author profile not found');
+      }
+
+      if (authorProfile.approvalStatus !== AuthorApprovalStatus.APPROVED) {
+        throw new BadRequestException('Author profile is not approved');
+      }
+
+      const wallet = await tx.wallet.upsert({
+        where: { userId },
+        create: {
+          userId,
+          balance: new Prisma.Decimal(0),
+          depositedBalance: new Prisma.Decimal(0),
+          earnedBalance: new Prisma.Decimal(0),
+          totalDeposited: new Prisma.Decimal(0),
+        },
+        update: {},
+      });
+
+      const requestAmount = new Prisma.Decimal(amount);
+      if (wallet.earnedBalance.lessThan(requestAmount)) {
+        throw new BadRequestException('Insufficient earned balance');
+      }
+
+      const updatedWallet = await tx.wallet.update({
+        where: { userId },
+        data: {
+          earnedBalance: wallet.earnedBalance.minus(requestAmount),
+        },
+      });
+
+      const withdrawalRequest = await tx.withdrawalRequest.create({
+        data: {
+          authorProfileId: authorProfile.id,
+          amount: requestAmount,
+          status: WithdrawalStatus.PENDING,
+          note: note?.trim() || null,
+        },
+      });
+
+      await tx.transaction.create({
+        data: {
+          userId,
+          amountIn: new Prisma.Decimal(0),
+          amountOut: requestAmount,
+          accumulated: updatedWallet.earnedBalance,
+          type: TransactionType.PURCHASE_CHAPTER,
+          content: `WITHDRAWAL_FREEZE:${withdrawalRequest.id}`,
+        },
+      });
+
+      return {
+        id: withdrawalRequest.id,
+        status: withdrawalRequest.status,
+        amount: Number(withdrawalRequest.amount),
+        authorProfileId: withdrawalRequest.authorProfileId,
+        earnedBalance: Number(updatedWallet.earnedBalance),
+        requestedAt: withdrawalRequest.requestedAt,
+      };
+    });
+  }
+
+  async listWithdrawalRequests(query: ListWithdrawalRequestsQuery) {
+    const page =
+      Number.isInteger(query.page) && (query.page as number) > 0
+        ? (query.page as number)
+        : 1;
+    const pageSize =
+      Number.isInteger(query.pageSize) &&
+      (query.pageSize as number) > 0 &&
+      (query.pageSize as number) <= 100
+        ? (query.pageSize as number)
+        : 20;
+
+    const where: Prisma.WithdrawalRequestWhereInput = {};
+
+    if (query.status) {
+      if (
+        !Object.values(WithdrawalStatus).includes(
+          query.status as WithdrawalStatus,
+        )
+      ) {
+        throw new BadRequestException('Invalid withdrawal status');
+      }
+      where.status = query.status as WithdrawalStatus;
+    }
+
+    if (query.authorProfileId !== undefined) {
+      if (
+        !Number.isInteger(query.authorProfileId) ||
+        query.authorProfileId <= 0
+      ) {
+        throw new BadRequestException(
+          'authorProfileId must be a positive integer',
+        );
+      }
+      where.authorProfileId = query.authorProfileId;
+    }
+
+    const [items, total] = await this.prisma.$transaction([
+      this.prisma.withdrawalRequest.findMany({
+        where,
+        orderBy: [{ requestedAt: 'desc' }, { id: 'desc' }],
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+        include: {
+          authorProfile: {
+            include: {
+              user: {
+                select: {
+                  id: true,
+                  email: true,
+                  nickname: true,
+                },
+              },
+            },
+          },
+        },
+      }),
+      this.prisma.withdrawalRequest.count({ where }),
+    ]);
+
+    return {
+      items: items.map((item) => ({
+        id: item.id,
+        amount: Number(item.amount),
+        status: item.status,
+        note: item.note,
+        requestedAt: item.requestedAt,
+        processedAt: item.processedAt,
+        authorProfile: {
+          id: item.authorProfile.id,
+          userId: item.authorProfile.user.id,
+          email: item.authorProfile.user.email,
+          nickname: item.authorProfile.user.nickname,
+          penName: item.authorProfile.penName,
+        },
+      })),
+      total,
+      page,
+      pageSize,
+    };
+  }
+
+  async resolveWithdrawalRequest(
+    adminUserId: number,
+    withdrawalRequestId: number,
+    decision: WithdrawalDecision,
+    note?: string,
+  ) {
+    this.assertUserId(adminUserId);
+
+    if (!Number.isInteger(withdrawalRequestId) || withdrawalRequestId <= 0) {
+      throw new BadRequestException(
+        'withdrawal request id must be a positive integer',
+      );
+    }
+
+    if (decision !== 'approve' && decision !== 'reject') {
+      throw new BadRequestException('decision must be approve or reject');
+    }
+
+    return this.prisma.$transaction(async (tx) => {
+      const request = await tx.withdrawalRequest.findUnique({
+        where: { id: withdrawalRequestId },
+        include: {
+          authorProfile: {
+            select: {
+              userId: true,
+            },
+          },
+        },
+      });
+
+      if (!request) {
+        throw new NotFoundException('Withdrawal request not found');
+      }
+
+      if (request.status !== WithdrawalStatus.PENDING) {
+        throw new BadRequestException('Withdrawal request is already resolved');
+      }
+
+      const nextStatus =
+        decision === 'approve'
+          ? WithdrawalStatus.APPROVED
+          : WithdrawalStatus.REJECTED;
+
+      const updatedRequest = await tx.withdrawalRequest.update({
+        where: { id: withdrawalRequestId },
+        data: {
+          status: nextStatus,
+          processedAt: new Date(),
+          note: note?.trim() || request.note,
+        },
+      });
+
+      const amount = new Prisma.Decimal(request.amount);
+      const authorUserId = request.authorProfile.userId;
+
+      if (decision === 'reject') {
+        const authorWallet = await tx.wallet.upsert({
+          where: { userId: authorUserId },
+          create: {
+            userId: authorUserId,
+            balance: new Prisma.Decimal(0),
+            depositedBalance: new Prisma.Decimal(0),
+            earnedBalance: new Prisma.Decimal(0),
+            totalDeposited: new Prisma.Decimal(0),
+          },
+          update: {},
+        });
+
+        const refundedWallet = await tx.wallet.update({
+          where: { userId: authorUserId },
+          data: {
+            earnedBalance: authorWallet.earnedBalance.plus(amount),
+          },
+        });
+
+        await tx.transaction.create({
+          data: {
+            userId: authorUserId,
+            amountIn: amount,
+            amountOut: new Prisma.Decimal(0),
+            accumulated: refundedWallet.earnedBalance,
+            type: TransactionType.PURCHASE_CHAPTER,
+            content: `WITHDRAWAL_REJECT_REFUND:${updatedRequest.id}:admin:${adminUserId}`,
+          },
+        });
+      }
+
+      await tx.transaction.create({
+        data: {
+          userId: authorUserId,
+          amountIn: new Prisma.Decimal(0),
+          amountOut: decision === 'approve' ? amount : new Prisma.Decimal(0),
+          accumulated: new Prisma.Decimal(0),
+          type: TransactionType.PURCHASE_CHAPTER,
+          content: `WITHDRAWAL_${decision.toUpperCase()}:${updatedRequest.id}:admin:${adminUserId}`,
+        },
+      });
+
+      return {
+        id: updatedRequest.id,
+        status: updatedRequest.status,
+        amount: Number(updatedRequest.amount),
+        processedAt: updatedRequest.processedAt,
+        authorProfileId: updatedRequest.authorProfileId,
+      };
+    });
+  }
+
+  private async buildNovelPricingInTx(
+    tx: Prisma.TransactionClient,
+    novelId: number,
+    userId?: number,
+  ) {
+    const novel = await tx.novel.findUnique({
+      where: { id: novelId },
+      select: {
+        id: true,
+        uploaderId: true,
+        defaultChapterPrice: true,
+        freeChapterCount: true,
+        comboDiscountPct: true,
+        chapters: {
+          orderBy: { id: 'asc' },
+          select: {
+            id: true,
+            title: true,
+            priceOverride: true,
+          },
+        },
+      },
+    });
+
+    if (!novel) {
+      throw new NotFoundException('Novel not found');
+    }
+
+    const vipSubscription =
+      userId && userId > 0
+        ? await tx.vipSubscription.findUnique({
+            where: { userId },
+            select: {
+              packageType: true,
+              isActive: true,
+              expiresAt: true,
+            },
+          })
+        : null;
+
+    const hasVipReaderAccess = Boolean(
+      vipSubscription &&
+      vipSubscription.isActive &&
+      VIP_ACCESS_PACKAGES.has(vipSubscription.packageType) &&
+      (vipSubscription.packageType === 'vip_permanent' ||
+        (vipSubscription.expiresAt !== null &&
+          vipSubscription.expiresAt.getTime() > Date.now())),
+    );
+
+    const comboDiscountPct = Math.max(0, Math.min(100, novel.comboDiscountPct));
+    const freeChapterCount = Math.max(0, novel.freeChapterCount);
+
+    const purchasedChapterIds =
+      userId && userId > 0
+        ? new Set(
+            (
+              await tx.purchasedChapter.findMany({
+                where: {
+                  userId,
+                  novelId,
+                },
+                select: {
+                  chapterId: true,
+                },
+              })
+            ).map((item) => item.chapterId),
+          )
+        : new Set<number>();
+
+    const chapters = novel.chapters.map((chapter, index) => {
+      const chapterNumber = index + 1;
+      const lockByTier = hasVipReaderAccess
+        ? false
+        : chapterNumber > freeChapterCount;
+      const isUnlockedByPurchase = purchasedChapterIds.has(chapter.id);
+      const isLocked = lockByTier && !isUnlockedByPurchase;
+      const effectivePrice = isLocked
+        ? (chapter.priceOverride ?? novel.defaultChapterPrice)
+        : new Prisma.Decimal(0);
+
+      return {
+        id: chapter.id,
+        title: chapter.title,
+        chapterNumber,
+        isLocked,
+        effectivePrice,
+        priceSource: hasVipReaderAccess
+          ? 'vip_subscription'
+          : chapter.priceOverride
+            ? 'chapter_override'
+            : 'novel_default',
+      };
+    });
+
+    const originalLockedTotal = chapters
+      .filter((chapter) => chapter.isLocked)
+      .reduce(
+        (acc, chapter) => acc.plus(chapter.effectivePrice),
+        new Prisma.Decimal(0),
+      );
+
+    const discountedLockedTotal = originalLockedTotal
+      .mul(new Prisma.Decimal(100 - comboDiscountPct).div(100))
+      .toDecimalPlaces(2);
+
+    return {
+      novelId: novel.id,
+      uploaderId: novel.uploaderId,
+      defaultChapterPrice: novel.defaultChapterPrice,
+      freeChapterCount,
+      comboDiscountPct,
+      chapters,
+      lockedChapterCount: chapters.filter((chapter) => chapter.isLocked).length,
+      originalLockedTotal: hasVipReaderAccess
+        ? new Prisma.Decimal(0)
+        : originalLockedTotal,
+      discountedLockedTotal: hasVipReaderAccess
+        ? new Prisma.Decimal(0)
+        : discountedLockedTotal,
+    };
+  }
+
+  private async settleVerifiedTopUp(
+    userId: number,
+    input: VerifyTopUpInput,
+    idempotencyKey: string,
+  ) {
+    const amountDecimal = new Prisma.Decimal(input.amount);
+
+    return this.prisma.$transaction(async (tx) => {
+      const wallet = await tx.wallet.upsert({
+        where: { userId },
+        create: {
+          userId,
+          balance: new Prisma.Decimal(0),
+          depositedBalance: new Prisma.Decimal(0),
+          earnedBalance: new Prisma.Decimal(0),
+          totalDeposited: new Prisma.Decimal(0),
+        },
+        update: {},
+      });
+
+      const nextDepositedBalance = wallet.depositedBalance.plus(amountDecimal);
+      const nextTotalDeposited = wallet.totalDeposited.plus(amountDecimal);
+
+      const updatedWallet = await tx.wallet.update({
+        where: { userId },
+        data: {
+          depositedBalance: nextDepositedBalance,
+          totalDeposited: nextTotalDeposited,
+        },
+      });
+
+      const transaction = await tx.transaction.create({
+        data: {
+          userId,
+          amountIn: amountDecimal,
+          amountOut: new Prisma.Decimal(0),
+          accumulated: updatedWallet.depositedBalance,
+          type: TransactionType.DEPOSIT,
+          content: idempotencyKey,
+        },
+      });
+
+      const appliedVipLevel = await this.applyVipUpgrade(
+        tx,
+        userId,
+        updatedWallet.totalDeposited,
+      );
+
+      return {
+        status: 'success',
+        reference: input.reference,
+        transactionId: transaction.id,
+        depositedBalance: Number(updatedWallet.depositedBalance),
+        totalDeposited: Number(updatedWallet.totalDeposited),
+        appliedVipLevelId: appliedVipLevel?.id ?? null,
+      };
+    });
+  }
+
+  private async applyVipUpgrade(
+    tx: Prisma.TransactionClient,
+    userId: number,
+    totalDeposited: Prisma.Decimal,
+  ): Promise<VipLevel | null> {
+    const levels = await tx.vipLevel.findMany({
+      orderBy: { vndValue: 'asc' },
+    });
+
+    let bestLevel: VipLevel | null = null;
+    for (const level of levels) {
+      if (
+        totalDeposited.greaterThanOrEqualTo(new Prisma.Decimal(level.vndValue))
+      ) {
+        bestLevel = level;
+      }
+    }
+
+    if (!bestLevel) {
+      return null;
+    }
+
+    await tx.user.update({
+      where: { id: userId },
+      data: { currentVipLevelId: bestLevel.id },
+    });
+
+    return bestLevel;
+  }
+
+  private toTransactionLabel(type: TransactionType, content: string | null) {
+    if (type === TransactionType.DEPOSIT) {
+      if (content?.startsWith('TOPUP:')) {
+        return 'Top-up settled';
+      }
+
+      return 'Wallet deposit';
+    }
+
+    if (type === TransactionType.COMBO_PURCHASE) {
+      return 'Combo purchase';
+    }
+
+    if (type === TransactionType.PURCHASE_CHAPTER) {
+      if (content?.startsWith('PURCHASE_BUYER:')) {
+        return 'Chapter purchase';
+      }
+
+      if (content?.startsWith('WITHDRAWAL_')) {
+        return 'Withdrawal activity';
+      }
+
+      return 'Purchase ledger';
+    }
+
+    return type.toString();
+  }
+  private calculateRevenueSplit(price: Prisma.Decimal) {
+    const authorShare = price.mul(95).div(100).toDecimalPlaces(2);
+    const platformFee = price.minus(authorShare).toDecimalPlaces(2);
+    return { authorShare, platformFee };
+  }
+
+  private makeTopUpIdempotencyKey(provider: string, reference: string) {
+    return `TOPUP:${provider}:${reference}`;
+  }
+
+  private buildGatewayUrl(provider: string, reference: string) {
+    return `https://sandbox.payments.local/${provider.toLowerCase()}/checkout?reference=${encodeURIComponent(reference)}`;
+  }
+
+  private assertUserId(userId: number) {
+    if (!Number.isInteger(userId) || userId <= 0) {
+      throw new BadRequestException(
+        'A valid authenticated user id is required',
+      );
+    }
+  }
+
+  private assertMoney(value: number, fieldName: string) {
+    if (typeof value !== 'number' || Number.isNaN(value) || value <= 0) {
+      throw new BadRequestException(`${fieldName} must be a positive number`);
+    }
+  }
+}
