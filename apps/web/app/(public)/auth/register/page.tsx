@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useContext, useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
 import { Input } from "@repo/ui/input";
 import { extractAuthErrorMessage, registerLocal } from "../../../../src/features/auth/api";
 import type { FieldErrors } from "../../../../src/features/auth/types";
@@ -105,12 +106,13 @@ export default function RegisterPage() {
               value={form.password}
             />
             <button
-              className="auth-password-toggle"
+              className="auth-password-toggle inline-flex items-center justify-center transition-transform hover:scale-105"
               type="button"
               onClick={() => setShowPassword((current) => !current)}
               aria-label="Toggle password visibility"
+              aria-pressed={showPassword}
             >
-              {showPassword ? "Hide" : "Show"}
+              {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
             </button>
             {errors.password ? <span className="auth-error">{errors.password}</span> : null}
           </label>

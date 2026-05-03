@@ -1,5 +1,14 @@
 import { CommentReactionType } from '@prisma/client';
 
+export interface CommentAttachment {
+  type: 'gif' | 'image';
+  url: string;
+  preview: string;
+  width: number;
+  height: number;
+  alt?: string;
+}
+
 export interface SocialCommentAuthor {
   id: number;
   nickname: string | null;
@@ -14,6 +23,7 @@ export interface SocialCommentNode {
   chapterId: number | null;
   parentId: number | null;
   content: string;
+  attachments: CommentAttachment[];
   createdAt: Date;
   updatedAt: Date;
   author: SocialCommentAuthor;
@@ -31,6 +41,7 @@ export interface SocialCommentScope {
 export interface CreateSocialCommentInput extends SocialCommentScope {
   content: string;
   parentId?: number;
+  attachments?: CommentAttachment[];
 }
 
 export interface ToggleCommentReactionInput {

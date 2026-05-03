@@ -2,6 +2,7 @@ import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AdSettingsModule } from './ad-settings/ad-settings.module';
+import { GifAssetsModule } from './gif-assets/gif-assets.module';
 import { AuthMiddleware } from './auth/auth.middleware';
 import { AuthModule } from './auth/auth.module';
 import { ChaptersController } from './chapters/chapters.controller';
@@ -23,6 +24,7 @@ import { UsersController } from './users/users.controller';
   imports: [
     AuthModule,
     AdSettingsModule,
+    GifAssetsModule,
     CmsModule,
     ReaderModule,
     RewardAdsModule,

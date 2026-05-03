@@ -10,7 +10,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
@@ -68,7 +67,7 @@ export function AdminHeader() {
       </nav>
 
       <div className="ml-auto flex min-w-0 items-center gap-2">
-        <label className="admin-search hidden min-w-[260px] items-center gap-2 rounded-lg border border-border bg-card px-3 py-2 text-sm text-muted-foreground md:flex">
+        {/* <label className="admin-search hidden min-w-[260px] items-center gap-2 rounded-lg border border-border bg-card px-3 py-2 text-sm text-muted-foreground md:flex">
           <Search className="size-4" aria-hidden="true" />
           <input
             type="search"
@@ -78,7 +77,7 @@ export function AdminHeader() {
           <kbd className="inline-flex items-center gap-1 rounded border border-border bg-secondary px-1.5 py-0.5 text-[10px] text-muted-foreground">
             <Command className="size-3" /> K
           </kbd>
-        </label>
+        </label> */}
 
         <button
           type="button"
@@ -127,7 +126,7 @@ export function AdminHeader() {
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="admin-shell w-48">
-            <DropdownMenuLabel>
+            <div className="px-1.5 py-1 text-xs font-medium text-muted-foreground">
               <div className="flex flex-col gap-0.5">
                 <span className="text-sm font-medium leading-none">
                   {userDisplayName}
@@ -136,7 +135,7 @@ export function AdminHeader() {
                   {user?.email ?? ""}
                 </span>
               </div>
-            </DropdownMenuLabel>
+            </div>
             <DropdownMenuSeparator />
             <DropdownMenuItem
               onClick={() => router.push(siteHomeHref)}

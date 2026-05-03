@@ -201,7 +201,8 @@ export async function submitNovelReview(
 }
 
 function validateCreateInput(input: CreateSocialCommentInput) {
-  const contentValidation = validateCommentContent(input.content);
+  const hasAttachments = (input.attachments?.length ?? 0) > 0;
+  const contentValidation = validateCommentContent(input.content, hasAttachments);
   if (!contentValidation.ok) {
     return contentValidation;
   }
@@ -251,6 +252,7 @@ export async function createSocialComment(
       novelId: input.novelId,
       chapterId: input.chapterId,
       parentId: input.parentId,
+      attachments: input.attachments ?? [],
     },
     includeCredentials: true,
   });

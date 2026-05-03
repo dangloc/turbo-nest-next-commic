@@ -595,8 +595,8 @@ function getNovelCopy(locale: "vi" | "en") {
         startReading: "Bắt đầu đọc",
         noReadableChapter: "Chưa có chương để đọc",
         enterValidChapter: "Nhập chương hợp lệ",
-        bookmarkNovel: "Lưu bookmark",
-        bookmarkedNovel: "Đã bookmark",
+        bookmarkNovel: "Theo dõi",
+        bookmarkedNovel: "Đã theo dõi",
         bookmarking: "Đang lưu...",
         removingBookmark: "Đang bỏ lưu...",
         bookmarkSaved: "Đã theo dõi truyện.",
@@ -704,8 +704,8 @@ function getNovelCopy(locale: "vi" | "en") {
         startReading: "Start reading",
         noReadableChapter: "No readable chapter yet",
         enterValidChapter: "Enter valid chapter",
-        bookmarkNovel: "Bookmark",
-        bookmarkedNovel: "Bookmarked",
+        bookmarkNovel: "Follow",
+        bookmarkedNovel: "Following",
         bookmarking: "Saving...",
         removingBookmark: "Removing...",
         bookmarkSaved: "Novel followed.",
@@ -1533,9 +1533,9 @@ export function NovelDetailView({ novelId }: { novelId: number }) {
                     disabled={orderedChapters.length === 0}
                     onClick={onOpenComboDialog}
                   >
-                    <LockOpen aria-hidden="true" />
+                    {/* <LockOpen aria-hidden="true" /> */}
                     {comboHasLockedChapters && comboPrice !== null
-                      ? `${copy.unlockAllLabel} • ${formatMoney(comboPrice, locale)}`
+                      ? `${copy.unlockAllLabel}`
                       : comboLockedChapterCount === 0 && comboPriceKnown
                         ? copy.unlockAllOwnedLabel
                         : copy.unlockAllLabel}
@@ -1548,7 +1548,9 @@ export function NovelDetailView({ novelId }: { novelId: number }) {
                     type="button"
                   >
                     <Bell aria-hidden="true" />
-                    {formatAppNumber(bookmarkCount, locale)}
+                    {isBookmarked ? copy.bookmarkedNovel : copy.bookmarkNovel}
+                    {" "}
+                    {/* {formatAppNumber(bookmarkCount, locale)} */}
                   </button>
                   <select
                     className="novel-recommend-select"
@@ -1783,7 +1785,7 @@ export function NovelDetailView({ novelId }: { novelId: number }) {
           </section>
 
           <Dialog open={comboDialogOpen} onOpenChange={setComboDialogOpen}>
-            <DialogContent className="max-w-[min(96vw,1100px)] gap-0 overflow-hidden border border-[#ead7ff] bg-white p-0 text-left sm:max-w-[1100px]">
+            <DialogContent className="max-w-[min(96vw,1200px)] max-h-[85vh] mx-auto my-6 gap-0 overflow-y-auto border border-[#ead7ff] bg-white p-0 text-left sm:max-w-[1200px]">
               <DialogHeader className="border-b border-[#f1e4ff] px-6 py-5">
                 <DialogTitle className="text-lg font-semibold text-slate-900">
                   {copy.unlockAllDialogTitle}
@@ -1793,7 +1795,7 @@ export function NovelDetailView({ novelId }: { novelId: number }) {
                 </DialogDescription>
               </DialogHeader>
 
-              <div className="grid gap-6 px-6 py-5 lg:grid-cols-[minmax(0,1.2fr)_320px]">
+              <div className="grid gap-4 px-6 py-5 lg:grid-cols-2">
                 <div className="grid gap-4">
                   <div className="grid gap-4 md:grid-cols-2">
                     <section className="grid gap-3 rounded-xl border border-[#efe2ff] bg-[#fdfaff] p-4">
@@ -1816,7 +1818,7 @@ export function NovelDetailView({ novelId }: { novelId: number }) {
                         </span>
                       </div>
                       {lockedChapterRows.length > 0 ? (
-                        <ul className="grid max-h-80 gap-2 overflow-y-auto pr-1">
+                        <ul className="flex flex-col max-h-95 gap-2 overflow-y-auto overflow-x-hidden pr-0">
                           {lockedChapterRows.map(
                             ({
                               chapter,
@@ -1826,7 +1828,7 @@ export function NovelDetailView({ novelId }: { novelId: number }) {
                             }) => (
                               <li
                                 key={chapter.id}
-                                className="grid gap-2 rounded-lg border border-[#f3e8ff] bg-white px-3 py-2"
+                                className="grid gap-2 rounded-lg border border-[#f3e8ff] bg-white px-3 py-2 w-full"
                               >
                                 <div className="flex items-start justify-between gap-3">
                                   <div className="min-w-0">
@@ -1884,7 +1886,7 @@ export function NovelDetailView({ novelId }: { novelId: number }) {
                         </span>
                       </div>
                       {unlockedChapterRows.length > 0 ? (
-                        <ul className="grid max-h-80 gap-2 overflow-y-auto pr-1">
+                        <ul className="grid max-h-95   gap-2 overflow-y-auto pr-1">
                           {unlockedChapterRows.map(
                             ({
                               chapter,
@@ -1967,7 +1969,7 @@ export function NovelDetailView({ novelId }: { novelId: number }) {
                   </div>
 
                   {user ? (
-                    <div className="grid gap-3">
+                    <div className="grid gap-2 grid-flow-col ">
                       <div className="grid gap-2 rounded-xl border border-[#e5e7eb] bg-white p-4">
                         <div className="flex items-center gap-2 text-sm font-medium text-slate-700">
                           <Wallet className="h-4 w-4" aria-hidden="true" />
@@ -2073,7 +2075,6 @@ export function NovelDetailView({ novelId }: { novelId: number }) {
 
           <section className="novel-detail-companion">
             <article className="novel-detail-editor">
-              <h2>Editor</h2>
               <div>
                 <span>{getAuthorName(novel).slice(0, 1).toUpperCase()}</span>
                 <strong>{getAuthorName(novel)}</strong>
@@ -3262,14 +3263,14 @@ export function ChapterReaderView({ chapterId }: { chapterId: number }) {
               <p>{copy.currentChapter}</p>
               <h1>{chapter.title}</h1>
               <div>
-                <span>
+                {/* <span>
                   {copy.chapterLabel} #
                   {formatAppNumber(Number(chapter.id), locale)}
                 </span>
                 <span>
                   {copy.novelLabel} #
                   {formatAppNumber(Number(chapter.novelId), locale)}
-                </span>
+                </span> */}
                 <span>
                   {formatAppNumber(Number(chapter.viewCount), locale)}{" "}
                   {copy.viewsLabel}

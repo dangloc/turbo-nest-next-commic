@@ -3,9 +3,10 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { CommentReactionType, PointTransactionType } from '@prisma/client';
+import { CommentReactionType, Prisma, PointTransactionType } from '@prisma/client';
 import { PrismaService } from '../prisma.service';
 import {
+  CommentAttachment,
   CreateOrUpdateNovelReviewInput,
   CreateSocialCommentInput,
   NovelReviewListResponse,
@@ -17,6 +18,19 @@ import {
   SocialCommentScope,
   ToggleCommentReactionInput,
 } from './types';
+
+const ALLOWED_ATTACHMENT_DOMAINS = new Set([
+  'media.tenor.com',
+  'media1.tenor.com',
+  'c.tenor.com',
+  'media.giphy.com',
+  'media0.giphy.com',
+  'media1.giphy.com',
+  'media2.giphy.com',
+  'media3.giphy.com',
+  'media4.giphy.com',
+  'i.giphy.com',
+]);
 
 const REVIEW_MISSION_REWARD_POINTS = 500;
 const COMMENT_MISSION_REWARD_POINTS = 700;
@@ -60,6 +74,7 @@ type CommentRecord = {
   chapterId: number | null;
   parentId: number | null;
   content: string;
+  attachments: Prisma.JsonValue;
   createdAt: Date;
   updatedAt: Date;
   user: {
@@ -382,9 +397,13 @@ export class SocialService {
       );
     }
 
-    const content = input.content?.trim();
-    if (!content) {
-      throw new BadRequestException('Comment content is required');
+    const content = input.content?.trim() ?? '';
+    const attachments = this.validateAttachments(input.attachments ?? []);
+
+    if (!content && attachments.length === 0) {
+      throw new BadRequestException(
+        'Comment content or an attachment is required',
+      );
     }
 
     const hasNovelScope = input.novelId !== undefined && input.novelId !== null;
@@ -453,6 +472,7 @@ export class SocialService {
         chapterId: finalChapterId,
         parentId,
         content,
+        attachments: attachments as unknown as Prisma.InputJsonValue,
       },
       include: {
         user: {
@@ -539,6 +559,73 @@ export class SocialService {
         },
       });
     });
+  }
+
+  private validateAttachments(raw: unknown[]): CommentAttachment[] {
+    if (!Array.isArray(raw)) {
+      throw new BadRequestException('attachments must be an array');
+    }
+
+    if (raw.length > 1) {
+      throw new BadRequestException('Maximum 1 attachment per comment');
+    }
+
+    return raw.map((item) => {
+      if (typeof item !== 'object' || item === null) {
+        throw new BadRequestException('Invalid attachment format');
+      }
+
+      const att = item as Record<string, unknown>;
+
+      if (att['type'] !== 'gif' && att['type'] !== 'image') {
+        throw new BadRequestException('Attachment type must be "gif" or "image"');
+      }
+
+      if (typeof att['url'] !== 'string' || !att['url']) {
+        throw new BadRequestException('Attachment url is required');
+      }
+
+      if (typeof att['preview'] !== 'string' || !att['preview']) {
+        throw new BadRequestException('Attachment preview is required');
+      }
+
+      this.validateAttachmentUrl(att['url'] as string);
+      this.validateAttachmentUrl(att['preview'] as string);
+
+      const width = Number(att['width']);
+      const height = Number(att['height']);
+
+      if (!Number.isFinite(width) || width <= 0) {
+        throw new BadRequestException('Attachment width must be a positive number');
+      }
+
+      if (!Number.isFinite(height) || height <= 0) {
+        throw new BadRequestException('Attachment height must be a positive number');
+      }
+
+      return {
+        type: att['type'] as 'gif' | 'image',
+        url: att['url'] as string,
+        preview: att['preview'] as string,
+        width,
+        height,
+        ...(typeof att['alt'] === 'string' ? { alt: att['alt'] } : {}),
+      };
+    });
+  }
+
+  private validateAttachmentUrl(url: string): void {
+    let parsed: URL;
+
+    try {
+      parsed = new URL(url);
+    } catch {
+      throw new BadRequestException(`Invalid attachment URL: ${url}`);
+    }
+
+    if (parsed.protocol !== 'https:') {
+      throw new BadRequestException('Attachment URLs must use HTTPS');
+    }
   }
 
   private normalizeScope(scope: SocialCommentScope): {
@@ -653,6 +740,9 @@ export class SocialService {
       chapterId: comment.chapterId,
       parentId: comment.parentId,
       content: comment.content,
+      attachments: Array.isArray(comment.attachments)
+        ? (comment.attachments as unknown as CommentAttachment[])
+        : [],
       createdAt: comment.createdAt,
       updatedAt: comment.updatedAt,
       author: {

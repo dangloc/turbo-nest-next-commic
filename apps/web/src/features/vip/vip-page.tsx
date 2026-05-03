@@ -139,12 +139,13 @@ function VipPackageCard({
   return (
     <article
       className={cn(
-        "relative flex min-h-[560px] flex-col rounded-[18px] border p-8",
+        "vip-package-card relative flex min-h-[560px] flex-col rounded-[18px] border p-8",
+        pkg.packageType === "vip_permanent" && "vip-permanent-card",
         tone.card,
       )}
     >
       {isPopular ? (
-        <div className="absolute left-1/2 top-0 -translate-x-1/2 rounded-b-lg bg-violet-600 px-10 py-3 text-sm font-bold text-white shadow-lg shadow-violet-600/30">
+        <div className="vip-popular-badge absolute left-1/2 top-0 -translate-x-1/2 rounded-b-lg bg-violet-600 px-10 py-3 text-sm font-bold text-white shadow-lg shadow-violet-600/30">
           Phổ Biến
         </div>
       ) : null}

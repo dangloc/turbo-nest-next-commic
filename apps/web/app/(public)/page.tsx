@@ -485,7 +485,7 @@ export default function Home() {
         </div>
 
         <div className="tsh-hero-slider__content">
-          <h1>
+          <h1 className="tsh-hero-slider__title">
             <Link href={heroHref}>
               {hero?.title ?? copy.heroFallbackTitle}
             </Link>

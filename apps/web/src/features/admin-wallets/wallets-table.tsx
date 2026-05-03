@@ -124,7 +124,7 @@ export function WalletsTable(props: WalletsTableProps) {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div className="relative max-w-sm w-full">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+         
           <Input
             placeholder="Tìm theo username, email, tên hiển thị..."
             value={search}

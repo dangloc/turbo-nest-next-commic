@@ -415,19 +415,18 @@ export function UsersTable() {
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex w-full flex-col gap-2 sm:max-w-xl sm:flex-row">
-          <div className="relative flex-1">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+          <div className="relative w-full">
             <Input
               placeholder="Tìm theo ID, username, email, tên hiển thị..."
               value={searchInput}
               onChange={(event) => onSearchChange(event.target.value)}
-              className="pl-9 pr-9"
+              className="pl-9 pr-9 w-4"
             />
             {searchInput ? (
               <button
                 type="button"
                 onClick={() => setSearchInput("")}
-                className="absolute right-2.5 top-2.5 inline-flex h-4 w-4 items-center justify-center text-muted-foreground transition-colors hover:text-foreground"
+                className="absolute right-2.5 top-2.5 inline-flex h-4 w-2 items-center justify-center text-muted-foreground transition-colors hover:text-foreground"
                 aria-label="Xóa tìm kiếm"
               >
                 <X className="h-4 w-4" />

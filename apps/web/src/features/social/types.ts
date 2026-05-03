@@ -1,3 +1,12 @@
+export interface CommentAttachment {
+  type: 'gif' | 'image';
+  url: string;
+  preview: string;
+  width: number;
+  height: number;
+  alt?: string;
+}
+
 export const SOCIAL_REACTION_TYPES = [
   "LIKE",
   "HEART",
@@ -23,6 +32,7 @@ export interface SocialCommentNode {
   chapterId: number | null;
   parentId: number | null;
   content: string;
+  attachments: CommentAttachment[];
   createdAt: string;
   updatedAt: string;
   author: SocialCommentAuthor;
@@ -41,6 +51,7 @@ export interface CreateSocialCommentInput {
   parentId?: number;
   novelId?: number;
   chapterId?: number;
+  attachments?: CommentAttachment[];
 }
 
 export interface ToggleCommentReactionInput {
@@ -174,11 +185,14 @@ export function validateCommentScope(scope: {
   return { ok: true };
 }
 
-export function validateCommentContent(content: string): SocialValidation {
-  if (!content.trim()) {
+export function validateCommentContent(
+  content: string,
+  hasAttachments = false,
+): SocialValidation {
+  if (!content.trim() && !hasAttachments) {
     return {
       ok: false,
-      message: "Comment content is required.",
+      message: "Comment content or an attachment is required.",
     };
   }
 

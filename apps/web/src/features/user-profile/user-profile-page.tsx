@@ -254,7 +254,6 @@ export function UserProfilePage() {
                     }
                     placeholder="Tên hiển thị"
                   />
-                  <small>Bạn còn 2 lượt đổi tên miễn phí</small>
                 </label>
 
                 <label>

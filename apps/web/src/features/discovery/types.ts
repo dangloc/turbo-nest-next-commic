@@ -63,7 +63,7 @@ export interface DiscoveryQueryInit {
 
 export const DISCOVERY_DEFAULTS: DiscoveryQuery = {
   page: 1,
-  limit: 20,
+  limit: 18,
   sortBy: "updatedAt",
   sortDir: "desc",
 };
@@ -131,9 +131,7 @@ export function buildDiscoveryQueryParams(query: DiscoveryQuery) {
     params.set("releaseYear", query.releaseYear);
   }
 
-  if (query.limit !== DISCOVERY_DEFAULTS.limit) {
-    params.set("limit", String(query.limit));
-  }
+  params.set("limit", String(query.limit));
 
   if (query.sortBy !== DISCOVERY_DEFAULTS.sortBy) {
     params.set("sortBy", query.sortBy);

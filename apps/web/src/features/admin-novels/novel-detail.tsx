@@ -511,8 +511,9 @@ export function NovelDetail({ novelId, backPath = "/dashboard/novels" }: NovelDe
     // Refresh chapter list
     const listRes = await listChaptersByNovel(novel.id);
     if (listRes.ok) setChapters(listRes.data);
+    const createdCount = Array.isArray(chaptersCreated) ? chaptersCreated.length : chaptersCreated;
     const note = warnings.length ? ` (${warnings[0]})` : "";
-    setChapterMessage(`Đã nhập ${chaptersCreated} chương.${note}`);
+    setChapterMessage(`Đã nhập ${createdCount} chương.${note}`);
   }
 
   // ----------------------------------------------------------
@@ -552,7 +553,7 @@ export function NovelDetail({ novelId, backPath = "/dashboard/novels" }: NovelDe
   }
 
   return (
-    <div className="flex max-w-none flex-col gap-5 xl:h-[calc(100vh-160px)]">
+    <div className="flex max-w-none flex-col gap-5 xl:h-[calc(100vh-120px)]">
       {/* Back */}
       <button
         type="button"

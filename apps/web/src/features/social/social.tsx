@@ -2,12 +2,22 @@
 
 import {
   ChevronDown,
+  Film,
   MessageSquareReply,
   SendHorizontal,
   SmilePlus,
   ThumbsUp,
+  X,
 } from "lucide-react";
-import { useContext, useEffect, useMemo, useState } from "react";
+import {
+  type ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 import { Avatar } from "@/components/ui/avatar";
 import {
@@ -26,8 +36,11 @@ import {
   fetchSocialComments,
   toggleSocialReaction,
 } from "./api";
+import { EmojiPicker } from "./emoji-picker";
+import { GifPicker } from "./gif-picker";
 import {
   SOCIAL_REACTION_TYPES,
+  type CommentAttachment,
   type SocialCommentNode,
   type SocialCommentScope,
   type SocialReactionType,
@@ -45,11 +58,7 @@ const QUICK_EMOJI_PRESETS = ["🥹", "😂", "😍", "🔥", "👏", "💯"] as 
 
 const REACTION_META: Record<
   SocialReactionType,
-  {
-    emoji: string;
-    vi: string;
-    en: string;
-  }
+  { emoji: string; vi: string; en: string }
 > = {
   LIKE: { emoji: "👍", vi: "Thích", en: "Like" },
   HEART: { emoji: "❤️", vi: "Yêu thích", en: "Love" },
@@ -70,32 +79,23 @@ function formatRelativeDate(value: string, locale: "vi" | "en") {
   const diffHours = Math.max(0, Math.floor(diffMs / 3_600_000));
   const diffDays = Math.max(0, Math.floor(diffMs / 86_400_000));
 
-  if (diffMinutes < 1) {
-    return locale === "vi" ? "Vừa xong" : "Just now";
-  }
-
-  if (diffMinutes < 60) {
+  if (diffMinutes < 1) return locale === "vi" ? "Vừa xong" : "Just now";
+  if (diffMinutes < 60)
     return locale === "vi"
       ? `${diffMinutes} phút trước`
       : `${diffMinutes} minutes ago`;
-  }
-
-  if (diffHours < 24) {
+  if (diffHours < 24)
     return locale === "vi"
       ? `${diffHours} giờ trước`
       : `${diffHours} hours ago`;
-  }
-
-  if (diffDays < 7) {
+  if (diffDays < 7)
     return locale === "vi" ? `${diffDays} ngày trước` : `${diffDays} days ago`;
-  }
 
   const diffWeeks = Math.floor(diffDays / 7);
-  if (diffWeeks < 5) {
+  if (diffWeeks < 5)
     return locale === "vi"
       ? `${diffWeeks} tuần trước`
       : `${diffWeeks} weeks ago`;
-  }
 
   return date.toLocaleDateString(locale === "vi" ? "vi-VN" : "en-US", {
     day: "2-digit",
@@ -115,7 +115,6 @@ function authorInitials(node: SocialCommentNode) {
     .slice(0, 2)
     .map((part) => part[0]?.toUpperCase() ?? "")
     .join("");
-
   return value || "U";
 }
 
@@ -134,20 +133,92 @@ function getReactionEmoji(type: SocialReactionType) {
   return REACTION_META[type].emoji;
 }
 
-function getCommentReactionCount(
-  node: SocialCommentNode,
-  type: SocialReactionType,
-) {
+function getCommentReactionCount(node: SocialCommentNode, type: SocialReactionType) {
   return node.reactions.find((item) => item.type === type)?.count ?? 0;
 }
 
 function appendQuickEmoji(current: string, emoji: string) {
   const trimmedEnd = current.trimEnd();
-  if (!trimmedEnd) {
-    return emoji + " ";
-  }
-
+  if (!trimmedEnd) return emoji + " ";
   return trimmedEnd + " " + emoji + " ";
+}
+
+// --- Floating picker wrapper (closes on outside click / Escape) ---
+function FloatingPicker({
+  children,
+  onClose,
+}: {
+  children: ReactNode;
+  onClose: () => void;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handler(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) onClose();
+    }
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [onClose]);
+
+  return (
+    <div ref={ref} className="absolute bottom-full left-0 z-50 mb-1">
+      {children}
+    </div>
+  );
+}
+
+// --- Attachment preview strip (in the compose box) ---
+function AttachmentStrip({
+  attachment,
+  onRemove,
+}: {
+  attachment: CommentAttachment;
+  onRemove: () => void;
+}) {
+  return (
+    <div className="relative mt-2 inline-block">
+      <img
+        src={attachment.preview}
+        alt={attachment.alt ?? "attachment"}
+        width={attachment.width}
+        height={attachment.height}
+        className="max-h-28 w-auto border border-border object-contain"
+        style={{ aspectRatio: `${attachment.width}/${attachment.height}` }}
+      />
+      <button
+        type="button"
+        onClick={onRemove}
+        aria-label="Remove attachment"
+        className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center border border-border bg-background shadow-sm hover:bg-muted"
+      >
+        <X className="h-3 w-3" />
+      </button>
+    </div>
+  );
+}
+
+// --- GIF display inside a rendered comment ---
+function CommentGif({ attachment }: { attachment: CommentAttachment }) {
+  const maxW = Math.min(attachment.width, 320);
+  const maxH = Math.round((maxW / attachment.width) * attachment.height);
+
+  return (
+    <div
+      className="overflow-hidden border border-border bg-muted"
+      style={{ width: maxW, height: maxH }}
+    >
+      <img
+        src={attachment.url}
+        alt={attachment.alt ?? "GIF"}
+        width={maxW}
+        height={maxH}
+        loading="lazy"
+        decoding="async"
+        className="h-full w-full object-cover"
+      />
+    </div>
+  );
 }
 
 export function SocialThread({
@@ -158,6 +229,7 @@ export function SocialThread({
   hideHeader = false,
 }: SocialThreadProps) {
   const { locale, user } = useContext(AppContext);
+
   const copy =
     locale === "vi"
       ? {
@@ -189,6 +261,9 @@ export function SocialThread({
           adminRole: "Admin",
           authorRole: "Tác giả",
           noComments: "Chưa có bình luận nào.",
+          addGif: "Thêm GIF",
+          emoji: "Emoji",
+          removeAttachment: "Xóa ảnh đính kèm",
         }
       : {
           socialInteraction: "Comments",
@@ -219,19 +294,27 @@ export function SocialThread({
           adminRole: "Admin",
           authorRole: "Author",
           noComments: "No comments yet.",
+          addGif: "Add GIF",
+          emoji: "Emoji",
+          removeAttachment: "Remove attachment",
         };
 
+  // ---- State ----
   const [comments, setComments] = useState<SocialCommentNode[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [submittingRoot, setSubmittingRoot] = useState(false);
-  const [submittingReplyId, setSubmittingReplyId] = useState<number | null>(
-    null,
-  );
+  const [submittingReplyId, setSubmittingReplyId] = useState<number | null>(null);
   const [rootDraft, setRootDraft] = useState("");
+  const [rootAttachments, setRootAttachments] = useState<CommentAttachment[]>([]);
+  const [showRootEmoji, setShowRootEmoji] = useState(false);
+  const [showRootGif, setShowRootGif] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
   const [replyingTo, setReplyingTo] = useState<number | null>(null);
   const [replyDraft, setReplyDraft] = useState("");
+  const [replyAttachments, setReplyAttachments] = useState<CommentAttachment[]>([]);
+  const [showReplyEmoji, setShowReplyEmoji] = useState(false);
+  const [showReplyGif, setShowReplyGif] = useState(false);
   const [replyStatus, setReplyStatus] = useState<string | null>(null);
   const [reactionFeedback, setReactionFeedback] = useState<
     Record<number, string | null>
@@ -241,10 +324,7 @@ export function SocialThread({
   const chapterId = isNovelScope(scope) ? undefined : scope.chapterId;
 
   const normalizedScope = useMemo<SocialCommentScope>(() => {
-    if (novelId !== undefined) {
-      return { novelId };
-    }
-
+    if (novelId !== undefined) return { novelId };
     return { chapterId: chapterId as number };
   }, [novelId, chapterId]);
 
@@ -259,9 +339,7 @@ export function SocialThread({
         getSessionToken() ?? undefined,
         controller.signal,
       );
-      if (controller.signal.aborted) {
-        return;
-      }
+      if (controller.signal.aborted) return;
 
       if (!response.ok) {
         setComments([]);
@@ -286,7 +364,6 @@ export function SocialThread({
       setError(response.error.message);
       return;
     }
-
     setComments(response.data);
     setError(null);
   }
@@ -301,11 +378,15 @@ export function SocialThread({
     setSubmittingRoot(true);
     setStatus(null);
 
-    const input = isNovelScope(normalizedScope)
+    const base = isNovelScope(normalizedScope)
       ? { content: rootDraft, novelId: normalizedScope.novelId }
       : { content: rootDraft, chapterId: normalizedScope.chapterId };
 
-    const response = await createSocialComment(input, token);
+    const response = await createSocialComment(
+      { ...base, attachments: rootAttachments },
+      token,
+    );
+
     if (!response.ok) {
       setStatus(response.error.message);
       setSubmittingRoot(false);
@@ -313,6 +394,7 @@ export function SocialThread({
     }
 
     setRootDraft("");
+    setRootAttachments([]);
     setStatus(copy.commentPosted);
     setSubmittingRoot(false);
     await refreshComments();
@@ -328,10 +410,12 @@ export function SocialThread({
     setSubmittingReplyId(parentId);
     setReplyStatus(null);
 
+    const base = buildReplyInput(parentId, replyDraft, normalizedScope);
     const response = await createSocialComment(
-      buildReplyInput(parentId, replyDraft, normalizedScope),
+      { ...base, attachments: replyAttachments },
       token,
     );
+
     if (!response.ok) {
       setReplyStatus(response.error.message);
       setSubmittingReplyId(null);
@@ -339,6 +423,7 @@ export function SocialThread({
     }
 
     setReplyDraft("");
+    setReplyAttachments([]);
     setReplyingTo(null);
     setReplyStatus(copy.replyPosted);
     setSubmittingReplyId(null);
@@ -348,28 +433,35 @@ export function SocialThread({
   async function onReaction(commentId: number, type: SocialReactionType) {
     const token = getSessionToken() ?? undefined;
     if (!token || !user) {
-      setReactionFeedback((current) => ({
-        ...current,
-        [commentId]: copy.signInToReact,
-      }));
+      setReactionFeedback((cur) => ({ ...cur, [commentId]: copy.signInToReact }));
       return;
     }
 
     const response = await toggleSocialReaction({ commentId, type }, token);
     if (!response.ok) {
-      setReactionFeedback((current) => ({
-        ...current,
+      setReactionFeedback((cur) => ({
+        ...cur,
         [commentId]: response.error.message,
       }));
       return;
     }
 
     await refreshComments();
-    setReactionFeedback((current) => ({
-      ...current,
+    setReactionFeedback((cur) => ({
+      ...cur,
       [commentId]: response.data ? copy.reactionUpdated : copy.reactionRemoved,
     }));
   }
+
+  const closeRootPickers = useCallback(() => {
+    setShowRootEmoji(false);
+    setShowRootGif(false);
+  }, []);
+
+  const closeReplyPickers = useCallback(() => {
+    setShowReplyEmoji(false);
+    setShowReplyGif(false);
+  }, []);
 
   function renderRoleBadge(role: string) {
     if (role === "ADMIN") {
@@ -379,7 +471,6 @@ export function SocialThread({
         </span>
       );
     }
-
     if (role === "AUTHOR") {
       return (
         <span className="inline-flex h-5 items-center border border-violet-200 bg-violet-50 px-1.5 text-[11px] font-semibold text-violet-700">
@@ -387,19 +478,25 @@ export function SocialThread({
         </span>
       );
     }
-
     return null;
   }
 
-  function renderQuickEmojiBar(
-    apply: (emoji: string) => void,
-    compact = false,
-  ) {
+  // --- Compose toolbar: quick emojis + emoji picker + GIF picker buttons ---
+  function renderToolbar(opts: {
+    onEmoji: (e: string) => void;
+    onAttachment: (a: CommentAttachment) => void;
+    showEmoji: boolean;
+    showGif: boolean;
+    onToggleEmoji: () => void;
+    onToggleGif: () => void;
+    onClosePickers: () => void;
+    compact?: boolean;
+  }) {
     return (
       <div
         className={cn(
-          "flex flex-wrap gap-2 border-b border-border pb-3",
-          compact && "pb-2",
+          "relative flex flex-wrap items-center gap-2 border-b border-border pb-3",
+          opts.compact && "pb-2",
         )}
         aria-label={copy.quickEmoji}
       >
@@ -408,19 +505,69 @@ export function SocialThread({
             key={emoji}
             type="button"
             className="inline-flex h-8 min-w-8 items-center justify-center border border-border bg-background px-2 text-base text-foreground transition-colors hover:bg-muted"
-            onClick={() => apply(emoji)}
+            onClick={() => opts.onEmoji(emoji)}
           >
             <span aria-hidden="true">{emoji}</span>
           </button>
         ))}
+
+        {/* Full emoji picker toggle */}
+        <button
+          type="button"
+          title={copy.emoji}
+          aria-label={copy.emoji}
+          className={cn(
+            "inline-flex h-8 items-center gap-1.5 border px-2 text-xs font-medium transition-colors",
+            opts.showEmoji
+              ? "border-violet-300 bg-violet-50 text-violet-700"
+              : "border-border bg-background text-foreground hover:bg-muted",
+          )}
+          onClick={() => {
+            opts.onToggleEmoji();
+          }}
+        >
+          <SmilePlus className="h-3.5 w-3.5" />
+        </button>
+
+        {/* GIF picker toggle */}
+        <button
+          type="button"
+          title={copy.addGif}
+          aria-label={copy.addGif}
+          className={cn(
+            "inline-flex h-8 items-center gap-1.5 border px-2 text-xs font-medium transition-colors",
+            opts.showGif
+              ? "border-violet-300 bg-violet-50 text-violet-700"
+              : "border-border bg-background text-foreground hover:bg-muted",
+          )}
+          onClick={() => {
+            opts.onToggleGif();
+          }}
+        >
+          <Film className="h-3.5 w-3.5" />
+          <span>GIF</span>
+        </button>
+
+        {opts.showEmoji && (
+          <FloatingPicker onClose={opts.onClosePickers}>
+            <EmojiPicker onSelect={(e) => { opts.onEmoji(e); opts.onClosePickers(); }} />
+          </FloatingPicker>
+        )}
+
+        {opts.showGif && (
+          <FloatingPicker onClose={opts.onClosePickers}>
+            <GifPicker
+              onSelect={(a) => { opts.onAttachment(a); opts.onClosePickers(); }}
+              onClose={opts.onClosePickers}
+            />
+          </FloatingPicker>
+        )}
       </div>
     );
   }
 
   function renderReactionSummary(node: SocialCommentNode) {
-    if (node.reactionCount <= 0) {
-      return null;
-    }
+    if (node.reactionCount <= 0) return null;
 
     return (
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1 border-t border-dashed border-border pt-2 text-xs text-muted-foreground">
@@ -435,6 +582,19 @@ export function SocialThread({
             {copy.youReacted}: {getReactionLabel(node.viewerReaction, locale)}
           </span>
         ) : null}
+      </div>
+    );
+  }
+
+  function renderCommentAttachments(node: SocialCommentNode) {
+    const gifs = node.attachments?.filter((a) => a.type === "gif") ?? [];
+    if (gifs.length === 0) return null;
+
+    return (
+      <div className="flex flex-wrap gap-2">
+        {gifs.map((att, i) => (
+          <CommentGif key={i} attachment={att} />
+        ))}
       </div>
     );
   }
@@ -475,10 +635,13 @@ export function SocialThread({
                 </span>
               </div>
 
-              <p className="whitespace-pre-wrap break-words text-sm leading-6 text-foreground">
-                {node.content}
-              </p>
+              {node.content ? (
+                <p className="whitespace-pre-wrap break-words text-sm leading-6 text-foreground">
+                  {node.content}
+                </p>
+              ) : null}
 
+              {renderCommentAttachments(node)}
               {renderReactionSummary(node)}
 
               <div className="flex flex-wrap items-center gap-2">
@@ -554,11 +717,11 @@ export function SocialThread({
                       : "border-border bg-background text-foreground hover:bg-muted",
                   )}
                   onClick={() => {
-                    setReplyingTo((current) =>
-                      current === node.id ? null : node.id,
-                    );
+                    setReplyingTo((cur) => (cur === node.id ? null : node.id));
                     setReplyDraft("");
+                    setReplyAttachments([]);
                     setReplyStatus(null);
+                    closeReplyPickers();
                   }}
                 >
                   <MessageSquareReply className="h-3.5 w-3.5" />
@@ -573,9 +736,7 @@ export function SocialThread({
               </div>
 
               {feedback ? (
-                <p className="text-xs font-medium text-violet-700">
-                  {feedback}
-                </p>
+                <p className="text-xs font-medium text-violet-700">{feedback}</p>
               ) : null}
             </div>
           </div>
@@ -583,9 +744,31 @@ export function SocialThread({
 
         {isReplyOpen ? (
           <div className="ml-[52px] border border-border bg-muted/10 p-3">
-            {renderQuickEmojiBar((emoji) => {
-              setReplyDraft((current) => appendQuickEmoji(current, emoji));
-            }, true)}
+            {renderToolbar({
+              onEmoji: (e) =>
+                setReplyDraft((cur) => appendQuickEmoji(cur, e)),
+              onAttachment: (a) => setReplyAttachments([a]),
+              showEmoji: showReplyEmoji,
+              showGif: showReplyGif,
+              onToggleEmoji: () => {
+                setShowReplyEmoji((v) => !v);
+                setShowReplyGif(false);
+              },
+              onToggleGif: () => {
+                setShowReplyGif((v) => !v);
+                setShowReplyEmoji(false);
+              },
+              onClosePickers: closeReplyPickers,
+              compact: true,
+            })}
+
+            {replyAttachments.length > 0 && replyAttachments[0] && (
+              <AttachmentStrip
+                attachment={replyAttachments[0]}
+                onRemove={() => setReplyAttachments([])}
+              />
+            )}
+
             <textarea
               value={replyDraft}
               onChange={(event) => setReplyDraft(event.target.value)}
@@ -606,9 +789,7 @@ export function SocialThread({
               >
                 <SendHorizontal className="h-3.5 w-3.5" />
                 <span>
-                  {submittingReplyId === node.id
-                    ? copy.posting
-                    : copy.postReply}
+                  {submittingReplyId === node.id ? copy.posting : copy.postReply}
                 </span>
               </button>
             </div>
@@ -647,16 +828,34 @@ export function SocialThread({
           <h2 className="mt-1 text-base font-semibold text-foreground">
             {title}
           </h2>
-          <p className="mt-1 text-sm text-muted-foreground">
-            {copy.syncedHint}
-          </p>
+          <p className="mt-1 text-sm text-muted-foreground">{copy.syncedHint}</p>
         </div>
       ) : null}
 
       <div className="border border-border bg-muted/10 p-4">
-        {renderQuickEmojiBar((emoji) => {
-          setRootDraft((current) => appendQuickEmoji(current, emoji));
+        {renderToolbar({
+          onEmoji: (e) => setRootDraft((cur) => appendQuickEmoji(cur, e)),
+          onAttachment: (a) => setRootAttachments([a]),
+          showEmoji: showRootEmoji,
+          showGif: showRootGif,
+          onToggleEmoji: () => {
+            setShowRootEmoji((v) => !v);
+            setShowRootGif(false);
+          },
+          onToggleGif: () => {
+            setShowRootGif((v) => !v);
+            setShowRootEmoji(false);
+          },
+          onClosePickers: closeRootPickers,
         })}
+
+        {rootAttachments.length > 0 && rootAttachments[0] && (
+          <AttachmentStrip
+            attachment={rootAttachments[0]}
+            onRemove={() => setRootAttachments([])}
+          />
+        )}
+
         <textarea
           value={rootDraft}
           onChange={(event) => setRootDraft(event.target.value)}
@@ -665,6 +864,7 @@ export function SocialThread({
           maxLength={2000}
           className="min-h-32 w-full resize-y border border-border bg-background px-3 py-3 text-sm leading-6 text-foreground outline-none transition-colors focus:border-violet-300"
         />
+
         <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
           <span className="text-xs text-muted-foreground">
             {rootDraft.trim().length}/2000
@@ -679,6 +879,7 @@ export function SocialThread({
             <span>{submittingRoot ? copy.posting : copy.postComment}</span>
           </button>
         </div>
+
         {status ? (
           <p className="mt-2 text-xs font-medium text-violet-700">{status}</p>
         ) : null}

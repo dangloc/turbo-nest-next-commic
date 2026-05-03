@@ -393,7 +393,6 @@ export function NovelsPage() {
                 <label className="grid gap-2 text-sm font-medium text-foreground lg:col-span-3">
                   Tên truyện
                   <div className="relative">
-                    <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                     <Input
                       className="pl-9"
                       value={filters.q}

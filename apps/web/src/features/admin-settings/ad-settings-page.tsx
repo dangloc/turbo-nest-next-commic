@@ -18,6 +18,7 @@ import {
 } from "@/lib/dashboard-access";
 import { AppContext } from "@/providers/app-provider";
 import { DEFAULT_PUBLIC_AD_SETTINGS } from "../ads/api";
+import { GifAssetsPage } from "./gif/gif-assets-page";
 import {
   fetchAdminAdSettings,
   fetchDashboardRoleSettings,
@@ -265,6 +266,7 @@ export function AdSettingsPage() {
   const disabled = isLoading || isSaving;
 
   return (
+    <>
     <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
       <div className="flex items-start justify-between gap-4">
         <div>
@@ -904,5 +906,10 @@ export function AdSettingsPage() {
         </CardContent>
       </Card>
     </form>
+
+    <div className="mt-6 border-t border-border pt-6">
+      <GifAssetsPage />
+    </div>
+    </>
   );
 }

@@ -146,6 +146,7 @@ export function Header() {
                 setMenuOpen((open) => !open);
               }}
             >
+              
               <Avatar
                 fallback={initials}
                 src={avatarUrl}
